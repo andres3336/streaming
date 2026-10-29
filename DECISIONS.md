@@ -15,7 +15,7 @@ implementation plan.
 
 - Android TV 11 / API 30
 - 32-bit `armeabi-v7a`
-- About 5 GB free storage
+- About 2 GB free storage
 - Streaming is the priority
 
 ## Sources

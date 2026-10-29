@@ -36,13 +36,24 @@ New ideas go to `Backlog` with priority `P4`.
 
 ## Environment
 
-- JDK 21, installed user-local
-- Gradle wrapper 8.14.6
-- Android SDK at `/home/andres/Android/Sdk`
+- JDK 21 at `~/.local/opt/jdk-21` (Temurin)
+- Gradle wrapper 8.14.6 (`./gradlew`)
+- Android SDK at `/home/andres/Android/Sdk` (`platforms;android-36`)
 - `compileSdk 36`, `targetSdk 36`, `minSdk 23`
 - TV reachable over adb at `192.168.100.16:5555`
 
 No Android Studio is required.
+
+## Build and deploy
+
+```bash
+./scripts/deploy.sh              # build, install and launch on the TV
+./scripts/logcat.sh              # follow the app log
+./scripts/screenshot.sh out.png  # capture the TV screen
+```
+
+`scripts/env.sh` sets `JAVA_HOME`, the SDK path, and the default device. Override
+`ADB_DEVICE` to target another TV.
 
 ## Scope
 
