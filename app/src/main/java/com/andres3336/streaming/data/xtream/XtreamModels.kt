@@ -1,5 +1,10 @@
 package com.andres3336.streaming.data.xtream
 
+data class XtreamAccount(
+    val authenticated: Boolean,
+    val status: String,
+)
+
 data class XtreamCategory(
     val id: String,
     val name: String,

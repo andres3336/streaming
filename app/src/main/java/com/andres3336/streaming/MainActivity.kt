@@ -97,6 +97,8 @@ import com.andres3336.streaming.data.config.LiveConfig
 import com.andres3336.streaming.data.config.LiveMode
 import com.andres3336.streaming.data.config.NetworkConfig
 import com.andres3336.streaming.data.config.PlayerConfig
+import com.andres3336.streaming.data.config.SourceHealth
+import com.andres3336.streaming.data.config.SourceHealthChecker
 import com.andres3336.streaming.data.config.SourcesConfig
 import com.andres3336.streaming.data.config.XtreamConfig
 import com.andres3336.streaming.data.live.ChannelSearch
@@ -156,6 +158,9 @@ private fun StreamingApp() {
     val client = remember { OkHttpClient() }
     val configRepository = remember(client) { ConfigRepository(BuildConfig.CONFIG_URL, client) }
     val m3uRepository = remember(client) { M3uRepository(client) }
+    val sourceHealthChecker = remember(client, m3uRepository) {
+        SourceHealthChecker(client, m3uRepository)
+    }
     val configCache = remember { ConfigCache(context) }
     val settingsStore = remember { DeviceSettingsStore(context) }
     val playbackStore = remember { PlaybackStore(context) }
@@ -173,6 +178,8 @@ private fun StreamingApp() {
     var liveState by remember { mutableStateOf(LiveState()) }
     var playing by remember { mutableStateOf<PlaybackRequest?>(null) }
     var refreshTick by remember { mutableIntStateOf(0) }
+    var refreshVersion by remember { mutableIntStateOf(0) }
+    var forceConfigRefresh by remember { mutableStateOf(false) }
     var refreshing by remember { mutableStateOf(false) }
     var pendingRefresh by remember { mutableStateOf(false) }
     var hasStopped by remember { mutableStateOf(false) }
@@ -185,7 +192,15 @@ private fun StreamingApp() {
 
     LaunchedEffect(retry) {
         state = AppState.Loading
-        val loaded = loadApp(context, configRepository, m3uRepository, configCache, etag, lastReady)
+        val loaded = loadApp(
+            context = context,
+            configRepository = configRepository,
+            m3uRepository = m3uRepository,
+            configCache = configCache,
+            etag = if (forceConfigRefresh) null else etag,
+            lastReady = lastReady,
+        )
+        forceConfigRefresh = false
         state = loaded
         if (loaded is AppState.Ready) {
             lastReady = loaded
@@ -203,7 +218,13 @@ private fun StreamingApp() {
 
         val current = state as? AppState.Ready ?: return@LaunchedEffect
         refreshing = true
-        val refreshed = refreshApp(configRepository, m3uRepository, configCache, current.etag)
+        val refreshed = refreshApp(
+            configRepository = configRepository,
+            m3uRepository = m3uRepository,
+            configCache = configCache,
+            etag = if (forceConfigRefresh) null else current.etag,
+        )
+        forceConfigRefresh = false
         refreshing = false
 
         if (refreshed != null) {
@@ -214,6 +235,7 @@ private fun StreamingApp() {
                 lastReady = refreshed
                 etag = refreshed.etag
                 centralConfig = refreshed.config
+                refreshVersion++
             }
         }
     }
@@ -294,10 +316,26 @@ private fun StreamingApp() {
     }
 
     val effectiveConfig = centralConfig?.let { ConfigMerger.apply(it, deviceSettings) }
+    val checkSources: suspend () -> SourceHealth = {
+        val config = effectiveConfig ?: (state as? AppState.Ready)?.config
+        if (config == null) {
+            SourceHealth()
+        } else {
+            withContext(Dispatchers.IO) { sourceHealthChecker.check(config) }
+        }
+    }
 
     when (val current = state) {
         is AppState.Loading -> LoadingScreen()
-        is AppState.Error -> ErrorScreen(current.message) { retry++ }
+        is AppState.Error -> ErrorScreen(
+            message = current.message,
+            onRetry = { retry++ },
+            onUpdateConfig = {
+                forceConfigRefresh = true
+                retry++
+            },
+        )
+
         is AppState.Ready -> ReadyScreen(
             ready = current,
             config = effectiveConfig ?: current.config,
@@ -310,8 +348,15 @@ private fun StreamingApp() {
             onFinished = onFinished,
             liveState = liveState,
             onToggleFavorite = onToggleFavorite,
+            refreshVersion = refreshVersion,
+            onCheckSources = checkSources,
             refreshing = refreshing,
-            onRefreshConfig = { if (playing == null) refreshTick++ },
+            onRefreshConfig = {
+                if (playing == null) {
+                    forceConfigRefresh = true
+                    refreshTick++
+                }
+            },
             onSettingsChange = { updated ->
                 deviceSettings = updated
                 scope.launch(Dispatchers.IO) { settingsStore.save(updated) }
@@ -353,6 +398,14 @@ private suspend fun loadApp(
             ?: AppState.Error("La configuración no cambió y no hay copia local")
 
         is ConfigFetch.Failure -> loadCached(configCache, m3uRepository)
+            ?: lastReady?.let {
+                loadFromConfig(
+                    config = it.config,
+                    etag = it.etag,
+                    sourceLabel = it.sourceLabel,
+                    m3uRepository = m3uRepository,
+                )
+            }
             ?: AppState.Error(fetched.message)
 
         is ConfigFetch.Success -> {
@@ -461,7 +514,18 @@ private fun LoadingScreen() {
 }
 
 @Composable
-private fun ErrorScreen(message: String, onRetry: () -> Unit) {
+private fun ErrorScreen(
+    message: String,
+    onRetry: () -> Unit,
+    onUpdateConfig: () -> Unit,
+) {
+    val updateFocus = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        delay(150)
+        runCatching { updateFocus.requestFocus() }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -484,9 +548,25 @@ private fun ErrorScreen(message: String, onRetry: () -> Unit) {
                 textAlign = TextAlign.Center,
             )
             Spacer(Modifier.height(32.dp))
-            Button(onClick = onRetry) {
-                Text("Reintentar", fontSize = 20.sp)
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Button(
+                    onClick = onUpdateConfig,
+                    modifier = Modifier.focusRequester(updateFocus),
+                ) {
+                    Text("Actualizar configuración", fontSize = 20.sp)
+                }
+                Button(onClick = onRetry) {
+                    Text("Reintentar", fontSize = 20.sp)
+                }
             }
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = "Actualizar configuración descarga de nuevo el gist y reintenta la fuente. " +
+                    "Si falla, se conserva la última configuración válida.",
+                color = Color(0xFF64748B),
+                fontSize = 14.sp,
+                textAlign = TextAlign.Center,
+            )
         }
     }
 }
@@ -504,6 +584,8 @@ private fun ReadyScreen(
     onFinished: (Channel) -> Unit,
     liveState: LiveState,
     onToggleFavorite: (Channel) -> Unit,
+    refreshVersion: Int,
+    onCheckSources: suspend () -> SourceHealth,
     refreshing: Boolean,
     onRefreshConfig: () -> Unit,
     onSettingsChange: (DeviceSettings) -> Unit,
@@ -527,6 +609,11 @@ private fun ReadyScreen(
             onNext = onSelect,
             onClose = onClose,
         )
+        return
+    }
+
+    if (config.forceUpdate) {
+        ForceUpdateScreen(onUpdateConfig = onRefreshConfig)
         return
     }
 
@@ -582,6 +669,8 @@ private fun ReadyScreen(
                         XtreamMoviesScreen(
                             xtream = xtream,
                             playerConfig = config.player,
+                            refreshVersion = refreshVersion,
+                            onUpdateConfig = onRefreshConfig,
                             onPlay = { onSelect(PlaybackRequest(it)) },
                         )
                     }
@@ -592,6 +681,8 @@ private fun ReadyScreen(
                         XtreamSeriesScreen(
                             xtream = xtream,
                             playerConfig = config.player,
+                            refreshVersion = refreshVersion,
+                            onUpdateConfig = onRefreshConfig,
                             onPlay = onSelect,
                         )
                     }
@@ -607,6 +698,7 @@ private fun ReadyScreen(
                     settings = settings,
                     refreshing = refreshing,
                     onRefreshConfig = onRefreshConfig,
+                    onCheckSources = onCheckSources,
                     onSettingsChange = onSettingsChange,
                     onClearCache = { VideoCache.clear(context) },
                 )
@@ -622,6 +714,48 @@ private fun ReadyScreen(
                     onToggleFavorite = onToggleFavorite,
                     onSelect = onSelect,
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ForceUpdateScreen(onUpdateConfig: () -> Unit) {
+    val updateFocus = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        delay(150)
+        runCatching { updateFocus.requestFocus() }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF0B1220))
+            .padding(48.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "Actualización obligatoria",
+                color = Color.White,
+                fontSize = 36.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = "Esta configuración requiere una actualización antes de continuar.",
+                color = Color(0xFF94A3B8),
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(Modifier.height(28.dp))
+            Button(
+                onClick = onUpdateConfig,
+                modifier = Modifier.focusRequester(updateFocus),
+            ) {
+                Text("Actualizar configuración", fontSize = 20.sp)
             }
         }
     }
@@ -944,6 +1078,8 @@ private fun LiveChannelRow(
 private fun XtreamMoviesScreen(
     xtream: XtreamConfig,
     playerConfig: PlayerConfig,
+    refreshVersion: Int,
+    onUpdateConfig: () -> Unit,
     onPlay: (Channel) -> Unit,
 ) {
     val client = remember(xtream, playerConfig.userAgent) {
@@ -957,7 +1093,7 @@ private fun XtreamMoviesScreen(
     var error by remember { mutableStateOf<String?>(null) }
     var retry by remember { mutableIntStateOf(0) }
 
-    LaunchedEffect(retry) {
+    LaunchedEffect(retry, refreshVersion, xtream) {
         loadingCategories = true
         error = null
         when (val result = client.vodCategories()) {
@@ -974,7 +1110,7 @@ private fun XtreamMoviesScreen(
         }
     }
 
-    LaunchedEffect(selectedCategory, retry) {
+    LaunchedEffect(selectedCategory, retry, refreshVersion, xtream) {
         val category = selectedCategory ?: return@LaunchedEffect
         loadingMovies = true
         error = null
@@ -992,7 +1128,12 @@ private fun XtreamMoviesScreen(
     }
 
     when {
-        error != null -> RetryPane(error!!) { retry++ }
+        error != null -> SourceFailurePane(
+            message = error!!,
+            onRetry = { retry++ },
+            onUpdateConfig = onUpdateConfig,
+        )
+
         loadingCategories && categories.isEmpty() -> CenteredMessage("Cargando películas…")
         else -> Row(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
@@ -1095,6 +1236,8 @@ private fun MovieRow(movie: XtreamMovie, onClick: () -> Unit) {
 private fun XtreamSeriesScreen(
     xtream: XtreamConfig,
     playerConfig: PlayerConfig,
+    refreshVersion: Int,
+    onUpdateConfig: () -> Unit,
     onPlay: (PlaybackRequest) -> Unit,
 ) {
     val client = remember(xtream, playerConfig.userAgent) {
@@ -1109,7 +1252,7 @@ private fun XtreamSeriesScreen(
     var retry by remember { mutableIntStateOf(0) }
     var detail by remember { mutableStateOf<XtreamSeries?>(null) }
 
-    LaunchedEffect(retry) {
+    LaunchedEffect(retry, refreshVersion, xtream) {
         loadingCategories = true
         error = null
         when (val result = client.seriesCategories()) {
@@ -1126,7 +1269,7 @@ private fun XtreamSeriesScreen(
         }
     }
 
-    LaunchedEffect(selectedCategory, retry) {
+    LaunchedEffect(selectedCategory, retry, refreshVersion, xtream) {
         val category = selectedCategory ?: return@LaunchedEffect
         loadingSeries = true
         error = null
@@ -1148,6 +1291,8 @@ private fun XtreamSeriesScreen(
         SeriesDetail(
             client = client,
             series = selectedSeries,
+            refreshVersion = refreshVersion,
+            onUpdateConfig = onUpdateConfig,
             onBack = { detail = null },
             onPlay = onPlay,
         )
@@ -1155,7 +1300,12 @@ private fun XtreamSeriesScreen(
     }
 
     when {
-        error != null -> RetryPane(error!!) { retry++ }
+        error != null -> SourceFailurePane(
+            message = error!!,
+            onRetry = { retry++ },
+            onUpdateConfig = onUpdateConfig,
+        )
+
         loadingCategories && categories.isEmpty() -> CenteredMessage("Cargando series…")
         else -> Row(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
@@ -1247,6 +1397,8 @@ private fun SeriesRow(series: XtreamSeries, onClick: () -> Unit) {
 private fun SeriesDetail(
     client: XtreamClient,
     series: XtreamSeries,
+    refreshVersion: Int,
+    onUpdateConfig: () -> Unit,
     onBack: () -> Unit,
     onPlay: (PlaybackRequest) -> Unit,
 ) {
@@ -1257,7 +1409,7 @@ private fun SeriesDetail(
 
     BackHandler { onBack() }
 
-    LaunchedEffect(series.id, retry) {
+    LaunchedEffect(series.id, retry, refreshVersion) {
         loading = true
         error = null
         when (val result = client.seriesInfo(series.id)) {
@@ -1308,7 +1460,11 @@ private fun SeriesDetail(
         ) {
             when {
                 loading -> CenteredMessage("Cargando episodios…")
-                error != null -> RetryPane(error!!) { retry++ }
+                error != null -> SourceFailurePane(
+                    message = error!!,
+                    onRetry = { retry++ },
+                    onUpdateConfig = onUpdateConfig,
+                )
                 seriesInfo == null || seriesInfo.seasons.isEmpty() -> {
                     CenteredMessage("No hay episodios")
                 }
@@ -1386,7 +1542,18 @@ private fun CenteredMessage(message: String) {
 }
 
 @Composable
-private fun RetryPane(message: String, onRetry: () -> Unit) {
+private fun SourceFailurePane(
+    message: String,
+    onRetry: () -> Unit,
+    onUpdateConfig: () -> Unit,
+) {
+    val updateFocus = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        delay(150)
+        runCatching { updateFocus.requestFocus() }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -1395,15 +1562,37 @@ private fun RetryPane(message: String, onRetry: () -> Unit) {
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
+                text = "No se pudo cargar la fuente",
+                color = Color.White,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(Modifier.height(10.dp))
+            Text(
                 text = message,
                 color = Color(0xFFFCA5A5),
                 fontSize = 18.sp,
                 textAlign = TextAlign.Center,
             )
-            Spacer(Modifier.height(16.dp))
-            Button(onClick = onRetry) {
-                Text("Reintentar", fontSize = 18.sp)
+            Spacer(Modifier.height(20.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Button(
+                    onClick = onUpdateConfig,
+                    modifier = Modifier.focusRequester(updateFocus),
+                ) {
+                    Text("Actualizar configuración", fontSize = 18.sp)
+                }
+                Button(onClick = onRetry) {
+                    Text("Reintentar", fontSize = 18.sp)
+                }
             }
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = "Si la actualización falla, se conserva la configuración anterior.",
+                color = Color(0xFF64748B),
+                fontSize = 14.sp,
+                textAlign = TextAlign.Center,
+            )
         }
     }
 }
@@ -1494,10 +1683,14 @@ private fun SettingsScreen(
     settings: DeviceSettings,
     refreshing: Boolean,
     onRefreshConfig: () -> Unit,
+    onCheckSources: suspend () -> SourceHealth,
     onSettingsChange: (DeviceSettings) -> Unit,
     onClearCache: () -> Unit,
 ) {
     var cacheCleared by remember { mutableStateOf(false) }
+    var checkingSources by remember { mutableStateOf(false) }
+    var sourceHealth by remember { mutableStateOf<SourceHealth?>(null) }
+    val scope = rememberCoroutineScope()
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -1584,6 +1777,63 @@ private fun SettingsScreen(
                     if (rate == 0) "Sin límite" to "0" else "${rate / 1000} Mbps" to rate.toString()
                 },
             ) { value -> onSettingsChange(settings.copy(maxBitrateKbps = value.toIntOrNull())) }
+        }
+
+        item { SettingsHeader("Fuentes") }
+        item {
+            Column {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Button(
+                        onClick = {
+                            if (!checkingSources) {
+                                checkingSources = true
+                                scope.launch {
+                                    sourceHealth = onCheckSources()
+                                    checkingSources = false
+                                }
+                            }
+                        },
+                        enabled = !checkingSources,
+                    ) {
+                        Text(
+                            text = if (checkingSources) "Comprobando…" else "Comprobar fuentes",
+                            fontSize = 17.sp,
+                        )
+                    }
+                    Text(
+                        text = "Comprueba la lista M3U y el acceso a Xtream.",
+                        color = Color(0xFF64748B),
+                        fontSize = 14.sp,
+                    )
+                }
+
+                sourceHealth?.let { health ->
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = health.summary(),
+                        color = if (health.isHealthy) Color(0xFF4ADE80) else Color(0xFFFCA5A5),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    health.liveMessage?.let { message ->
+                        Text(
+                            text = "En vivo: $message",
+                            color = Color(0xFFFCA5A5),
+                            fontSize = 13.sp,
+                        )
+                    }
+                    health.xtreamMessage?.let { message ->
+                        Text(
+                            text = "Xtream: $message",
+                            color = Color(0xFFFCA5A5),
+                            fontSize = 13.sp,
+                        )
+                    }
+                }
+            }
         }
 
         item { SettingsHeader("Configuración") }

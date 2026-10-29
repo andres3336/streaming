@@ -105,3 +105,12 @@ Append-only. Newest entries at the bottom.
   credentials never appear.
 - Verified the panel on the TV: H.264 1280×720, OMX.realtek decoder, 2.4 Mbps
   estimate, 24 s buffer, 0 dropped frames. 65 unit tests passing.
+- Added the Xtream account status probe and a mode-aware source health check. Ajustes
+  now has `Comprobar fuentes`; verified `En vivo: OK · Xtream: OK` on the TV.
+- Added the Spanish update-config recovery flow on start and VOD source failures:
+  `Actualizar configuración` forces a fresh gist fetch without the ETag and retries;
+  `Reintentar` retries the current source. The old config is kept if the update fails.
+- Verified the failure path with a local test config whose M3U was unreachable: the
+  error screen focused `Actualizar configuración`, issued a second forced config
+  request and kept the recovery prompt without crashing. Restored the real config.
+- Added the blocking `forceUpdate` prompt. 70 unit tests passing. Version 0.11.0.

@@ -1,7 +1,7 @@
 # Streaming — V1 reconciled TODO
 
 **Last reconciled:** 2026-10-29  
-**App:** Streaming 0.10.0 (`versionCode 10`)  
+**App:** Streaming 0.11.0 (`versionCode 11`)  
 **TV:** `192.168.100.16:5555` — MOTOROLA GOOGLE TV, Android 11 / API 30, armeabi-v7a  
 **Specs:** 74 tasks in `tasks/`  
 **Change log:** `HISTORY.md`  
@@ -26,7 +26,8 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 - **Series:** Xtream categories, seasons/episodes, playback, next-episode queue.
 - **Player:** audio/subtitle pickers with immediate apply and clear off state.
 - **Config:** permanent gist, no-cache fetch, encrypted last-known-good cache,
-  refresh on resume, manual update, safe apply only when not playing.
+  refresh on resume, manual update, source health check, update-config retry dialog,
+  forceUpdate prompt, safe apply only when not playing.
 - **Ajustes:** buffer, quality cap, aspect, VOD cache size/clear, WiFi/Ethernet-only,
   max bitrate. Local overrides merge on top of the gist.
 - **Playback:** ExoPlayer HLS/TS/MP4, headers, retry/backoff, live auto-reconnect,
@@ -35,19 +36,16 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
   dropped frames, decoder, bandwidth) with host-only source masking.
 - **Security:** config cache, playback positions and live state use Keystore AES-GCM;
   errors do not log/display URLs.
-- **Tests:** 65 unit tests passing.
+- **Tests:** 70 unit tests passing.
 
 ## Now (max 3)
 
-- [ ] `cfg-008` · Source health check · [spec](tasks/cfg-008_source_health_check.md) — Source health check.
-- [ ] `cfg-009` · Update-config dialog and retry flow · [spec](tasks/cfg-009_update_config_dialog_and_retry_flow.md) — Update-config dialog and retry flow.
-- [ ] `cfg-004` · Config refresh on start, resume and failure · [spec](tasks/cfg-004_config_refresh_on_start_resume_and_failure.md) — Start/resume/manual refresh and safe apply done; forceUpdate prompt pending.
+- [ ] `cfg-016` · Offline playlist cache · [spec](tasks/cfg-016_offline_playlist_cache.md) — Cache the channel list for a true offline start.
+- [ ] `liv-005` · Xtream auth and lazy live categories · [spec](tasks/liv-005_xtream_auth_and_lazy_live_categories.md) — Xtream auth + VOD catalog done; live categories/lazy loading pending.
+- [ ] `liv-006` · Live source mode gist, Xtream or merge · [spec](tasks/liv-006_live_source_mode_gist_xtream_or_merge.md) — Gist live works; Xtream VOD works; xtream/merge live mode pending.
 
 ## Next (V1)
 
-- [ ] `cfg-016` · Offline playlist cache · [spec](tasks/cfg-016_offline_playlist_cache.md) — Cache the channel list for a true offline start; added during reconciliation.
-- [ ] `liv-005` · Xtream auth and lazy live categories · [spec](tasks/liv-005_xtream_auth_and_lazy_live_categories.md) — Xtream auth + VOD catalog done; live categories/lazy loading pending.
-- [ ] `liv-006` · Live source mode gist, Xtream or merge · [spec](tasks/liv-006_live_source_mode_gist_xtream_or_merge.md) — Gist live works; Xtream VOD works; xtream/merge live mode pending.
 - [ ] `cfg-007` · Config validate and publish script · [spec](tasks/cfg-007_config_validate_and_publish_script.md) — Config validate/publish script.
 - [ ] `test-004` · Cache and storage limit test · [spec](tasks/test-004_cache_and_storage_limit_test.md) — Cache and storage limit test.
 - [ ] `test-005` · Config update propagation test · [spec](tasks/test-005_config_update_propagation_test.md) — Config update propagation test.
@@ -89,6 +87,9 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 - [x] 2026-10-29 · `liv-004` · Channel search · [spec](tasks/liv-004_channel_search.md) — Accent-insensitive name/group search, query persistence, no-results state.
 - [x] 2026-10-29 · `ply-006` · Audio and subtitle track pickers · [spec](tasks/ply-006_audio_and_subtitle_track_pickers.md) — Spanish labels, immediate apply, explicit Desactivado state.
 - [x] 2026-10-29 · `ply-007` · Stream info and bandwidth estimate · [spec](tasks/ply-007_stream_info_and_bandwidth_estimate.md) — Codec, resolution, FPS, bitrate, buffer, dropped frames, decoder, bandwidth; host-only source.
+- [x] 2026-10-29 · `cfg-008` · Source health check · [spec](tasks/cfg-008_source_health_check.md) — M3U and Xtream checks, mode-aware, manual check in Ajustes.
+- [x] 2026-10-29 · `cfg-009` · Update-config dialog and retry flow · [spec](tasks/cfg-009_update_config_dialog_and_retry_flow.md) — Spanish two-button recovery, forced config fetch, old config retained on failure.
+- [x] 2026-10-29 · `cfg-004` · Config refresh on start, resume and failure · [spec](tasks/cfg-004_config_refresh_on_start_resume_and_failure.md) — Start/resume/manual refresh, safe apply and forceUpdate blocking prompt.
 
 ## Deferred — v1.1
 
@@ -158,12 +159,12 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 | [`liv-004`](tasks/liv-004_channel_search.md) | Channel search | Done | Accent-insensitive name/group search, query persistence, no-results state. |
 | [`ply-006`](tasks/ply-006_audio_and_subtitle_track_pickers.md) | Audio and subtitle track pickers | Done | Spanish labels, immediate apply, explicit Desactivado state. |
 | [`ply-007`](tasks/ply-007_stream_info_and_bandwidth_estimate.md) | Stream info and bandwidth estimate | Done | Codec, resolution, FPS, bitrate, buffer, dropped frames, decoder, bandwidth; host-only source. |
-| [`cfg-004`](tasks/cfg-004_config_refresh_on_start_resume_and_failure.md) | Config refresh on start, resume and failure | Now | Start/resume/manual refresh and safe apply done; forceUpdate prompt pending. |
-| [`cfg-008`](tasks/cfg-008_source_health_check.md) | Source health check | Now | Source health check. |
-| [`cfg-009`](tasks/cfg-009_update_config_dialog_and_retry_flow.md) | Update-config dialog and retry flow | Now | Update-config dialog and retry flow. |
-| [`cfg-016`](tasks/cfg-016_offline_playlist_cache.md) | Offline playlist cache | Next | Cache the channel list for a true offline start; added during reconciliation. |
-| [`liv-005`](tasks/liv-005_xtream_auth_and_lazy_live_categories.md) | Xtream auth and lazy live categories | Next | Xtream auth + VOD catalog done; live categories/lazy loading pending. |
-| [`liv-006`](tasks/liv-006_live_source_mode_gist_xtream_or_merge.md) | Live source mode gist, Xtream or merge | Next | Gist live works; Xtream VOD works; xtream/merge live mode pending. |
+| [`cfg-004`](tasks/cfg-004_config_refresh_on_start_resume_and_failure.md) | Config refresh on start, resume and failure | Done | Start/resume/manual refresh, safe apply and forceUpdate blocking prompt. |
+| [`cfg-008`](tasks/cfg-008_source_health_check.md) | Source health check | Done | M3U and Xtream checks, mode-aware, manual check in Ajustes. |
+| [`cfg-009`](tasks/cfg-009_update_config_dialog_and_retry_flow.md) | Update-config dialog and retry flow | Done | Spanish two-button recovery, forced config fetch, old config retained on failure. |
+| [`cfg-016`](tasks/cfg-016_offline_playlist_cache.md) | Offline playlist cache | Now | Cache the channel list for a true offline start. |
+| [`liv-005`](tasks/liv-005_xtream_auth_and_lazy_live_categories.md) | Xtream auth and lazy live categories | Now | Xtream auth + VOD catalog done; live categories/lazy loading pending. |
+| [`liv-006`](tasks/liv-006_live_source_mode_gist_xtream_or_merge.md) | Live source mode gist, Xtream or merge | Now | Gist live works; Xtream VOD works; xtream/merge live mode pending. |
 | [`cfg-007`](tasks/cfg-007_config_validate_and_publish_script.md) | Config validate and publish script | Next | Config validate/publish script. |
 | [`test-004`](tasks/test-004_cache_and_storage_limit_test.md) | Cache and storage limit test | Next | Cache and storage limit test. |
 | [`test-005`](tasks/test-005_config_update_propagation_test.md) | Config update propagation test | Next | Config update propagation test. |
@@ -221,10 +222,15 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
   keying channels on `tvg-id`, falling back to the URL.
 - Zapping follows the current search-filtered list, wraps at both ends, and is enabled
   by `live.zapping`. `live.startLastChannel` focuses the last channel on entry.
-- The player track picker opens from `Audio · Subtítulos`, `MENU` or `INFO`.
+- The player track picker opens from `Audio · Subtítulos` or `MENU`; `INFO` opens stream
+  diagnostics.
+- `Ajustes → Fuentes → Comprobar fuentes` checks the M3U and Xtream sources enabled by
+  the current mode. Source failures offer `Actualizar configuración` + `Reintentar`;
+  force-updating fetches the gist without an ETag and keeps the old config on failure.
 - Config cache works when the gist is unreachable. The playlist still needs network;
   `cfg-016` fixes that.
 - Next-episode auto-play is always on; the on/off setting is still pending.
+- V1 finish line: `cfg-016`, `liv-005` and `liv-006` are the next three items.
 - `vod-001`/`vod-002` are marked done for core browse/playback; poster grid and detail
   panels are v1.1 polish.
 - Architecture refactors (`ui-001`, `ply-011`) are not user-visible; keep them in v1.1

@@ -26,6 +26,22 @@ class XtreamClient(
     private val userAgent = userAgent?.takeIf(String::isNotBlank)
         ?: "Streaming/${BuildConfig.VERSION_NAME}"
 
+    /** Cheap login/status probe used by the source health check. */
+    suspend fun accountStatus(): XtreamResult<XtreamAccount> =
+        jsonObjectUrl(statusUrl()).mapObject { json ->
+            val user = json.optJSONObject("user_info")
+            val authenticated = json.optInt("auth", 0) == 1 ||
+                user?.optString("auth") == "1" ||
+                user?.optString("status").equals("Active", ignoreCase = true)
+
+            XtreamAccount(
+                authenticated = authenticated,
+                status = user?.optString("status")
+                    ?.takeIf(String::isNotBlank)
+                    ?: "Desconocido",
+            )
+        }
+
     suspend fun vodCategories(): XtreamResult<List<XtreamCategory>> =
         jsonArray("get_vod_categories").mapArray { array ->
             (0 until array.length()).mapNotNull { index ->
@@ -126,6 +142,13 @@ class XtreamClient(
             .apply { extra.forEach { (key, value) -> addQueryParameter(key, value) } }
             .build()
 
+    private fun statusUrl(): HttpUrl =
+        base.toHttpUrl().newBuilder()
+            .addPathSegment("player_api.php")
+            .addQueryParameter("username", config.username)
+            .addQueryParameter("password", config.password)
+            .build()
+
     private suspend fun jsonArray(
         action: String,
         extra: Map<String, String> = emptyMap(),
@@ -144,8 +167,10 @@ class XtreamClient(
     private suspend fun jsonObject(
         action: String,
         extra: Map<String, String> = emptyMap(),
-    ): XtreamResult<JSONObject> {
-        val body = when (val result = execute(apiUrl(action, extra))) {
+    ): XtreamResult<JSONObject> = jsonObjectUrl(apiUrl(action, extra))
+
+    private suspend fun jsonObjectUrl(url: HttpUrl): XtreamResult<JSONObject> {
+        val body = when (val result = execute(url)) {
             is XtreamResult.Success -> result.value
             is XtreamResult.Failure -> return result
         }
