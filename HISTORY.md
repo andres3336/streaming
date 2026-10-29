@@ -38,3 +38,9 @@ Append-only. Newest entries at the bottom.
 - Added Coil channel logos. The current playlist uses one generic logo for all 55
   channels, so the list falls back to channel initials unless the playlist has
   distinct logos.
+- Added the Xtream client: auth, VOD categories, movies, series, series info and
+  stream URL construction. Credentials stay in the gist and are never logged.
+- Added the Películas and Series tabs with category rails, posters, movie playback,
+  seasons/episodes and episode playback.
+- Verified on the TV: 38 movie categories, 36 series categories, movie at 1920x960
+  and episode at 1920x872. Version 0.4.0.

@@ -6,9 +6,9 @@ Target device: Google TV / Android TV, 32-bit ARM, Android 11, limited storage.
 
 ## Current status
 
-The Android TV app runs on the TV with the real 55-channel gist playlist, grouped
-channel browsing and ExoPlayer playback. Xtream movies/series, logos and local
-hardware overrides are next. See `TODO.md`.
+The Android TV app runs on the TV with the real 55-channel gist playlist plus Xtream
+movies and series, including playback. Local hardware overrides, Ajustes, caching and
+EPG are next. See `TODO.md`.
 
 ## Task tracking
 
