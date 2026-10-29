@@ -6,31 +6,23 @@ Target device: Google TV / Android TV, 32-bit ARM, Android 11, limited storage.
 
 ## Current status
 
-Planning and task board. The Android app is not scaffolded yet.
+Planning; the Android hello-world scaffold is in progress. See `TODO.md`.
 
-Work is tracked in [Kandown](https://kandown.dev) task files:
-
-```text
-tasks/          one Markdown file per task
-.kandown/       board config and local web UI
-```
-
-The board is the source of truth. Do not keep a second Kanban file.
-
-## Board workflow
-
-```bash
-kandown init      # already done
-kandown           # web board + terminal UI
-kandown board     # terminal UI only
-kandown list      # CLI
-```
-
-Columns:
+## Task tracking
 
 ```text
-Backlog -> Todo -> In Progress -> Review -> Done
+TODO.md         the only source of truth for what is next and what is done
+HISTORY.md      append-only log of decisions and status changes
+tasks/          one Markdown spec per task, linked from TODO.md
+archive/        frozen material (old Kandown board), never used at build time
 ```
+
+Rules:
+
+- Keep at most three items in `Now`.
+- Move items between sections; do not copy them.
+- Never remove or rewrite `Done` entries.
+- Git history plus `HISTORY.md` is the version log.
 
 Tags:
 

@@ -1,1 +1,3 @@
-This project uses Kandown. Before task work, run `kandown work` and follow its output. <!-- kandown:agent-ref -->
+Before task work, read `TODO.md` and `HISTORY.md`. `TODO.md` is the only source of
+truth for task status; `HISTORY.md` is append-only. After task work, update both and
+commit the result.
