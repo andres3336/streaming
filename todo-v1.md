@@ -122,9 +122,9 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 - `liv-010` · Custom groups and pinned categories · [spec](tasks/liv-010_custom_groups_and_pinned_categories.md)
 - `liv-011` · Advanced filters and bulk rename · [spec](tasks/liv-011_advanced_filters_and_bulk_rename.md)
 - `liv-012` · Live preview pane with session handoff · [spec](tasks/liv-012_live_preview_pane.md) — Not required for the product; keep as a reference design.
+- `ply-016` · Sleep timer · [spec](tasks/ply-016_sleep_timer.md) — Not required for the product.
 - `ply-018` · Picture-in-picture · [spec](tasks/ply-018_picture_in_picture.md)
 - `ply-019` · Audio-only mode · [spec](tasks/ply-019_audio_only_mode.md)
-- `ply-016` · Sleep timer · [spec](tasks/ply-016_sleep_timer.md) — Not required for the product.
 - `ui-003` · Simple and Full UI modes · [spec](tasks/ui-003_simple_and_full_ui_modes.md)
 - `ui-008` · Themes and accent color · [spec](tasks/ui-008_themes_and_accent_color.md)
 - `ui-009` · Font family and popup size · [spec](tasks/ui-009_font_family_and_popup_size.md)
