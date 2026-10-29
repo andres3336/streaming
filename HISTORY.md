@@ -35,3 +35,6 @@ Append-only. Newest entries at the bottom.
   config and playlist requests so gist edits propagate.
 - Verified the real 55-channel live list on the TV: group header, auto-focus and
   playback. TD+ plays at 1280x720.
+- Added Coil channel logos. The current playlist uses one generic logo for all 55
+  channels, so the list falls back to channel initials unless the playlist has
+  distinct logos.
