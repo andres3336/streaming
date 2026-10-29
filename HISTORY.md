@@ -14,3 +14,11 @@ Append-only. Newest entries at the bottom.
 - Added `scripts/env.sh`, `deploy.sh`, `logcat.sh`, `screenshot.sh`.
 - Built `app-debug.apk` (9.6 MB), installed it on `192.168.100.16:5555`, and verified
   launch plus D-pad input. `apk-001`, `apk-002`, `apk-003` are done.
+- Added the M3U parser: EXTINF attributes, EXTGRP, EXTVLCOPT headers, BOM/CRLF,
+  missing-URL handling, and 10 unit tests.
+- Added Media3 ExoPlayer 1.11.1 with HLS, per-channel headers, lifecycle pause/resume,
+  audio focus and keep-screen-on.
+- Added a demo channel list (two public HLS streams) and a fullscreen player. Verified
+  848x480 H.264 playback and Back navigation on the TV. `liv-001` and `ply-001` are done.
+- Debug builds use a `TextureView` so `adb screencap` can capture video; release keeps
+  `SurfaceView`.

@@ -7,7 +7,7 @@ Detailed specs live in `tasks/`. The change log lives in `HISTORY.md`.
 
 - [ ] cfg-001 · Config schema and validator · P1 · [spec](tasks/cfg-001_config_schema_and_validator.md)
 - [ ] cfg-002 · Fetch config from secret gist · P1 · [spec](tasks/cfg-002_fetch_config_from_secret_gist.md)
-- [ ] liv-001 · M3U parser · P1 · [spec](tasks/liv-001_m3u_parser.md)
+- [ ] liv-002 · Channel list, group rail and logos · P1 · [spec](tasks/liv-002_channel_list_group_rail_and_logos.md)
 
 ## Next
 
@@ -22,14 +22,12 @@ Detailed specs live in `tasks/`. The change log lives in `HISTORY.md`.
 - [ ] cfg-007 · Config validate and publish script · P2 · [spec](tasks/cfg-007_config_validate_and_publish_script.md)
 
 ### Live TV
-- [ ] liv-002 · Channel list, group rail and logos · P1 · [spec](tasks/liv-002_channel_list_group_rail_and_logos.md)
 - [ ] liv-003 · Favorites, recents and last channel · P1 · [spec](tasks/liv-003_favorites_recents_and_last_channel.md)
 - [ ] liv-004 · Channel search · P1 · [spec](tasks/liv-004_channel_search.md)
 - [ ] liv-005 · Xtream auth and lazy live categories · P1 · [spec](tasks/liv-005_xtream_auth_and_lazy_live_categories.md)
 - [ ] liv-006 · Live source mode gist, Xtream or merge · P1 · [spec](tasks/liv-006_live_source_mode_gist_xtream_or_merge.md)
 
 ### Player
-- [ ] ply-001 · ExoPlayer core with headers · P1 · [spec](tasks/ply-001_exoplayer_core_with_headers.md)
 - [ ] ply-002 · Retry, fallback and reconnect · P1 · [spec](tasks/ply-002_retry_fallback_and_reconnect.md)
 - [ ] ply-003 · Player HUD, auto-hide and keep screen on · P1 · [spec](tasks/ply-003_player_hud_auto_hide_and_keep_screen_on.md)
 - [ ] ply-004 · Channel zapping and last channel · P1 · [spec](tasks/ply-004_channel_zapping_and_last_channel.md)
@@ -112,3 +110,5 @@ Detailed specs live in `tasks/`. The change log lives in `HISTORY.md`.
 - [x] 2026-10-29 · apk-001 Toolchain and Android scaffold
 - [x] 2026-10-29 · apk-002 TV manifest, banner and launcher assets
 - [x] 2026-10-29 · apk-003 Deploy and logcat scripts
+- [x] 2026-10-29 · liv-001 M3U parser
+- [x] 2026-10-29 · ply-001 ExoPlayer core with headers

@@ -6,7 +6,8 @@ Target device: Google TV / Android TV, 32-bit ARM, Android 11, limited storage.
 
 ## Current status
 
-Planning; the Android hello-world scaffold is in progress. See `TODO.md`.
+The Android TV app runs on the TV with a demo channel list and ExoPlayer HLS playback.
+The real config gist, channel browser and Xtream sources are next. See `TODO.md`.
 
 ## Task tracking
 
