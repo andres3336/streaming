@@ -17,6 +17,9 @@ config.local.json
 secrets.properties
 .env
 
+# Local reference dumps (generated, not source)
+ingest/
+
 # OS / editor
 .DS_Store
 *.swp

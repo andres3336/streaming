@@ -1,6 +1,6 @@
 ---
 id: cfg-001
-title: "Config schema and validator"
+title: Config schema and validator
 status: Todo
 priority: P1
 tags: [v1, config]
@@ -9,7 +9,9 @@ ownerType: human
 created: 2026-10-29
 order: 4
 depends_on: [apk-001]
+updated: 2026-10-29T20:50:54Z
 ---
+
 # Config schema and validator
 
 ## Context

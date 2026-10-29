@@ -1,6 +1,6 @@
 ---
 id: apk-001
-title: "Toolchain and Android scaffold"
+title: Toolchain and Android scaffold
 status: Todo
 priority: P1
 tags: [v1, apk]
@@ -8,7 +8,9 @@ epic: APK
 ownerType: human
 created: 2026-10-29
 order: 1
+updated: 2026-10-29T20:50:10Z
 ---
+
 # Toolchain and Android scaffold
 
 ## Context

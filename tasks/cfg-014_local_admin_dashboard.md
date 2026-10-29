@@ -1,6 +1,6 @@
 ---
 id: cfg-014
-title: "Local admin dashboard"
+title: Local admin dashboard
 status: Backlog
 priority: P4
 tags: [v2, config, ui]
@@ -9,7 +9,9 @@ ownerType: human
 created: 2026-10-29
 order: 71
 depends_on: [cfg-007]
+updated: 2026-10-29T20:50:37Z
 ---
+
 # Local admin dashboard
 
 ## Context

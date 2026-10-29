@@ -1,9 +1,12 @@
 {
   "ui": {
     "language": "en",
-    "theme": "auto",
-    "skin": "kandown",
-    "font": "inter"
+    "theme": "light",
+    "skin": "shadcn",
+    "font": "mono",
+    "background": "solid",
+    "onboardingCompleted": true,
+    "categoryChips": true
   },
   "agent": {
     "suggestFollowUp": false,
@@ -35,7 +38,13 @@
     ],
     "defaultPriority": "P3",
     "defaultOwnerType": "human",
-    "stackDefaultState": "collapsed",
+    "columnColors": {
+      "backlog": "red",
+      "todo": "blue",
+      "in progress": "orange",
+      "review": "violet",
+      "done": "yellow"
+    },
     "columnMeta": {
       "Backlog": {
         "role": "backlog",
@@ -58,14 +67,22 @@
         "instructions": "Only accept work whose criteria and required review are satisfied. Preserve the completion report and evidence."
       }
     },
-    "columnColors": {
-      "done": "yellow"
-    }
+    "stackDefaultState": "collapsed"
   },
   "tui": {
     "defaultView": "board",
     "showDetailPane": true,
-    "listSort": "status"
+    "listSort": "status",
+    "listSortDir": "asc",
+    "columns": {
+      "age": true,
+      "status": true,
+      "priority": true,
+      "owner": true,
+      "deps": true,
+      "tags": false,
+      "assignee": true
+    }
   },
   "fields": {
     "priority": true,
@@ -83,5 +100,8 @@
     "taskEdits": true,
     "subtaskCompletions": true,
     "editDebounceMs": 2000
+  },
+  "extensions": {
+    "restricted": true
   }
 }

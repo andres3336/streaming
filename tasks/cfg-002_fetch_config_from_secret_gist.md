@@ -1,6 +1,6 @@
 ---
 id: cfg-002
-title: "Fetch config from secret gist"
+title: Fetch config from secret gist
 status: Todo
 priority: P1
 tags: [v1, config, security]
@@ -9,7 +9,9 @@ ownerType: human
 created: 2026-10-29
 order: 5
 depends_on: [cfg-001]
+updated: 2026-10-29T20:40:26Z
 ---
+
 # Fetch config from secret gist
 
 ## Context
