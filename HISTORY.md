@@ -78,3 +78,6 @@ Append-only. Newest entries at the bottom.
   stored URLs contain Xtream credentials. The legacy plaintext file is deleted.
 - Sanitized config, playlist, Xtream and player errors so URLs/credentials are not
   logged or shown. 43 unit tests passing. Version 0.9.0.
+- Reconciled the stale board into `todo-v1.md`: 74 specs, 20 done, 3 Now items,
+  10 Next, 7 polish, 18 v1.1 and 15 v2. Added `cfg-016` offline playlist cache.
+  Renamed `TODO.md` and updated the agent instructions.

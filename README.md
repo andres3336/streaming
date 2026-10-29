@@ -10,14 +10,14 @@ The Android TV app runs the real 55-channel gist playlist and Xtream movies/seri
 with playback, Ajustes, local hardware overrides, VOD caching, encrypted config and
 resume positions, bounded retry/error overlay, config refresh on resume, VOD resume and
 next-episode auto-play. The forceUpdate prompt, EPG and channel search are next. See
-`TODO.md`.
+`todo-v1.md`.
 
 ## Task tracking
 
 ```text
-TODO.md         the only source of truth for what is next and what is done
+todo-v1.md      the only source of truth for what is next and what is done
 HISTORY.md      append-only log of decisions and status changes
-tasks/          one Markdown spec per task, linked from TODO.md
+tasks/          one Markdown spec per task, linked from todo-v1.md
 archive/        frozen material (old Kandown board), never used at build time
 ```
 
