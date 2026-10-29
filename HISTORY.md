@@ -44,3 +44,13 @@ Append-only. Newest entries at the bottom.
   seasons/episodes and episode playback.
 - Verified on the TV: 38 movie categories, 36 series categories, movie at 1920x960
   and episode at 1920x872. Version 0.4.0.
+- Expanded the config to v2: network, player, cache, live, EPG, diagnostics and UI
+  settings, with validation and tests.
+- Added local device overrides in `files/device-settings.json` and a deep merge on top
+  of the gist. Sources and credentials remain central-only.
+- Added the Ajustes screen: buffer, quality cap, aspect, VOD cache size, clear cache,
+  WiFi/Ethernet-only and max bitrate.
+- Wired buffer, quality/bitrate track selection, aspect resize, network policy and a
+  VOD-only Media3 SimpleCache.
+- Verified on the TV: buffer persisted across restart, the VOD cache grew to ~13 MB,
+  and clearing removed the cache directory. 34 unit tests passing. Version 0.5.0.

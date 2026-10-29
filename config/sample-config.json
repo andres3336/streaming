@@ -1,26 +1,61 @@
 {
-  "version": 1,
+  "version": 2,
   "sources": {
     "liveMode": "gist",
-    "m3uUrl": "https://gist.githubusercontent.com/USUARIO/GIST_ID/raw/lista.m3u",
+    "m3uUrl": "https://gist.githubusercontent.com/USUARIO/GIST_ID/raw/playlist.m3u",
     "xtream": {
       "baseUrl": "http://example.com:8080",
       "username": "USUARIO",
       "password": "CONTRASENA"
     }
   },
+  "network": {
+    "wifiOnly": false,
+    "maxBitrateKbps": 0,
+    "connectTimeoutMs": 15000,
+    "readTimeoutMs": 20000
+  },
   "player": {
-    "userAgent": "Streaming/0.3",
+    "userAgent": "Streaming/0.5",
     "headers": {
       "Referer": "https://example.com/"
     },
-    "bufferMs": 3000
+    "bufferMs": 3000,
+    "minBufferMs": 15000,
+    "maxBufferMs": 50000,
+    "retryCount": 3,
+    "retryDelayMs": 1000,
+    "reconnect": true,
+    "qualityCap": "auto",
+    "aspectMode": "fit",
+    "audioOnly": false,
+    "sleepTimerMinutes": 0
   },
-  "epgUrl": null,
+  "cache": {
+    "vodEnabled": true,
+    "sizeMb": 250,
+    "clearOnStart": false
+  },
+  "live": {
+    "startLastChannel": true,
+    "zapping": true
+  },
+  "epg": {
+    "url": null,
+    "refreshHours": 12
+  },
+  "diagnostics": {
+    "showStats": false,
+    "logLevel": "warn"
+  },
   "ui": {
-    "simpleMode": false,
-    "pin": "1234",
-    "sections": ["live", "movies", "series"]
+    "sections": ["live", "movies", "series"],
+    "theme": "dark",
+    "accentColor": "#3B82F6",
+    "fontScale": 1.0,
+    "showChannelNumbers": true,
+    "showLogos": true,
+    "showNowNext": false
   },
   "forceUpdate": false
 }

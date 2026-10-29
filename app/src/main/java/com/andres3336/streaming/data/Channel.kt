@@ -8,4 +8,5 @@ data class Channel(
     val tvgId: String? = null,
     val userAgent: String? = null,
     val referer: String? = null,
+    val isVod: Boolean = false,
 )

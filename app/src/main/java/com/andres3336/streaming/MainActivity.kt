@@ -30,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,9 +53,14 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.VideoSize
+import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.datasource.cache.CacheDataSource
+import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
+import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import androidx.tv.material3.Button
 import androidx.tv.material3.MaterialTheme
@@ -65,18 +71,29 @@ import com.andres3336.streaming.data.M3uParser
 import com.andres3336.streaming.data.M3uRepository
 import com.andres3336.streaming.data.config.ConfigFetch
 import com.andres3336.streaming.data.config.ConfigRepository
+import com.andres3336.streaming.data.config.AppConfig
+import com.andres3336.streaming.data.config.CacheConfig
+import com.andres3336.streaming.data.config.ConfigMerger
 import com.andres3336.streaming.data.config.LiveMode
+import com.andres3336.streaming.data.config.NetworkConfig
 import com.andres3336.streaming.data.config.PlayerConfig
+import com.andres3336.streaming.data.config.SourcesConfig
 import com.andres3336.streaming.data.config.XtreamConfig
+import com.andres3336.streaming.data.settings.DeviceSettings
+import com.andres3336.streaming.data.settings.DeviceSettingsStore
+import com.andres3336.streaming.data.settings.SettingsOptions
 import com.andres3336.streaming.data.xtream.XtreamCategory
 import com.andres3336.streaming.data.xtream.XtreamClient
 import com.andres3336.streaming.data.xtream.XtreamMovie
 import com.andres3336.streaming.data.xtream.XtreamResult
 import com.andres3336.streaming.data.xtream.XtreamSeries
 import com.andres3336.streaming.data.xtream.XtreamSeriesInfo
+import com.andres3336.streaming.player.NetworkPolicy
+import com.andres3336.streaming.player.VideoCache
 import coil.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 
@@ -96,11 +113,9 @@ private sealed interface AppState {
     data class Error(val message: String) : AppState
     data class Ready(
         val channels: List<Channel>,
-        val player: PlayerConfig,
+        val config: AppConfig,
         val sourceLabel: String,
         val etag: String?,
-        val xtream: XtreamConfig?,
-        val sections: List<String>,
     ) : AppState
 }
 
@@ -110,11 +125,19 @@ private fun StreamingApp() {
     val client = remember { OkHttpClient() }
     val configRepository = remember(client) { ConfigRepository(BuildConfig.CONFIG_URL, client) }
     val m3uRepository = remember(client) { M3uRepository(client) }
+    val settingsStore = remember { DeviceSettingsStore(context) }
+    val scope = rememberCoroutineScope()
 
     var state by remember { mutableStateOf<AppState>(AppState.Loading) }
     var retry by remember { mutableIntStateOf(0) }
     var etag by remember { mutableStateOf<String?>(null) }
     var lastReady by remember { mutableStateOf<AppState.Ready?>(null) }
+    var centralConfig by remember { mutableStateOf<AppConfig?>(null) }
+    var deviceSettings by remember { mutableStateOf(DeviceSettings()) }
+
+    LaunchedEffect(Unit) {
+        deviceSettings = withContext(Dispatchers.IO) { settingsStore.load() }
+    }
 
     LaunchedEffect(retry) {
         state = AppState.Loading
@@ -123,13 +146,24 @@ private fun StreamingApp() {
         if (loaded is AppState.Ready) {
             lastReady = loaded
             etag = loaded.etag
+            centralConfig = loaded.config
         }
     }
+
+    val effectiveConfig = centralConfig?.let { ConfigMerger.apply(it, deviceSettings) }
 
     when (val current = state) {
         is AppState.Loading -> LoadingScreen()
         is AppState.Error -> ErrorScreen(current.message) { retry++ }
-        is AppState.Ready -> ReadyScreen(current)
+        is AppState.Ready -> ReadyScreen(
+            ready = current,
+            config = effectiveConfig ?: current.config,
+            settings = deviceSettings,
+            onSettingsChange = { updated ->
+                deviceSettings = updated
+                scope.launch(Dispatchers.IO) { settingsStore.save(updated) }
+            },
+        )
     }
 }
 
@@ -148,11 +182,12 @@ private suspend fun loadApp(
         }
         return AppState.Ready(
             channels = channels,
-            player = PlayerConfig(),
+            config = AppConfig(
+                version = 1,
+                sources = SourcesConfig(LiveMode.GIST),
+            ),
             sourceLabel = "Demo",
             etag = null,
-            xtream = null,
-            sections = listOf("live"),
         )
     }
 
@@ -175,11 +210,9 @@ private suspend fun loadApp(
                 )) {
                     is M3uFetch.Success -> AppState.Ready(
                         channels = playlist.channels,
-                        player = config.player,
+                        config = config,
                         sourceLabel = if (config.sources.liveMode == LiveMode.GIST) "Gist" else "Remoto",
                         etag = fetched.etag,
-                        xtream = config.sources.xtream,
-                        sections = config.ui.sections,
                     )
 
                     is M3uFetch.Failure -> AppState.Error(playlist.message)
@@ -246,7 +279,13 @@ private fun ErrorScreen(message: String, onRetry: () -> Unit) {
 }
 
 @Composable
-private fun ReadyScreen(ready: AppState.Ready) {
+private fun ReadyScreen(
+    ready: AppState.Ready,
+    config: AppConfig,
+    settings: DeviceSettings,
+    onSettingsChange: (DeviceSettings) -> Unit,
+) {
+    val context = LocalContext.current
     var selected by remember(ready.channels) { mutableStateOf<Channel?>(null) }
     var section by remember { mutableStateOf("live") }
 
@@ -254,12 +293,13 @@ private fun ReadyScreen(ready: AppState.Ready) {
 
     val channel = selected
     if (channel != null) {
-        PlaybackScreen(channel, ready.player)
+        PlaybackScreen(channel, config.player, config.network, config.cache)
         return
     }
 
-    val showMovies = ready.xtream != null && "movies" in ready.sections
-    val showSeries = ready.xtream != null && "series" in ready.sections
+    val xtream = config.sources.xtream
+    val showMovies = xtream != null && "movies" in config.ui.sections
+    val showSeries = xtream != null && "series" in config.ui.sections
     val activeSection = when {
         section == "movies" && !showMovies -> "live"
         section == "series" && !showSeries -> "live"
@@ -282,6 +322,7 @@ private fun ReadyScreen(ready: AppState.Ready) {
             text = when (activeSection) {
                 "movies" -> "Xtream · Películas"
                 "series" -> "Xtream · Series"
+                "settings" -> "Ajustes · solo este TV"
                 else -> "${ready.sourceLabel} · ${ready.channels.size} canales"
             },
             color = Color(0xFF94A3B8),
@@ -292,6 +333,7 @@ private fun ReadyScreen(ready: AppState.Ready) {
             section = activeSection,
             showMovies = showMovies,
             showSeries = showSeries,
+            showSettings = true,
             onSelect = { section = it },
         )
         Spacer(Modifier.height(16.dp))
@@ -299,26 +341,31 @@ private fun ReadyScreen(ready: AppState.Ready) {
         Box(modifier = Modifier.fillMaxSize()) {
             when (activeSection) {
                 "movies" -> {
-                    val xtream = ready.xtream
                     if (xtream != null) {
                         XtreamMoviesScreen(
                             xtream = xtream,
-                            playerConfig = ready.player,
+                            playerConfig = config.player,
                             onPlay = { selected = it },
                         )
                     }
                 }
 
                 "series" -> {
-                    val xtream = ready.xtream
                     if (xtream != null) {
                         XtreamSeriesScreen(
                             xtream = xtream,
-                            playerConfig = ready.player,
+                            playerConfig = config.player,
                             onPlay = { selected = it },
                         )
                     }
                 }
+
+                "settings" -> SettingsScreen(
+                    config = config,
+                    settings = settings,
+                    onSettingsChange = onSettingsChange,
+                    onClearCache = { VideoCache.clear(context) },
+                )
 
                 else -> ChannelList(ready.channels) { selected = it }
             }
@@ -331,6 +378,7 @@ private fun SectionBar(
     section: String,
     showMovies: Boolean,
     showSeries: Boolean,
+    showSettings: Boolean,
     onSelect: (String) -> Unit,
 ) {
     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -340,6 +388,9 @@ private fun SectionBar(
         }
         if (showSeries) {
             SectionButton("Series", selected = section == "series") { onSelect("series") }
+        }
+        if (showSettings) {
+            SectionButton("Ajustes", selected = section == "settings") { onSelect("settings") }
         }
     }
 }
@@ -544,6 +595,7 @@ private fun XtreamMoviesScreen(
                                     group = "Películas",
                                     logo = movie.logo,
                                     tvgId = movie.id,
+                                    isVod = true,
                                 ),
                             )
                         }
@@ -831,6 +883,7 @@ private fun SeriesDetail(
                                             group = "Series",
                                             logo = series.cover,
                                             tvgId = episode.id,
+                                            isVod = true,
                                         ),
                                     )
                                 },
@@ -905,11 +958,182 @@ private fun ChannelInitial(name: String) {
 }
 
 @Composable
-private fun PlaybackScreen(channel: Channel, playerConfig: PlayerConfig) {
+private fun SettingsScreen(
+    config: AppConfig,
+    settings: DeviceSettings,
+    onSettingsChange: (DeviceSettings) -> Unit,
+    onClearCache: () -> Unit,
+) {
+    var cacheCleared by remember { mutableStateOf(false) }
+
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        item { SettingsHeader("Reproducción") }
+        item {
+            ChoiceRow(
+                label = "Búfer",
+                current = config.player.bufferMs.toString(),
+                options = listOf(
+                    "Bajo · 2 s" to "2000",
+                    "Normal · 3 s" to "3000",
+                    "Alto · 5 s" to "5000",
+                ),
+            ) { value -> onSettingsChange(settings.copy(bufferMs = value.toIntOrNull())) }
+        }
+        item {
+            ChoiceRow(
+                label = "Calidad máxima",
+                current = config.player.qualityCap,
+                options = listOf(
+                    "Auto" to "auto",
+                    "1080p" to "1080p",
+                    "720p" to "720p",
+                    "480p" to "480p",
+                ),
+            ) { value -> onSettingsChange(settings.copy(qualityCap = value)) }
+        }
+        item {
+            ChoiceRow(
+                label = "Aspecto",
+                current = config.player.aspectMode,
+                options = listOf(
+                    "Ajustar" to "fit",
+                    "Rellenar" to "fill",
+                    "Zoom" to "zoom",
+                    "Original" to "original",
+                ),
+            ) { value -> onSettingsChange(settings.copy(aspectMode = value)) }
+        }
+
+        item { SettingsHeader("Caché VOD") }
+        item {
+            ChoiceRow(
+                label = "Tamaño",
+                current = config.cache.sizeMb.toString(),
+                options = SettingsOptions.CACHE_SIZES.map { "$it MB" to it.toString() },
+            ) { value -> onSettingsChange(settings.copy(cacheSizeMb = value.toIntOrNull())) }
+        }
+        item {
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Button(onClick = {
+                    onClearCache()
+                    cacheCleared = true
+                }) {
+                    Text(
+                        text = if (cacheCleared) "Caché borrada" else "Borrar caché",
+                        fontSize = 17.sp,
+                    )
+                }
+                Text(
+                    text = "Solo se cachean películas y series.",
+                    color = Color(0xFF64748B),
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(top = 12.dp),
+                )
+            }
+        }
+
+        item { SettingsHeader("Red") }
+        item {
+            ChoiceRow(
+                label = "Solo WiFi/Ethernet",
+                current = config.network.wifiOnly.toString(),
+                options = listOf("Sí" to "true", "No" to "false"),
+            ) { value -> onSettingsChange(settings.copy(wifiOnly = value.toBoolean())) }
+        }
+        item {
+            ChoiceRow(
+                label = "Ancho de banda máximo",
+                current = config.network.maxBitrateKbps.toString(),
+                options = SettingsOptions.BITRATES_KBPS.map { rate ->
+                    if (rate == 0) "Sin límite" to "0" else "${rate / 1000} Mbps" to rate.toString()
+                },
+            ) { value -> onSettingsChange(settings.copy(maxBitrateKbps = value.toIntOrNull())) }
+        }
+
+        item {
+            Spacer(Modifier.height(8.dp))
+            Button(onClick = {
+                onSettingsChange(DeviceSettings())
+                cacheCleared = false
+            }) {
+                Text("Restablecer ajustes locales", fontSize = 17.sp)
+            }
+        }
+        item {
+            Text(
+                text = "Los valores del gist se usan cuando no hay un ajuste local. " +
+                    "Los cambios se aplican al siguiente inicio de reproducción.",
+                color = Color(0xFF64748B),
+                fontSize = 14.sp,
+                modifier = Modifier.padding(bottom = 24.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun SettingsHeader(text: String) {
+    Text(
+        text = text,
+        color = Color(0xFF93C5FD),
+        fontSize = 22.sp,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(top = 8.dp),
+    )
+}
+
+@Composable
+private fun ChoiceRow(
+    label: String,
+    current: String,
+    options: List<Pair<String, String>>,
+    onSelect: (String) -> Unit,
+) {
+    Column {
+        Text(
+            text = label,
+            color = Color.White,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+        )
+        Spacer(Modifier.height(6.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            options.forEach { (text, value) ->
+                Button(onClick = { onSelect(value) }) {
+                    Text(
+                        text = text,
+                        color = if (value == current) Color(0xFF3B82F6) else Color.White,
+                        fontSize = 15.sp,
+                        fontWeight = if (value == current) FontWeight.Bold else FontWeight.Normal,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PlaybackScreen(
+    channel: Channel,
+    playerConfig: PlayerConfig,
+    networkConfig: NetworkConfig,
+    cacheConfig: CacheConfig,
+) {
     val context = LocalContext.current
+    val allowed = remember(networkConfig.wifiOnly) {
+        NetworkPolicy.isAllowed(context, networkConfig.wifiOnly)
+    }
+    if (!allowed) {
+        NetworkBlockedScreen()
+        return
+    }
+
     val lifecycleOwner = LocalLifecycleOwner.current
-    val player = remember(channel, playerConfig) {
-        buildPlayer(context, channel, playerConfig).also { exoPlayer ->
+    val player = remember(channel, playerConfig, networkConfig, cacheConfig) {
+        buildPlayer(context, channel, playerConfig, networkConfig, cacheConfig).also { exoPlayer ->
             exoPlayer.addListener(object : Player.Listener {
                 override fun onPlaybackStateChanged(playbackState: Int) {
                     if (BuildConfig.DEBUG) Log.d("Streaming", "state=$playbackState")
@@ -966,10 +1190,14 @@ private fun PlaybackScreen(channel: Channel, playerConfig: PlayerConfig) {
                     .inflate(R.layout.player_view, null) as PlayerView).apply {
                     this.player = player
                     keepScreenOn = true
+                    resizeMode = aspectResizeMode(playerConfig.aspectMode)
                 }
             },
             modifier = Modifier.fillMaxSize(),
-            update = { view -> view.player = player },
+            update = { view ->
+                view.player = player
+                view.resizeMode = aspectResizeMode(playerConfig.aspectMode)
+            },
         )
 
         Text(
@@ -989,6 +1217,8 @@ private fun buildPlayer(
     context: Context,
     channel: Channel,
     config: PlayerConfig,
+    network: NetworkConfig,
+    cache: CacheConfig,
 ): ExoPlayer {
     val headers = buildMap {
         putAll(config.headers)
@@ -999,17 +1229,87 @@ private fun buildPlayer(
         ?: config.userAgent
         ?: "Streaming/${BuildConfig.VERSION_NAME}"
 
-    val dataSource = DefaultHttpDataSource.Factory()
+    val httpDataSource = DefaultHttpDataSource.Factory()
         .setUserAgent(userAgent)
         .setDefaultRequestProperties(headers)
         .setAllowCrossProtocolRedirects(true)
+        .setConnectTimeoutMs(network.connectTimeoutMs)
+        .setReadTimeoutMs(network.readTimeoutMs)
+
+    val dataSourceFactory: DataSource.Factory =
+        if (channel.isVod && cache.vodEnabled) {
+            CacheDataSource.Factory()
+                .setCache(VideoCache.get(context, cache.sizeMb))
+                .setUpstreamDataSourceFactory(httpDataSource)
+                .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+        } else {
+            httpDataSource
+        }
+
+    val trackSelector = DefaultTrackSelector(context).apply {
+        val parameters = buildUponParameters()
+        when (config.qualityCap) {
+            "1080p" -> parameters.setMaxVideoSize(1920, 1080)
+            "720p" -> parameters.setMaxVideoSize(1280, 720)
+            "480p" -> parameters.setMaxVideoSize(854, 480)
+            "360p" -> parameters.setMaxVideoSize(640, 360)
+        }
+        if (network.maxBitrateKbps > 0) {
+            parameters.setMaxVideoBitrate(network.maxBitrateKbps * 1000)
+        }
+        setParameters(parameters.build())
+    }
+
+    val loadControl = DefaultLoadControl.Builder()
+        .setBufferDurationsMs(
+            maxOf(config.minBufferMs, config.bufferMs),
+            maxOf(config.maxBufferMs, config.minBufferMs, config.bufferMs),
+            config.bufferMs.coerceAtLeast(500),
+            config.bufferMs.coerceAtLeast(1_000),
+        )
+        .build()
 
     return ExoPlayer.Builder(context)
-        .setMediaSourceFactory(DefaultMediaSourceFactory(dataSource))
+        .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
+        .setTrackSelector(trackSelector)
+        .setLoadControl(loadControl)
         .setAudioAttributes(AudioAttributes.DEFAULT, true)
         .setHandleAudioBecomingNoisy(true)
         .build()
         .apply {
             setMediaItem(MediaItem.fromUri(channel.url))
         }
+}
+
+private fun aspectResizeMode(value: String): Int = when (value) {
+    "fill", "stretch" -> AspectRatioFrameLayout.RESIZE_MODE_FILL
+    "zoom" -> AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+    else -> AspectRatioFrameLayout.RESIZE_MODE_FIT
+}
+
+@Composable
+private fun NetworkBlockedScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF0B1220))
+            .padding(48.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "Solo WiFi/Ethernet",
+                color = Color.White,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = "Desactiva \"Solo WiFi/Ethernet\" en Ajustes o conecta el TV a la red local.",
+                color = Color(0xFF94A3B8),
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
 }

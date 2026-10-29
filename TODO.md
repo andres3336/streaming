@@ -33,7 +33,6 @@ Detailed specs live in `tasks/`. The change log lives in `HISTORY.md`.
 - [ ] ply-006 · Audio and subtitle track pickers · P1 · [spec](tasks/ply-006_audio_and_subtitle_track_pickers.md)
 - [ ] ply-007 · Stream info and bandwidth estimate · P1 · [spec](tasks/ply-007_stream_info_and_bandwidth_estimate.md)
 - [ ] ply-008 · Error overlay and diagnostics · P1 · [spec](tasks/ply-008_error_overlay_and_diagnostics.md)
-- [ ] ply-009 · VOD disk cache 100 to 500 MB · P1 · [spec](tasks/ply-009_vod_disk_cache_100_to_500_mb.md)
 - [ ] ply-010 · Cache controls and storage usage · P1 · [spec](tasks/ply-010_cache_controls_and_storage_usage.md)
 - [ ] ply-011 · Universal player scaffold with capabilities · P1 · [spec](tasks/ply-011_universal_player_scaffold_with_capabilities.md)
 
@@ -105,6 +104,8 @@ Detailed specs live in `tasks/`. The change log lives in `HISTORY.md`.
 ## Done
 
 - [x] 2026-10-29 · Imported 73 task specs from Kandown (see `HISTORY.md`)
+- [x] 2026-10-29 · Local device overrides + Ajustes (buffer, quality, aspect, cache, network)
+- [x] 2026-10-29 · ply-009 VOD disk cache 100 to 500 MB
 - [x] 2026-10-29 · apk-001 Toolchain and Android scaffold
 - [x] 2026-10-29 · apk-002 TV manifest, banner and launcher assets
 - [x] 2026-10-29 · apk-003 Deploy and logcat scripts
