@@ -6,9 +6,9 @@ Target device: Google TV / Android TV, 32-bit ARM, Android 11, limited storage.
 
 ## Current status
 
-The Android TV app runs on the TV with remote config, remote M3U loading, grouped channel
-browsing and ExoPlayer HLS playback. Setting the real `config.url` is the remaining step
-before testing the actual playlists. See `TODO.md`.
+The Android TV app runs on the TV with the real 55-channel gist playlist, grouped
+channel browsing and ExoPlayer playback. Xtream movies/series, logos and local
+hardware overrides are next. See `TODO.md`.
 
 ## Task tracking
 

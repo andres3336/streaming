@@ -22,6 +22,7 @@ class M3uRepository(
         val request = Request.Builder()
             .url(url)
             .header("Accept", "*/*")
+            .header("Cache-Control", "no-cache")
             .apply {
                 userAgent?.takeIf(String::isNotBlank)?.let { header("User-Agent", it) }
                 headers.forEach { (key, value) ->

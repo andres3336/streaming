@@ -23,6 +23,7 @@ class ConfigRepository(
         val request = Request.Builder()
             .url(configUrl)
             .header("Accept", "application/json")
+            .header("Cache-Control", "no-cache")
             .apply { if (!etag.isNullOrBlank()) header("If-None-Match", etag) }
             .build()
 

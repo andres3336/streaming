@@ -31,3 +31,7 @@ Append-only. Newest entries at the bottom.
 - Added loading, error/retry, auto-focused grouped channel list, and remote M3U loading.
 - Verified end-to-end against a local config and playlist over `adb reverse`: config
   fetch, 3 channels in 2 groups, playback. `cfg-001` and `cfg-002` are done.
+- Pointed `config.url` at the permanent gist and added `Cache-Control: no-cache` to the
+  config and playlist requests so gist edits propagate.
+- Verified the real 55-channel live list on the TV: group header, auto-focus and
+  playback. TD+ plays at 1280x720.
