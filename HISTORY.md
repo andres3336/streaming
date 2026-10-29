@@ -64,3 +64,9 @@ Append-only. Newest entries at the bottom.
   `retryCount` and `retryDelayMs`.
 - Verified with a 404 channel: two bounded retries, then the error overlay; Cerrar
   returns to the channel list. Version 0.7.0.
+- Added silent config refresh on app resume and a manual `Actualizar configuración`
+  action in Ajustes.
+- Config updates apply only when nothing is playing; a refresh that arrives during
+  playback is deferred until the player closes.
+- Verified playback survives Home/resume and the manual refresh completes without
+  interrupting the UI. Version 0.8.0.

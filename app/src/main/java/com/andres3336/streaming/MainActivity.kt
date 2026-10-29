@@ -131,6 +131,7 @@ private fun StreamingApp() {
     val configCache = remember { ConfigCache(context) }
     val settingsStore = remember { DeviceSettingsStore(context) }
     val scope = rememberCoroutineScope()
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     var state by remember { mutableStateOf<AppState>(AppState.Loading) }
     var retry by remember { mutableIntStateOf(0) }
@@ -138,6 +139,11 @@ private fun StreamingApp() {
     var lastReady by remember { mutableStateOf<AppState.Ready?>(null) }
     var centralConfig by remember { mutableStateOf<AppConfig?>(null) }
     var deviceSettings by remember { mutableStateOf(DeviceSettings()) }
+    var playing by remember { mutableStateOf<Channel?>(null) }
+    var refreshTick by remember { mutableIntStateOf(0) }
+    var refreshing by remember { mutableStateOf(false) }
+    var pendingRefresh by remember { mutableStateOf(false) }
+    var hasStopped by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         deviceSettings = withContext(Dispatchers.IO) { settingsStore.load() }
@@ -154,6 +160,56 @@ private fun StreamingApp() {
         }
     }
 
+    LaunchedEffect(refreshTick) {
+        if (refreshTick == 0) return@LaunchedEffect
+        if (playing != null) {
+            pendingRefresh = true
+            return@LaunchedEffect
+        }
+
+        val current = state as? AppState.Ready ?: return@LaunchedEffect
+        refreshing = true
+        val refreshed = refreshApp(configRepository, m3uRepository, configCache, current.etag)
+        refreshing = false
+
+        if (refreshed != null) {
+            if (playing != null) {
+                pendingRefresh = true
+            } else {
+                state = refreshed
+                lastReady = refreshed
+                etag = refreshed.etag
+                centralConfig = refreshed.config
+            }
+        }
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_STOP -> hasStopped = true
+                Lifecycle.Event.ON_RESUME -> {
+                    if (hasStopped) {
+                        hasStopped = false
+                        if (playing != null) pendingRefresh = true else refreshTick++
+                    }
+                }
+
+                else -> Unit
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    val closePlayback = {
+        playing = null
+        if (pendingRefresh) {
+            pendingRefresh = false
+            refreshTick++
+        }
+    }
+
     val effectiveConfig = centralConfig?.let { ConfigMerger.apply(it, deviceSettings) }
 
     when (val current = state) {
@@ -163,6 +219,11 @@ private fun StreamingApp() {
             ready = current,
             config = effectiveConfig ?: current.config,
             settings = deviceSettings,
+            selected = playing,
+            onSelect = { playing = it },
+            onClose = closePlayback,
+            refreshing = refreshing,
+            onRefreshConfig = { if (playing == null) refreshTick++ },
             onSettingsChange = { updated ->
                 deviceSettings = updated
                 scope.launch(Dispatchers.IO) { settingsStore.save(updated) }
@@ -264,6 +325,28 @@ private suspend fun loadFromConfig(
     }
 }
 
+private suspend fun refreshApp(
+    configRepository: ConfigRepository,
+    m3uRepository: M3uRepository,
+    configCache: ConfigCache,
+    etag: String?,
+): AppState.Ready? = when (val fetched = configRepository.fetch(etag)) {
+    is ConfigFetch.Success -> {
+        configCache.save(fetched.raw)
+        when (val loaded = loadFromConfig(
+            config = fetched.config,
+            etag = fetched.etag,
+            sourceLabel = if (fetched.config.sources.liveMode == LiveMode.GIST) "Gist" else "Remoto",
+            m3uRepository = m3uRepository,
+        )) {
+            is AppState.Ready -> loaded
+            else -> null
+        }
+    }
+
+    else -> null
+}
+
 @Composable
 private fun LoadingScreen() {
     Box(
@@ -325,13 +408,17 @@ private fun ReadyScreen(
     ready: AppState.Ready,
     config: AppConfig,
     settings: DeviceSettings,
+    selected: Channel?,
+    onSelect: (Channel) -> Unit,
+    onClose: () -> Unit,
+    refreshing: Boolean,
+    onRefreshConfig: () -> Unit,
     onSettingsChange: (DeviceSettings) -> Unit,
 ) {
     val context = LocalContext.current
-    var selected by remember(ready.channels) { mutableStateOf<Channel?>(null) }
     var section by remember { mutableStateOf("live") }
 
-    BackHandler(enabled = selected != null) { selected = null }
+    BackHandler(enabled = selected != null) { onClose() }
 
     val channel = selected
     if (channel != null) {
@@ -340,7 +427,7 @@ private fun ReadyScreen(
             playerConfig = config.player,
             networkConfig = config.network,
             cacheConfig = config.cache,
-            onClose = { selected = null },
+            onClose = onClose,
         )
         return
     }
@@ -393,7 +480,7 @@ private fun ReadyScreen(
                         XtreamMoviesScreen(
                             xtream = xtream,
                             playerConfig = config.player,
-                            onPlay = { selected = it },
+                            onPlay = { onSelect(it) },
                         )
                     }
                 }
@@ -403,7 +490,7 @@ private fun ReadyScreen(
                         XtreamSeriesScreen(
                             xtream = xtream,
                             playerConfig = config.player,
-                            onPlay = { selected = it },
+                            onPlay = { onSelect(it) },
                         )
                     }
                 }
@@ -411,11 +498,13 @@ private fun ReadyScreen(
                 "settings" -> SettingsScreen(
                     config = config,
                     settings = settings,
+                    refreshing = refreshing,
+                    onRefreshConfig = onRefreshConfig,
                     onSettingsChange = onSettingsChange,
                     onClearCache = { VideoCache.clear(context) },
                 )
 
-                else -> ChannelList(ready.channels) { selected = it }
+                else -> ChannelList(ready.channels) { onSelect(it) }
             }
         }
     }
@@ -1009,6 +1098,8 @@ private fun ChannelInitial(name: String) {
 private fun SettingsScreen(
     config: AppConfig,
     settings: DeviceSettings,
+    refreshing: Boolean,
+    onRefreshConfig: () -> Unit,
     onSettingsChange: (DeviceSettings) -> Unit,
     onClearCache: () -> Unit,
 ) {
@@ -1099,6 +1190,29 @@ private fun SettingsScreen(
                     if (rate == 0) "Sin límite" to "0" else "${rate / 1000} Mbps" to rate.toString()
                 },
             ) { value -> onSettingsChange(settings.copy(maxBitrateKbps = value.toIntOrNull())) }
+        }
+
+        item { SettingsHeader("Configuración") }
+        item {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Button(
+                    onClick = onRefreshConfig,
+                    enabled = !refreshing,
+                ) {
+                    Text(
+                        text = if (refreshing) "Actualizando…" else "Actualizar configuración",
+                        fontSize = 17.sp,
+                    )
+                }
+                Text(
+                    text = "Se revisa al abrir y al volver a la app.",
+                    color = Color(0xFF64748B),
+                    fontSize = 14.sp,
+                )
+            }
         }
 
         item {
