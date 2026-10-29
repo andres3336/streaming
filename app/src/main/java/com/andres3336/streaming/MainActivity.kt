@@ -335,7 +335,13 @@ private fun ReadyScreen(
 
     val channel = selected
     if (channel != null) {
-        PlaybackScreen(channel, config.player, config.network, config.cache)
+        PlaybackScreen(
+            channel = channel,
+            playerConfig = config.player,
+            networkConfig = config.network,
+            cacheConfig = config.cache,
+            onClose = { selected = null },
+        )
         return
     }
 
@@ -1163,6 +1169,7 @@ private fun PlaybackScreen(
     playerConfig: PlayerConfig,
     networkConfig: NetworkConfig,
     cacheConfig: CacheConfig,
+    onClose: () -> Unit,
 ) {
     val context = LocalContext.current
     val allowed = remember(networkConfig.wifiOnly) {
@@ -1173,8 +1180,13 @@ private fun PlaybackScreen(
         return
     }
 
+    var retryToken by remember(channel) { mutableIntStateOf(0) }
+    var autoRetries by remember(channel) { mutableIntStateOf(0) }
+    var errorMessage by remember(channel) { mutableStateOf<String?>(null) }
+    val retryFocus = remember { FocusRequester() }
+
     val lifecycleOwner = LocalLifecycleOwner.current
-    val player = remember(channel, playerConfig, networkConfig, cacheConfig) {
+    val player = remember(channel, playerConfig, networkConfig, cacheConfig, retryToken) {
         buildPlayer(context, channel, playerConfig, networkConfig, cacheConfig).also { exoPlayer ->
             exoPlayer.addListener(object : Player.Listener {
                 override fun onPlaybackStateChanged(playbackState: Int) {
@@ -1183,6 +1195,7 @@ private fun PlaybackScreen(
 
                 override fun onPlayerError(error: PlaybackException) {
                     Log.e("Streaming", "player error", error)
+                    errorMessage = friendlyPlaybackError(error)
                 }
 
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -1201,6 +1214,22 @@ private fun PlaybackScreen(
     LaunchedEffect(player) {
         player.prepare()
         player.playWhenReady = true
+    }
+
+    LaunchedEffect(errorMessage, channel.isVod) {
+        if (errorMessage == null) return@LaunchedEffect
+
+        if (!channel.isVod && autoRetries < playerConfig.retryCount) {
+            val delayMs = (playerConfig.retryDelayMs.toLong().coerceAtLeast(500L) * (autoRetries + 1))
+                .coerceAtMost(5_000L)
+            delay(delayMs)
+            autoRetries += 1
+            errorMessage = null
+            retryToken += 1
+        } else {
+            delay(150)
+            runCatching { retryFocus.requestFocus() }
+        }
     }
 
     DisposableEffect(player) {
@@ -1252,7 +1281,81 @@ private fun PlaybackScreen(
                 .background(Color(0x99000000), RoundedCornerShape(8.dp))
                 .padding(horizontal = 12.dp, vertical = 6.dp),
         )
+
+        val error = errorMessage
+        if (error != null) {
+            PlaybackErrorOverlay(
+                message = error,
+                retryFocus = retryFocus,
+                onRetry = {
+                    autoRetries = 0
+                    errorMessage = null
+                    retryToken += 1
+                },
+                onClose = onClose,
+            )
+        }
     }
+}
+
+@Composable
+private fun PlaybackErrorOverlay(
+    message: String,
+    retryFocus: FocusRequester,
+    onRetry: () -> Unit,
+    onClose: () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xCC000000))
+            .padding(48.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "No se pudo reproducir",
+                color = Color.White,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = message,
+                color = Color(0xFFFCA5A5),
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(Modifier.height(24.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Button(
+                    onClick = onRetry,
+                    modifier = Modifier.focusRequester(retryFocus),
+                ) {
+                    Text("Reintentar", fontSize = 18.sp)
+                }
+                Button(onClick = onClose) {
+                    Text("Cerrar", fontSize = 18.sp)
+                }
+            }
+        }
+    }
+}
+
+private fun friendlyPlaybackError(error: PlaybackException): String = when (error.errorCode) {
+    PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS ->
+        "El canal no está disponible en este momento."
+
+    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED,
+    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT -> "No se pudo conectar. Revisa la red del TV."
+
+    PlaybackException.ERROR_CODE_DECODING_FAILED ->
+        "El TV no puede decodificar este formato."
+
+    PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND ->
+        "El contenido ya no está disponible."
+
+    else -> "No se pudo reproducir este contenido."
 }
 
 private fun buildPlayer(

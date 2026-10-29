@@ -7,9 +7,9 @@ Target device: Google TV / Android TV, 32-bit ARM, Android 11, limited storage.
 ## Current status
 
 The Android TV app runs the real 55-channel gist playlist and Xtream movies/series,
-with playback, Ajustes, local hardware overrides, VOD caching and an encrypted
-last-known-good config. Refresh-on-resume, retry/reconnect and EPG are next. See
-`TODO.md`.
+with playback, Ajustes, local hardware overrides, VOD caching, an encrypted
+last-known-good config, and bounded retry with a Spanish error overlay. Refresh-on-resume
+and EPG are next. See `TODO.md`.
 
 ## Task tracking
 

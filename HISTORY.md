@@ -59,3 +59,8 @@ Append-only. Newest entries at the bottom.
 - Verified the fallback by building against an unreachable config URL: the app started
   from the cache, loaded the real playlist and showed `Gist · caché`. The cache file
   contains no plaintext credentials or playlist URL. Version 0.6.0.
+- Added a Spanish playback error overlay with Reintentar and Cerrar.
+- Added bounded retry with backoff and auto-reconnect for live streams using
+  `retryCount` and `retryDelayMs`.
+- Verified with a 404 channel: two bounded retries, then the error overlay; Cerrar
+  returns to the channel list. Version 0.7.0.
