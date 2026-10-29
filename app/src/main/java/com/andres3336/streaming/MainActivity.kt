@@ -3,6 +3,7 @@ package com.andres3336.streaming
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent as AndroidKeyEvent
 import android.view.LayoutInflater
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -22,7 +23,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -34,12 +38,19 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -49,9 +60,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.TrackGroup
+import androidx.media3.common.TrackSelectionOverride
+import androidx.media3.common.Tracks
 import androidx.media3.common.VideoSize
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultHttpDataSource
@@ -77,11 +92,16 @@ import com.andres3336.streaming.data.config.AppConfig
 import com.andres3336.streaming.data.config.CacheConfig
 import com.andres3336.streaming.data.config.ConfigMerger
 import com.andres3336.streaming.data.config.ConfigParser
+import com.andres3336.streaming.data.config.LiveConfig
 import com.andres3336.streaming.data.config.LiveMode
 import com.andres3336.streaming.data.config.NetworkConfig
 import com.andres3336.streaming.data.config.PlayerConfig
 import com.andres3336.streaming.data.config.SourcesConfig
 import com.andres3336.streaming.data.config.XtreamConfig
+import com.andres3336.streaming.data.live.ChannelSearch
+import com.andres3336.streaming.data.live.LiveState
+import com.andres3336.streaming.data.live.LiveStateStore
+import com.andres3336.streaming.data.live.liveKey
 import com.andres3336.streaming.data.playback.PlaybackEntry
 import com.andres3336.streaming.data.playback.PlaybackRequest
 import com.andres3336.streaming.data.playback.PlaybackStore
@@ -95,6 +115,8 @@ import com.andres3336.streaming.data.xtream.XtreamResult
 import com.andres3336.streaming.data.xtream.XtreamSeries
 import com.andres3336.streaming.data.xtream.XtreamSeriesInfo
 import com.andres3336.streaming.player.NetworkPolicy
+import com.andres3336.streaming.player.TrackChoice
+import com.andres3336.streaming.player.TrackChoices
 import com.andres3336.streaming.player.VideoCache
 import coil.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
@@ -135,6 +157,7 @@ private fun StreamingApp() {
     val configCache = remember { ConfigCache(context) }
     val settingsStore = remember { DeviceSettingsStore(context) }
     val playbackStore = remember { PlaybackStore(context) }
+    val liveStateStore = remember { LiveStateStore(context) }
     val scope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -145,6 +168,7 @@ private fun StreamingApp() {
     var centralConfig by remember { mutableStateOf<AppConfig?>(null) }
     var deviceSettings by remember { mutableStateOf(DeviceSettings()) }
     var playbackEntries by remember { mutableStateOf<List<PlaybackEntry>>(emptyList()) }
+    var liveState by remember { mutableStateOf(LiveState()) }
     var playing by remember { mutableStateOf<PlaybackRequest?>(null) }
     var refreshTick by remember { mutableIntStateOf(0) }
     var refreshing by remember { mutableStateOf(false) }
@@ -154,6 +178,7 @@ private fun StreamingApp() {
     LaunchedEffect(Unit) {
         deviceSettings = withContext(Dispatchers.IO) { settingsStore.load() }
         playbackEntries = withContext(Dispatchers.IO) { playbackStore.load() }
+        liveState = withContext(Dispatchers.IO) { liveStateStore.load() }
     }
 
     LaunchedEffect(retry) {
@@ -210,6 +235,14 @@ private fun StreamingApp() {
     }
 
     val onSelect: (PlaybackRequest) -> Unit = { request ->
+        if (!request.channel.isVod) {
+            val updated = liveState.remember(request.channel.liveKey())
+            if (updated != liveState) {
+                liveState = updated
+                scope.launch(Dispatchers.IO) { liveStateStore.save(updated) }
+            }
+        }
+
         val savedPosition = playbackEntries
             .firstOrNull { it.url == request.channel.url && it.isResumable }
             ?.positionMs
@@ -219,6 +252,14 @@ private fun StreamingApp() {
             request
         } else {
             request.copy(startPositionMs = savedPosition)
+        }
+    }
+
+    val onToggleFavorite: (Channel) -> Unit = { channel ->
+        val updated = liveState.toggleFavorite(channel.liveKey())
+        if (updated != liveState) {
+            liveState = updated
+            scope.launch(Dispatchers.IO) { liveStateStore.save(updated) }
         }
     }
 
@@ -265,6 +306,8 @@ private fun StreamingApp() {
             playbackEntries = playbackEntries,
             onProgress = onProgress,
             onFinished = onFinished,
+            liveState = liveState,
+            onToggleFavorite = onToggleFavorite,
             refreshing = refreshing,
             onRefreshConfig = { if (playing == null) refreshTick++ },
             onSettingsChange = { updated ->
@@ -457,12 +500,15 @@ private fun ReadyScreen(
     playbackEntries: List<PlaybackEntry>,
     onProgress: (Channel, Long, Long) -> Unit,
     onFinished: (Channel) -> Unit,
+    liveState: LiveState,
+    onToggleFavorite: (Channel) -> Unit,
     refreshing: Boolean,
     onRefreshConfig: () -> Unit,
     onSettingsChange: (DeviceSettings) -> Unit,
 ) {
     val context = LocalContext.current
     var section by remember { mutableStateOf("live") }
+    var liveQuery by remember { mutableStateOf("") }
 
     BackHandler(enabled = selected != null) { onClose() }
 
@@ -473,6 +519,7 @@ private fun ReadyScreen(
             playerConfig = config.player,
             networkConfig = config.network,
             cacheConfig = config.cache,
+            liveConfig = config.live,
             onProgress = onProgress,
             onFinished = onFinished,
             onNext = onSelect,
@@ -562,7 +609,17 @@ private fun ReadyScreen(
                     onClearCache = { VideoCache.clear(context) },
                 )
 
-                else -> ChannelList(ready.channels) { onSelect(PlaybackRequest(it)) }
+                else -> ChannelList(
+                    channels = ready.channels,
+                    favorites = liveState.favorites,
+                    recents = liveState.recents,
+                    lastChannel = liveState.lastChannel,
+                    startLastChannel = config.live.startLastChannel,
+                    query = liveQuery,
+                    onQueryChange = { liveQuery = it },
+                    onToggleFavorite = onToggleFavorite,
+                    onSelect = onSelect,
+                )
             }
         }
     }
@@ -610,77 +667,273 @@ private fun SectionButton(
     }
 }
 
+private sealed interface LiveListRow {
+    data class Header(val title: String) : LiveListRow
+    data class Item(
+        val channel: Channel,
+        val favorite: Boolean,
+        val showGroup: Boolean,
+    ) : LiveListRow
+}
+
 @Composable
 private fun ChannelList(
     channels: List<Channel>,
-    onSelect: (Channel) -> Unit,
+    favorites: List<String>,
+    recents: List<String>,
+    lastChannel: String?,
+    startLastChannel: Boolean,
+    query: String,
+    onQueryChange: (String) -> Unit,
+    onToggleFavorite: (Channel) -> Unit,
+    onSelect: (PlaybackRequest) -> Unit,
 ) {
-    val groups = remember(channels) { channels.groupBy { it.group ?: "Sin grupo" } }
+    val visible = remember(channels, query) { ChannelSearch.filter(channels, query) }
+    val favoriteChannels = remember(visible, favorites) {
+        LiveState.resolve(favorites, visible)
+    }
+    val recentChannels = remember(visible, recents, favorites) {
+        LiveState.resolve(recents, visible).filterNot { it.liveKey() in favorites }
+    }
+    val groups = remember(visible) { visible.groupBy { it.group ?: "Sin grupo" } }
+    val rows = remember(favoriteChannels, recentChannels, groups, favorites) {
+        buildList {
+            if (favoriteChannels.isNotEmpty()) {
+                add(LiveListRow.Header("Favoritos"))
+                favoriteChannels.forEach {
+                    add(LiveListRow.Item(it, favorite = true, showGroup = true))
+                }
+            }
+            if (recentChannels.isNotEmpty()) {
+                add(LiveListRow.Header("Recientes"))
+                recentChannels.forEach {
+                    add(LiveListRow.Item(it, favorite = false, showGroup = true))
+                }
+            }
+            groups.forEach { (group, groupChannels) ->
+                add(LiveListRow.Header(group))
+                groupChannels.forEach {
+                    add(LiveListRow.Item(it, favorite = it.liveKey() in favorites, showGroup = false))
+                }
+            }
+        }
+    }
     val showLogos = remember(channels) {
         channels.mapNotNull { it.logo?.takeIf(String::isNotBlank) }.distinct().size > 1
     }
-    val firstChannel = remember(channels) { channels.firstOrNull() }
-    val firstFocus = remember { FocusRequester() }
+    val focusKey = remember(lastChannel, startLastChannel, visible) {
+        if (startLastChannel) {
+            lastChannel?.takeIf { key -> visible.any { it.liveKey() == key } }
+        } else {
+            null
+        }
+    }
+    val focusIndex = remember(rows, focusKey) {
+        rows.indexOfFirst { it is LiveListRow.Item && it.channel.liveKey() == focusKey }
+            .takeIf { it >= 0 }
+            ?: rows.indexOfFirst { it is LiveListRow.Item }
+    }
+    val listState = rememberLazyListState()
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+    var focusRequested by remember { mutableStateOf(false) }
 
-    LaunchedEffect(firstChannel) {
-        if (firstChannel != null) {
+    // Focus the last channel only once per visit; filtering while typing must
+    // never steal focus from the search field.
+    LaunchedEffect(focusIndex) {
+        if (!focusRequested && focusIndex >= 0) {
+            focusRequested = true
+            listState.scrollToItem(focusIndex)
             delay(150)
-            runCatching { firstFocus.requestFocus() }
+            runCatching { focusRequester.requestFocus() }
         }
     }
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        groups.forEach { (group, groupChannels) ->
-            item(key = "group-$group") {
-                Text(
-                    text = group,
-                    color = Color(0xFF93C5FD),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
-                )
+    Column(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            BasicTextField(
+                value = query,
+                onValueChange = onQueryChange,
+                singleLine = true,
+                textStyle = TextStyle(color = Color.White, fontSize = 18.sp),
+                cursorBrush = SolidColor(Color(0xFF3B82F6)),
+                modifier = Modifier
+                    .width(420.dp)
+                    .background(Color(0xFF1E293B), RoundedCornerShape(8.dp))
+                    .onPreviewKeyEvent { event ->
+                        if (event.type != KeyEventType.KeyDown) {
+                            return@onPreviewKeyEvent false
+                        }
+
+                        when (event.nativeKeyEvent.keyCode) {
+                            AndroidKeyEvent.KEYCODE_DPAD_DOWN -> {
+                                focusManager.moveFocus(FocusDirection.Down)
+                                true
+                            }
+
+                            AndroidKeyEvent.KEYCODE_DPAD_UP -> {
+                                focusManager.moveFocus(FocusDirection.Up)
+                                true
+                            }
+
+                            else -> false
+                        }
+                    },
+                decorationBox = { innerTextField ->
+                    Box(modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
+                        if (query.isEmpty()) {
+                            Text(
+                                text = "Buscar canal o grupo…",
+                                color = Color(0xFF64748B),
+                                fontSize = 18.sp,
+                            )
+                        }
+                        innerTextField()
+                    }
+                },
+            )
+            if (query.isNotEmpty()) {
+                Spacer(Modifier.width(8.dp))
+                Button(onClick = { onQueryChange("") }) {
+                    Text("Limpiar", fontSize = 16.sp)
+                }
             }
-            items(groupChannels) { channel ->
-                Button(
-                    onClick = { onSelect(channel) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .then(
-                            if (channel == firstChannel) {
-                                Modifier.focusRequester(firstFocus)
+            Spacer(Modifier.weight(1f))
+            Text(
+                text = if (query.isBlank()) {
+                    "${visible.size} canales"
+                } else {
+                    "${visible.size} de ${channels.size} canales"
+                },
+                color = Color(0xFF64748B),
+                fontSize = 14.sp,
+            )
+        }
+        Spacer(Modifier.height(12.dp))
+
+        if (visible.isEmpty()) {
+            CenteredMessage(
+                if (query.isBlank()) {
+                    "No hay canales"
+                } else {
+                    "No hay canales para \"$query\""
+                },
+            )
+        } else {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                itemsIndexed(rows) { index, row ->
+                    when (row) {
+                        is LiveListRow.Header -> Text(
+                            text = row.title,
+                            color = Color(0xFF93C5FD),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
+                        )
+
+                        is LiveListRow.Item -> LiveChannelRow(
+                            channel = row.channel,
+                            favorite = row.favorite,
+                            showGroup = row.showGroup,
+                            showLogo = showLogos,
+                            focusModifier = if (index == focusIndex) {
+                                Modifier.focusRequester(focusRequester)
                             } else {
                                 Modifier
                             },
-                        ),
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        if (showLogos) {
-                            AsyncImage(
-                                model = channel.logo,
-                                contentDescription = null,
-                                placeholder = painterResource(R.drawable.ic_channel_placeholder),
-                                error = painterResource(R.drawable.ic_channel_placeholder),
-                                fallback = painterResource(R.drawable.ic_channel_placeholder),
-                                contentScale = ContentScale.Fit,
-                                modifier = Modifier.size(40.dp),
-                            )
-                        } else {
-                            ChannelInitial(channel.name)
-                        }
-                        Spacer(Modifier.width(16.dp))
-                        Text(
-                            text = channel.name,
-                            fontSize = 18.sp,
+                            onSelect = {
+                                val channelIndex = visible.indexOfFirst {
+                                    it.url == row.channel.url && it.name == row.channel.name
+                                }
+                                onSelect(
+                                    PlaybackRequest(
+                                        channel = row.channel,
+                                        queue = visible,
+                                        index = channelIndex.coerceAtLeast(0),
+                                    ),
+                                )
+                            },
+                            onToggleFavorite = { onToggleFavorite(row.channel) },
                         )
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun LiveChannelRow(
+    channel: Channel,
+    favorite: Boolean,
+    showGroup: Boolean,
+    showLogo: Boolean,
+    focusModifier: Modifier,
+    onSelect: () -> Unit,
+    onToggleFavorite: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Button(
+            onClick = onSelect,
+            modifier = Modifier
+                .weight(1f)
+                .then(focusModifier),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (showLogo) {
+                    AsyncImage(
+                        model = channel.logo,
+                        contentDescription = null,
+                        placeholder = painterResource(R.drawable.ic_channel_placeholder),
+                        error = painterResource(R.drawable.ic_channel_placeholder),
+                        fallback = painterResource(R.drawable.ic_channel_placeholder),
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.size(40.dp),
+                    )
+                } else {
+                    ChannelInitial(channel.name)
+                }
+                Spacer(Modifier.width(16.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = channel.name,
+                        fontSize = 18.sp,
+                        maxLines = 1,
+                    )
+                    if (showGroup && !channel.group.isNullOrBlank()) {
+                        Text(
+                            text = channel.group,
+                            color = Color(0xFF64748B),
+                            fontSize = 13.sp,
+                            maxLines = 1,
+                        )
+                    }
+                }
+            }
+        }
+        Spacer(Modifier.width(8.dp))
+        Button(
+            onClick = onToggleFavorite,
+            modifier = Modifier.width(56.dp),
+        ) {
+            Text(
+                text = if (favorite) "★" else "☆",
+                color = if (favorite) Color(0xFFFBBF24) else Color(0xFF94A3B8),
+                fontSize = 22.sp,
+            )
         }
     }
 }
@@ -1422,6 +1675,7 @@ private fun PlaybackScreen(
     playerConfig: PlayerConfig,
     networkConfig: NetworkConfig,
     cacheConfig: CacheConfig,
+    liveConfig: LiveConfig,
     onProgress: (Channel, Long, Long) -> Unit,
     onFinished: (Channel) -> Unit,
     onNext: (PlaybackRequest) -> Unit,
@@ -1442,8 +1696,12 @@ private fun PlaybackScreen(
     var errorMessage by remember(channel) { mutableStateOf<String?>(null) }
     var showNext by remember(channel) { mutableStateOf(false) }
     var countdown by remember(channel) { mutableIntStateOf(10) }
+    var currentTracks by remember(channel) { mutableStateOf(Tracks.EMPTY) }
+    var showTracks by remember(channel) { mutableStateOf(false) }
     val retryFocus = remember { FocusRequester() }
     val nextFocus = remember { FocusRequester() }
+    val tracksButtonFocus = remember { FocusRequester() }
+    val firstTrackFocus = remember { FocusRequester() }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val player = remember(channel, playerConfig, networkConfig, cacheConfig, retryToken) {
@@ -1464,6 +1722,10 @@ private fun PlaybackScreen(
                 override fun onPlayerError(error: PlaybackException) {
                     Log.e("Streaming", "player error ${error.errorCodeName}")
                     errorMessage = friendlyPlaybackError(error)
+                }
+
+                override fun onTracksChanged(tracks: Tracks) {
+                    currentTracks = tracks
                 }
 
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -1571,7 +1833,73 @@ private fun PlaybackScreen(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    val audioChoices = remember(currentTracks) { TrackChoices.audio(currentTracks) }
+    val subtitleChoices = remember(currentTracks) { TrackChoices.subtitles(currentTracks) }
+    val subtitlesEnabled = remember(currentTracks) { TrackChoices.hasSelectedSubtitles(currentTracks) }
+
+    val zap: (Int) -> Unit = { delta ->
+        val queue = request.queue
+        if (!channel.isVod && liveConfig.zapping && queue.size > 1) {
+            val currentIndex = request.index
+                .takeIf { it in queue.indices }
+                ?: queue.indexOfFirst { it.url == channel.url }
+            val base = currentIndex.takeIf { it >= 0 } ?: 0
+            val next = ((base + delta) % queue.size + queue.size) % queue.size
+            onNext(PlaybackRequest(queue[next], queue, next))
+        }
+    }
+
+    BackHandler(enabled = showTracks) { showTracks = false }
+
+    LaunchedEffect(showTracks) {
+        delay(150)
+        runCatching {
+            if (showTracks) firstTrackFocus.requestFocus() else tracksButtonFocus.requestFocus()
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .onPreviewKeyEvent { event ->
+                if (event.type != KeyEventType.KeyDown || showTracks) {
+                    return@onPreviewKeyEvent false
+                }
+
+                when (event.nativeKeyEvent.keyCode) {
+                    AndroidKeyEvent.KEYCODE_CHANNEL_UP,
+                    AndroidKeyEvent.KEYCODE_MEDIA_NEXT,
+                    -> {
+                        if (!channel.isVod && liveConfig.zapping) {
+                            zap(1)
+                            true
+                        } else {
+                            false
+                        }
+                    }
+
+                    AndroidKeyEvent.KEYCODE_CHANNEL_DOWN,
+                    AndroidKeyEvent.KEYCODE_MEDIA_PREVIOUS,
+                    -> {
+                        if (!channel.isVod && liveConfig.zapping) {
+                            zap(-1)
+                            true
+                        } else {
+                            false
+                        }
+                    }
+
+                    AndroidKeyEvent.KEYCODE_MENU,
+                    AndroidKeyEvent.KEYCODE_INFO,
+                    -> {
+                        showTracks = true
+                        true
+                    }
+
+                    else -> false
+                }
+            },
+    ) {
         AndroidView(
             factory = { viewContext ->
                 (LayoutInflater.from(viewContext)
@@ -1588,16 +1916,36 @@ private fun PlaybackScreen(
             },
         )
 
-        Text(
-            text = channel.name,
-            color = Color.White,
-            fontSize = 18.sp,
+        Column(
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(32.dp)
                 .background(Color(0x99000000), RoundedCornerShape(8.dp))
                 .padding(horizontal = 12.dp, vertical = 6.dp),
-        )
+        ) {
+            Text(
+                text = channel.name,
+                color = Color.White,
+                fontSize = 18.sp,
+            )
+            if (!channel.isVod && liveConfig.zapping) {
+                Text(
+                    text = "CH+ / CH− cambia de canal",
+                    color = Color(0xFF94A3B8),
+                    fontSize = 13.sp,
+                )
+            }
+        }
+
+        Button(
+            onClick = { showTracks = true },
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(32.dp)
+                .focusRequester(tracksButtonFocus),
+        ) {
+            Text("Audio · Subtítulos", fontSize = 16.sp)
+        }
 
         val error = errorMessage
         if (error != null) {
@@ -1625,7 +1973,199 @@ private fun PlaybackScreen(
                 onCancel = { showNext = false },
             )
         }
+
+        if (showTracks) {
+            TrackPickerOverlay(
+                audio = audioChoices,
+                subtitles = subtitleChoices,
+                subtitlesEnabled = subtitlesEnabled,
+                firstFocus = firstTrackFocus,
+                onSelectAudio = { choice -> applyAudioTrack(player, choice) },
+                onSelectSubtitles = { choice -> applySubtitleTrack(player, choice) },
+                onDisableSubtitles = { disableSubtitles(player) },
+                onClose = { showTracks = false },
+            )
+        }
     }
+}
+
+@Composable
+private fun TrackPickerOverlay(
+    audio: List<TrackChoice>,
+    subtitles: List<TrackChoice>,
+    subtitlesEnabled: Boolean,
+    firstFocus: FocusRequester,
+    onSelectAudio: (TrackChoice) -> Unit,
+    onSelectSubtitles: (TrackChoice) -> Unit,
+    onDisableSubtitles: () -> Unit,
+    onClose: () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xCC000000))
+            .padding(48.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier
+                .width(680.dp)
+                .fillMaxHeight(0.9f)
+                .background(Color(0xFF0F172A), RoundedCornerShape(12.dp))
+                .padding(24.dp),
+        ) {
+            Text(
+                text = "Audio y subtítulos",
+                color = Color.White,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(Modifier.height(12.dp))
+
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                item {
+                    Text(
+                        text = "Audio",
+                        color = Color(0xFF93C5FD),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 4.dp),
+                    )
+                }
+                if (audio.isEmpty()) {
+                    item {
+                        Text(
+                            text = "Sin pistas de audio.",
+                            color = Color(0xFF64748B),
+                            fontSize = 15.sp,
+                        )
+                    }
+                } else {
+                    itemsIndexed(audio, key = { _, choice -> "audio-${choice.id}" }) { index, choice ->
+                        TrackOptionButton(
+                            label = choice.label,
+                            selected = choice.selected,
+                            focusRequester = if (index == 0) firstFocus else null,
+                            onClick = { onSelectAudio(choice) },
+                        )
+                    }
+                }
+
+                item {
+                    Text(
+                        text = "Subtítulos",
+                        color = Color(0xFF93C5FD),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 12.dp),
+                    )
+                }
+                item {
+                    TrackOptionButton(
+                        label = "Desactivado",
+                        selected = !subtitlesEnabled,
+                        focusRequester = if (audio.isEmpty()) firstFocus else null,
+                        onClick = onDisableSubtitles,
+                    )
+                }
+                if (subtitles.isEmpty()) {
+                    item {
+                        Text(
+                            text = "Este contenido no incluye subtítulos.",
+                            color = Color(0xFF64748B),
+                            fontSize = 15.sp,
+                        )
+                    }
+                } else {
+                    itemsIndexed(
+                        subtitles,
+                        key = { _, choice -> "subtitle-${choice.id}" },
+                    ) { _, choice ->
+                        TrackOptionButton(
+                            label = choice.label,
+                            selected = choice.selected,
+                            focusRequester = null,
+                            onClick = { onSelectSubtitles(choice) },
+                        )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(12.dp))
+            Button(
+                onClick = onClose,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("Cerrar", fontSize = 17.sp)
+            }
+        }
+    }
+}
+
+@Composable
+private fun TrackOptionButton(
+    label: String,
+    selected: Boolean,
+    focusRequester: FocusRequester?,
+    onClick: () -> Unit,
+) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(
+                if (focusRequester != null) {
+                    Modifier.focusRequester(focusRequester)
+                } else {
+                    Modifier
+                },
+            ),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = label,
+                color = if (selected) Color(0xFF3B82F6) else Color.White,
+                fontSize = 17.sp,
+                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                maxLines = 1,
+                modifier = Modifier.weight(1f),
+            )
+            if (selected) {
+                Text(
+                    text = "✓",
+                    color = Color(0xFF3B82F6),
+                    fontSize = 18.sp,
+                )
+            }
+        }
+    }
+}
+
+private fun applyAudioTrack(player: ExoPlayer, choice: TrackChoice) {
+    player.trackSelectionParameters = player.trackSelectionParameters.buildUpon()
+        .setTrackTypeDisabled(C.TRACK_TYPE_AUDIO, false)
+        .setOverrideForType(TrackSelectionOverride(choice.group, choice.trackIndex))
+        .build()
+}
+
+private fun applySubtitleTrack(player: ExoPlayer, choice: TrackChoice) {
+    player.trackSelectionParameters = player.trackSelectionParameters.buildUpon()
+        .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false)
+        .setOverrideForType(TrackSelectionOverride(choice.group, choice.trackIndex))
+        .build()
+}
+
+private fun disableSubtitles(player: ExoPlayer) {
+    player.trackSelectionParameters = player.trackSelectionParameters.buildUpon()
+        .clearOverridesOfType(C.TRACK_TYPE_TEXT)
+        .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, true)
+        .build()
 }
 
 @Composable

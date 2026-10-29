@@ -81,3 +81,17 @@ Append-only. Newest entries at the bottom.
 - Reconciled the stale board into `todo-v1.md`: 74 specs, 20 done, 3 Now items,
   10 Next, 7 polish, 18 v1.1 and 15 v2. Added `cfg-016` offline playlist cache.
   Renamed `TODO.md` and updated the agent instructions.
+- Added encrypted live state (`files/live-state.bin`) for favorites, recents and the
+  last channel, keyed by `tvg-id` or URL so it survives playlist refreshes.
+- Added Favoritos and Recientes rows, star toggles, and last-channel focus on entry.
+- Added CH+/CH− and media next/previous zapping over the current filtered list with
+  wraparound. Verified FUTV → Tigo → Canal 4 on the TV, plus state persistence after
+  a force-stop and relaunch.
+- Added accent-insensitive channel search by name and group, query persistence while
+  browsing results, a clear action and a no-results state. Verified on the TV with the
+  system keyboard.
+- Added the audio/subtitle picker: Spanish labels (language, layout, codec), immediate
+  track overrides, an explicit Desactivado subtitle state, and MENU/INFO shortcuts.
+  Verified the panel and selection on live playback.
+- 60 unit tests passing (17 new for live state, search and track labels).
+  Version 0.10.0.

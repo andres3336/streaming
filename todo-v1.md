@@ -1,7 +1,7 @@
 # Streaming — V1 reconciled TODO
 
 **Last reconciled:** 2026-10-29  
-**App:** Streaming 0.9.0 (`versionCode 9`)  
+**App:** Streaming 0.10.0 (`versionCode 10`)  
 **TV:** `192.168.100.16:5555` — MOTOROLA GOOGLE TV, Android 11 / API 30, armeabi-v7a  
 **Specs:** 74 tasks in `tasks/`  
 **Change log:** `HISTORY.md`  
@@ -20,30 +20,29 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 
 ## Current state
 
-- **Live:** curated 55-channel gist playlist, group `TV`, logos/initials, auto-focus.
+- **Live:** curated 55-channel gist playlist, group `TV`, logos/initials, auto-focus,
+  favorites, recents, last channel, CH+/CH− and media-key zapping, channel search.
 - **Movies:** Xtream categories, posters, playback (1920x960 verified).
 - **Series:** Xtream categories, seasons/episodes, playback, next-episode queue.
+- **Player:** audio/subtitle pickers with immediate apply and clear off state.
 - **Config:** permanent gist, no-cache fetch, encrypted last-known-good cache,
   refresh on resume, manual update, safe apply only when not playing.
 - **Ajustes:** buffer, quality cap, aspect, VOD cache size/clear, WiFi/Ethernet-only,
   max bitrate. Local overrides merge on top of the gist.
 - **Playback:** ExoPlayer HLS/TS/MP4, headers, retry/backoff, live auto-reconnect,
   Spanish error overlay, VOD cache, resume/Continue, next-episode countdown.
-- **Security:** config cache and playback positions use Keystore AES-GCM; errors do
-  not log/display URLs.
-- **Tests:** 43 unit tests passing.
+- **Security:** config cache, playback positions and live state use Keystore AES-GCM;
+  errors do not log/display URLs.
+- **Tests:** 60 unit tests passing.
 
 ## Now (max 3)
-
-- [ ] Favoritos, recientes, último canal y zapping — `liv-003` + `ply-004`
-- [ ] Búsqueda de canales — `liv-004`
-- [ ] Selector de audio y subtítulos — `ply-006`
-
-## Next (V1)
 
 - [ ] `ply-007` · Stream info and bandwidth estimate · [spec](tasks/ply-007_stream_info_and_bandwidth_estimate.md) — Codec, resolution, FPS, bitrate, buffer, dropped frames, bandwidth.
 - [ ] `cfg-008` · Source health check · [spec](tasks/cfg-008_source_health_check.md) — Source health check.
 - [ ] `cfg-009` · Update-config dialog and retry flow · [spec](tasks/cfg-009_update_config_dialog_and_retry_flow.md) — Update-config dialog and retry flow.
+
+## Next (V1)
+
 - [ ] `cfg-004` · Config refresh on start, resume and failure · [spec](tasks/cfg-004_config_refresh_on_start_resume_and_failure.md) — Start/resume/manual refresh and safe apply done; forceUpdate prompt pending.
 - [ ] `cfg-016` · Offline playlist cache · [spec](tasks/cfg-016_offline_playlist_cache.md) — Cache the channel list for a true offline start; added during reconciliation.
 - [ ] `liv-005` · Xtream auth and lazy live categories · [spec](tasks/liv-005_xtream_auth_and_lazy_live_categories.md) — Xtream auth + VOD catalog done; live categories/lazy loading pending.
@@ -84,6 +83,10 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 - [x] 2026-10-29 · `vod-002` · Xtream Series browse · [spec](tasks/vod-002_xtream_series_browse.md) — Core categories/seasons/episodes/playback; season tabs/detail panel deferred.
 - [x] 2026-10-29 · `vod-004` · Resume and Continue watching · [spec](tasks/vod-004_resume_and_continue_watching.md) — Resume positions + Continue tab; 0:17 resume verified.
 - [x] 2026-10-29 · `vod-005` · Next episode auto-play · [spec](tasks/vod-005_next_episode_auto_play.md) — 10 s countdown + Reproducir ahora/Cancelar; on/off setting pending.
+- [x] 2026-10-29 · `liv-003` · Favorites, recents and last channel · [spec](tasks/liv-003_favorites_recents_and_last_channel.md) — Encrypted live state, Favoritos/Recientes rows, last-channel focus.
+- [x] 2026-10-29 · `ply-004` · Channel zapping and last channel · [spec](tasks/ply-004_channel_zapping_and_last_channel.md) — CH+/CH− and media next/previous, filtered queue with wrap.
+- [x] 2026-10-29 · `liv-004` · Channel search · [spec](tasks/liv-004_channel_search.md) — Accent-insensitive name/group search, query persistence, no-results state.
+- [x] 2026-10-29 · `ply-006` · Audio and subtitle track pickers · [spec](tasks/ply-006_audio_and_subtitle_track_pickers.md) — Spanish labels, immediate apply, explicit Desactivado state.
 
 ## Deferred — v1.1
 
@@ -148,13 +151,13 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 | [`vod-002`](tasks/vod-002_xtream_series_browse.md) | Xtream Series browse | Done | Core categories/seasons/episodes/playback; season tabs/detail panel deferred. |
 | [`vod-004`](tasks/vod-004_resume_and_continue_watching.md) | Resume and Continue watching | Done | Resume positions + Continue tab; 0:17 resume verified. |
 | [`vod-005`](tasks/vod-005_next_episode_auto_play.md) | Next episode auto-play | Done | 10 s countdown + Reproducir ahora/Cancelar; on/off setting pending. |
-| [`liv-003`](tasks/liv-003_favorites_recents_and_last_channel.md) | Favorites, recents and last channel | Now | Favorites, recents, last channel. |
-| [`ply-004`](tasks/ply-004_channel_zapping_and_last_channel.md) | Channel zapping and last channel | Now | Channel zapping and last channel. |
-| [`liv-004`](tasks/liv-004_channel_search.md) | Channel search | Now | Channel search across the curated list. |
-| [`ply-006`](tasks/ply-006_audio_and_subtitle_track_pickers.md) | Audio and subtitle track pickers | Now | Audio and subtitle track pickers. |
-| [`ply-007`](tasks/ply-007_stream_info_and_bandwidth_estimate.md) | Stream info and bandwidth estimate | Next | Codec, resolution, FPS, bitrate, buffer, dropped frames, bandwidth. |
-| [`cfg-008`](tasks/cfg-008_source_health_check.md) | Source health check | Next | Source health check. |
-| [`cfg-009`](tasks/cfg-009_update_config_dialog_and_retry_flow.md) | Update-config dialog and retry flow | Next | Update-config dialog and retry flow. |
+| [`liv-003`](tasks/liv-003_favorites_recents_and_last_channel.md) | Favorites, recents and last channel | Done | Encrypted live state, Favoritos/Recientes rows, last-channel focus. |
+| [`ply-004`](tasks/ply-004_channel_zapping_and_last_channel.md) | Channel zapping and last channel | Done | CH+/CH− and media next/previous, filtered queue with wrap. |
+| [`liv-004`](tasks/liv-004_channel_search.md) | Channel search | Done | Accent-insensitive name/group search, query persistence, no-results state. |
+| [`ply-006`](tasks/ply-006_audio_and_subtitle_track_pickers.md) | Audio and subtitle track pickers | Done | Spanish labels, immediate apply, explicit Desactivado state. |
+| [`ply-007`](tasks/ply-007_stream_info_and_bandwidth_estimate.md) | Stream info and bandwidth estimate | Now | Codec, resolution, FPS, bitrate, buffer, dropped frames, bandwidth. |
+| [`cfg-008`](tasks/cfg-008_source_health_check.md) | Source health check | Now | Source health check. |
+| [`cfg-009`](tasks/cfg-009_update_config_dialog_and_retry_flow.md) | Update-config dialog and retry flow | Now | Update-config dialog and retry flow. |
 | [`cfg-004`](tasks/cfg-004_config_refresh_on_start_resume_and_failure.md) | Config refresh on start, resume and failure | Next | Start/resume/manual refresh and safe apply done; forceUpdate prompt pending. |
 | [`cfg-016`](tasks/cfg-016_offline_playlist_cache.md) | Offline playlist cache | Next | Cache the channel list for a true offline start; added during reconciliation. |
 | [`liv-005`](tasks/liv-005_xtream_auth_and_lazy_live_categories.md) | Xtream auth and lazy live categories | Next | Xtream auth + VOD catalog done; live categories/lazy loading pending. |
@@ -207,6 +210,12 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 
 - The config gist is the canonical config; sources and credentials are central-only.
 - `Ajustes` is visible and has no PIN. Local overrides live in `files/device-settings.json`.
+- Live state (favorites, recents, last channel) is encrypted in `files/live-state.bin`
+  because channel keys can contain playlist tokens. It survives playlist refreshes by
+  keying channels on `tvg-id`, falling back to the URL.
+- Zapping follows the current search-filtered list, wraps at both ends, and is enabled
+  by `live.zapping`. `live.startLastChannel` focuses the last channel on entry.
+- The player track picker opens from `Audio · Subtítulos`, `MENU` or `INFO`.
 - Config cache works when the gist is unreachable. The playlist still needs network;
   `cfg-016` fixes that.
 - Next-episode auto-play is always on; the on/off setting is still pending.
