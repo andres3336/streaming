@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "sources": {
+    "liveMode": "gist",
+    "m3uUrl": "https://gist.githubusercontent.com/USUARIO/GIST_ID/raw/lista.m3u",
+    "xtream": {
+      "baseUrl": "http://example.com:8080",
+      "username": "USUARIO",
+      "password": "CONTRASENA"
+    }
+  },
+  "player": {
+    "userAgent": "Streaming/0.3",
+    "headers": {
+      "Referer": "https://example.com/"
+    },
+    "bufferMs": 3000
+  },
+  "epgUrl": null,
+  "ui": {
+    "simpleMode": false,
+    "pin": "1234",
+    "sections": ["live", "movies", "series"]
+  },
+  "forceUpdate": false
+}

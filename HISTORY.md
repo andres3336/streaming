@@ -22,3 +22,12 @@ Append-only. Newest entries at the bottom.
   848x480 H.264 playback and Back navigation on the TV. `liv-001` and `ply-001` are done.
 - Debug builds use a `TextureView` so `adb screencap` can capture video; release keeps
   `SurfaceView`.
+- Added the config schema, validator, JSON Schema and redacted sample (`config/`), with
+  9 parser tests.
+- Added `ConfigRepository` (OkHttp, ETag/If-None-Match, no URL or credential logging)
+  and `M3uRepository`, with 5 repository tests.
+- Wired `config.url` from untracked `local.properties` into `BuildConfig.CONFIG_URL`;
+  an empty URL falls back to the demo playlist.
+- Added loading, error/retry, auto-focused grouped channel list, and remote M3U loading.
+- Verified end-to-end against a local config and playlist over `adb reverse`: config
+  fetch, 3 channels in 2 groups, playback. `cfg-001` and `cfg-002` are done.

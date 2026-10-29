@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Streaming config",
+  "type": "object",
+  "required": ["version", "sources"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "sources": {
+      "type": "object",
+      "required": ["liveMode"],
+      "additionalProperties": false,
+      "properties": {
+        "liveMode": {
+          "enum": ["gist", "xtream", "merge"]
+        },
+        "m3uUrl": {
+          "type": "string",
+          "pattern": "^https?://"
+        },
+        "xtream": {
+          "type": "object",
+          "required": ["baseUrl", "username", "password"],
+          "additionalProperties": false,
+          "properties": {
+            "baseUrl": {
+              "type": "string",
+              "pattern": "^https?://"
+            },
+            "username": {
+              "type": "string",
+              "minLength": 1
+            },
+            "password": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "liveMode": {
+                "enum": ["gist", "merge"]
+              }
+            }
+          },
+          "then": {
+            "required": ["m3uUrl"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "liveMode": {
+                "enum": ["xtream", "merge"]
+              }
+            }
+          },
+          "then": {
+            "required": ["xtream"]
+          }
+        }
+      ]
+    },
+    "player": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "userAgent": {
+          "type": "string"
+        },
+        "headers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "bufferMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 30000
+        }
+      }
+    },
+    "epgUrl": {
+      "type": ["string", "null"],
+      "pattern": "^https?://"
+    },
+    "ui": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "simpleMode": {
+          "type": "boolean"
+        },
+        "pin": {
+          "type": "string",
+          "pattern": "^[0-9]{4,8}$"
+        },
+        "sections": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "enum": ["live", "movies", "series"]
+          }
+        }
+      }
+    },
+    "forceUpdate": {
+      "type": "boolean"
+    }
+  }
+}

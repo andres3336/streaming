@@ -6,8 +6,9 @@ Target device: Google TV / Android TV, 32-bit ARM, Android 11, limited storage.
 
 ## Current status
 
-The Android TV app runs on the TV with a demo channel list and ExoPlayer HLS playback.
-The real config gist, channel browser and Xtream sources are next. See `TODO.md`.
+The Android TV app runs on the TV with remote config, remote M3U loading, grouped channel
+browsing and ExoPlayer HLS playback. Setting the real `config.url` is the remaining step
+before testing the actual playlists. See `TODO.md`.
 
 ## Task tracking
 
@@ -75,6 +76,17 @@ Excluded:
 - TMDB, Trakt, Stremio, Cast, Watch Next
 
 See `DECISIONS.md` for details.
+
+## Configuration
+
+Set the raw secret-gist URL in `local.properties`:
+
+```properties
+config.url=https://gist.githubusercontent.com/USUARIO/GIST_ID/raw/config.json
+```
+
+If it is empty, the app uses the bundled demo playlist. See `config/README.md` and
+`config/schema.json`.
 
 ## Secrets
 

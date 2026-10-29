@@ -5,14 +5,13 @@ Detailed specs live in `tasks/`. The change log lives in `HISTORY.md`.
 
 ## Now
 
-- [ ] cfg-001 · Config schema and validator · P1 · [spec](tasks/cfg-001_config_schema_and_validator.md)
-- [ ] cfg-002 · Fetch config from secret gist · P1 · [spec](tasks/cfg-002_fetch_config_from_secret_gist.md)
 - [ ] liv-002 · Channel list, group rail and logos · P1 · [spec](tasks/liv-002_channel_list_group_rail_and_logos.md)
+- [ ] ply-002 · Retry, fallback and reconnect · P1 · [spec](tasks/ply-002_retry_fallback_and_reconnect.md)
+- [ ] cfg-003 · Encrypted last-known-good config cache · P1 · [spec](tasks/cfg-003_encrypted_last_known_good_config_cache.md)
 
 ## Next
 
 ### Config
-- [ ] cfg-003 · Encrypted last-known-good config cache · P1 · [spec](tasks/cfg-003_encrypted_last_known_good_config_cache.md)
 - [ ] cfg-004 · Config refresh on start, resume and failure · P1 · [spec](tasks/cfg-004_config_refresh_on_start_resume_and_failure.md)
 - [ ] cfg-005 · Grandma mode lock with PIN · P1 · [spec](tasks/cfg-005_grandma_mode_lock_with_pin.md)
 - [ ] cfg-006 · First-run loading and retry screen · P1 · [spec](tasks/cfg-006_first_run_loading_and_retry_screen.md)
@@ -28,7 +27,6 @@ Detailed specs live in `tasks/`. The change log lives in `HISTORY.md`.
 - [ ] liv-006 · Live source mode gist, Xtream or merge · P1 · [spec](tasks/liv-006_live_source_mode_gist_xtream_or_merge.md)
 
 ### Player
-- [ ] ply-002 · Retry, fallback and reconnect · P1 · [spec](tasks/ply-002_retry_fallback_and_reconnect.md)
 - [ ] ply-003 · Player HUD, auto-hide and keep screen on · P1 · [spec](tasks/ply-003_player_hud_auto_hide_and_keep_screen_on.md)
 - [ ] ply-004 · Channel zapping and last channel · P1 · [spec](tasks/ply-004_channel_zapping_and_last_channel.md)
 - [ ] ply-005 · Aspect ratio and zoom modes · P1 · [spec](tasks/ply-005_aspect_ratio_and_zoom_modes.md)
@@ -112,3 +110,5 @@ Detailed specs live in `tasks/`. The change log lives in `HISTORY.md`.
 - [x] 2026-10-29 · apk-003 Deploy and logcat scripts
 - [x] 2026-10-29 · liv-001 M3U parser
 - [x] 2026-10-29 · ply-001 ExoPlayer core with headers
+- [x] 2026-10-29 · cfg-001 Config schema and validator
+- [x] 2026-10-29 · cfg-002 Fetch config from secret gist
