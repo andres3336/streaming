@@ -95,3 +95,13 @@ Append-only. Newest entries at the bottom.
   Verified the panel and selection on live playback.
 - 60 unit tests passing (17 new for live state, search and track labels).
   Version 0.10.0.
+- Scope decision: finish V1 before v1.1. `liv-008`/`liv-009` moved to v2 because
+  local category/channel overrides conflict with the gist as the remote source of
+  truth; `liv-012` and `ply-016` moved to v2 as not required. v1.1 now starts with
+  `epg-001` and `epg-002`.
+- Added the in-player stream info panel (`INFO` or the `Info` button): video codec,
+  resolution, FPS, bitrate, buffer, dropped frames, decoder name, Media3 bandwidth
+  estimate and stream type. The source is reduced to its host so tokens and
+  credentials never appear.
+- Verified the panel on the TV: H.264 1280×720, OMX.realtek decoder, 2.4 Mbps
+  estimate, 24 s buffer, 0 dropped frames. 65 unit tests passing.

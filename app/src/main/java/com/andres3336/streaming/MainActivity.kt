@@ -73,6 +73,7 @@ import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.analytics.AnalyticsListener
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.ui.AspectRatioFrameLayout
@@ -115,6 +116,7 @@ import com.andres3336.streaming.data.xtream.XtreamResult
 import com.andres3336.streaming.data.xtream.XtreamSeries
 import com.andres3336.streaming.data.xtream.XtreamSeriesInfo
 import com.andres3336.streaming.player.NetworkPolicy
+import com.andres3336.streaming.player.StreamStatsFormat
 import com.andres3336.streaming.player.TrackChoice
 import com.andres3336.streaming.player.TrackChoices
 import com.andres3336.streaming.player.VideoCache
@@ -1698,10 +1700,15 @@ private fun PlaybackScreen(
     var countdown by remember(channel) { mutableIntStateOf(10) }
     var currentTracks by remember(channel) { mutableStateOf(Tracks.EMPTY) }
     var showTracks by remember(channel) { mutableStateOf(false) }
+    var showStats by remember(channel) { mutableStateOf(false) }
+    var decoderName by remember(channel) { mutableStateOf<String?>(null) }
+    var bandwidthBps by remember(channel) { mutableStateOf(0L) }
+    var streamStats by remember(channel) { mutableStateOf<StreamStats?>(null) }
     val retryFocus = remember { FocusRequester() }
     val nextFocus = remember { FocusRequester() }
     val tracksButtonFocus = remember { FocusRequester() }
     val firstTrackFocus = remember { FocusRequester() }
+    val statsFirstFocus = remember { FocusRequester() }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val player = remember(channel, playerConfig, networkConfig, cacheConfig, retryToken) {
@@ -1736,6 +1743,26 @@ private fun PlaybackScreen(
                     if (BuildConfig.DEBUG) {
                         Log.d("Streaming", "video=${videoSize.width}x${videoSize.height}")
                     }
+                }
+            })
+
+            exoPlayer.addAnalyticsListener(object : AnalyticsListener {
+                override fun onVideoDecoderInitialized(
+                    eventTime: AnalyticsListener.EventTime,
+                    name: String,
+                    initializedTimestampMs: Long,
+                    initializationDurationMs: Long,
+                ) {
+                    decoderName = name
+                }
+
+                override fun onBandwidthEstimate(
+                    eventTime: AnalyticsListener.EventTime,
+                    elapsedMs: Int,
+                    bytesTransferred: Long,
+                    bitrateEstimate: Long,
+                ) {
+                    bandwidthBps = bitrateEstimate
                 }
             })
         }
@@ -1837,6 +1864,14 @@ private fun PlaybackScreen(
     val subtitleChoices = remember(currentTracks) { TrackChoices.subtitles(currentTracks) }
     val subtitlesEnabled = remember(currentTracks) { TrackChoices.hasSelectedSubtitles(currentTracks) }
 
+    LaunchedEffect(player, showStats) {
+        if (!showStats) return@LaunchedEffect
+        while (true) {
+            streamStats = readStreamStats(player, channel, decoderName, bandwidthBps)
+            delay(1_000)
+        }
+    }
+
     val zap: (Int) -> Unit = { delta ->
         val queue = request.queue
         if (!channel.isVod && liveConfig.zapping && queue.size > 1) {
@@ -1849,12 +1884,18 @@ private fun PlaybackScreen(
         }
     }
 
-    BackHandler(enabled = showTracks) { showTracks = false }
+    BackHandler(enabled = showTracks || showStats) {
+        if (showStats) showStats = false else showTracks = false
+    }
 
-    LaunchedEffect(showTracks) {
+    LaunchedEffect(showTracks, showStats) {
         delay(150)
         runCatching {
-            if (showTracks) firstTrackFocus.requestFocus() else tracksButtonFocus.requestFocus()
+            when {
+                showTracks -> firstTrackFocus.requestFocus()
+                showStats -> statsFirstFocus.requestFocus()
+                else -> tracksButtonFocus.requestFocus()
+            }
         }
     }
 
@@ -1862,7 +1903,7 @@ private fun PlaybackScreen(
         modifier = Modifier
             .fillMaxSize()
             .onPreviewKeyEvent { event ->
-                if (event.type != KeyEventType.KeyDown || showTracks) {
+                if (event.type != KeyEventType.KeyDown || showTracks || showStats) {
                     return@onPreviewKeyEvent false
                 }
 
@@ -1889,10 +1930,15 @@ private fun PlaybackScreen(
                         }
                     }
 
-                    AndroidKeyEvent.KEYCODE_MENU,
-                    AndroidKeyEvent.KEYCODE_INFO,
-                    -> {
+                    AndroidKeyEvent.KEYCODE_MENU -> {
+                        showStats = false
                         showTracks = true
+                        true
+                    }
+
+                    AndroidKeyEvent.KEYCODE_INFO -> {
+                        showTracks = false
+                        showStats = true
                         true
                     }
 
@@ -1937,14 +1983,27 @@ private fun PlaybackScreen(
             }
         }
 
-        Button(
-            onClick = { showTracks = true },
+        Row(
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(32.dp)
-                .focusRequester(tracksButtonFocus),
+                .padding(32.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text("Audio · Subtítulos", fontSize = 16.sp)
+            Button(onClick = {
+                showTracks = false
+                showStats = true
+            }) {
+                Text("Info", fontSize = 16.sp)
+            }
+            Button(
+                onClick = {
+                    showStats = false
+                    showTracks = true
+                },
+                modifier = Modifier.focusRequester(tracksButtonFocus),
+            ) {
+                Text("Audio · Subtítulos", fontSize = 16.sp)
+            }
         }
 
         val error = errorMessage
@@ -1986,6 +2045,147 @@ private fun PlaybackScreen(
                 onClose = { showTracks = false },
             )
         }
+
+        if (showStats) {
+            StreamStatsOverlay(
+                stats = streamStats,
+                firstFocus = statsFirstFocus,
+                onClose = { showStats = false },
+            )
+        }
+    }
+}
+
+private data class StreamStats(
+    val codec: String,
+    val resolution: String,
+    val frameRate: String,
+    val bitrate: String,
+    val buffer: String,
+    val droppedFrames: String,
+    val decoder: String,
+    val bandwidth: String,
+    val source: String,
+    val kind: String,
+)
+
+private fun readStreamStats(
+    player: ExoPlayer,
+    channel: Channel,
+    decoderName: String?,
+    bandwidthBps: Long,
+): StreamStats {
+    val video = player.videoFormat
+    player.videoDecoderCounters?.ensureUpdated()
+
+    val width = video?.width?.takeIf { it > 0 } ?: player.videoSize.width
+    val height = video?.height?.takeIf { it > 0 } ?: player.videoSize.height
+
+    return StreamStats(
+        codec = StreamStatsFormat.codec(video?.sampleMimeType, video?.codecs),
+        resolution = StreamStatsFormat.resolution(width, height),
+        frameRate = StreamStatsFormat.frameRate(video?.frameRate ?: 0f),
+        bitrate = StreamStatsFormat.bitrate(video?.bitrate?.toLong() ?: 0L),
+        buffer = StreamStatsFormat.buffer(player.totalBufferedDuration),
+        droppedFrames = StreamStatsFormat.droppedFrames(
+            player.videoDecoderCounters?.droppedBufferCount ?: 0,
+        ),
+        decoder = decoderName ?: "—",
+        bandwidth = StreamStatsFormat.bitrate(bandwidthBps),
+        source = StreamStatsFormat.maskedSource(channel.url),
+        kind = if (channel.isVod) "VOD" else "En vivo",
+    )
+}
+
+@Composable
+private fun StreamStatsOverlay(
+    stats: StreamStats?,
+    firstFocus: FocusRequester,
+    onClose: () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xCC000000))
+            .padding(48.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier
+                .width(820.dp)
+                .fillMaxHeight(0.96f)
+                .background(Color(0xFF0F172A), RoundedCornerShape(12.dp))
+                .padding(24.dp),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Información del stream",
+                        color = Color.White,
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        text = "Datos actualizados cada segundo. La URL completa se oculta.",
+                        color = Color(0xFF64748B),
+                        fontSize = 14.sp,
+                    )
+                }
+                Spacer(Modifier.width(16.dp))
+                Button(
+                    onClick = onClose,
+                    modifier = Modifier.focusRequester(firstFocus),
+                ) {
+                    Text("Cerrar", fontSize = 17.sp)
+                }
+            }
+            Spacer(Modifier.height(20.dp))
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(14.dp),
+                ) {
+                    StatRow("Tipo", stats?.kind ?: "—")
+                    StatRow("Códec de vídeo", stats?.codec ?: "—")
+                    StatRow("Resolución", stats?.resolution ?: "—")
+                    StatRow("Fotogramas por segundo", stats?.frameRate ?: "—")
+                    StatRow("Bitrate de vídeo", stats?.bitrate ?: "—")
+                }
+                Spacer(Modifier.width(32.dp))
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(14.dp),
+                ) {
+                    StatRow("Búfer", stats?.buffer ?: "—")
+                    StatRow("Fotogramas descartados", stats?.droppedFrames ?: "—")
+                    StatRow("Decodificador", stats?.decoder ?: "—")
+                    StatRow("Ancho de banda estimado", stats?.bandwidth ?: "—")
+                    StatRow("Fuente", stats?.source ?: "oculta")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun StatRow(label: String, value: String) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = label,
+            color = Color(0xFF94A3B8),
+            fontSize = 14.sp,
+        )
+        Text(
+            text = value,
+            color = Color.White,
+            fontSize = 17.sp,
+            fontWeight = FontWeight.Medium,
+            maxLines = 2,
+        )
     }
 }
 
