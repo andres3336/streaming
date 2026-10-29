@@ -1,13 +1,10 @@
 ---
 id: vod-005
 title: "Next episode auto-play"
-status: Backlog
 priority: P3
 tags: [v1.1, series]
 epic: Series
-ownerType: human
 created: 2026-10-29
-order: 44
 depends_on: [vod-002, vod-004]
 ---
 # Next episode auto-play

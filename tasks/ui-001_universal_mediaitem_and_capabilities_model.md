@@ -1,13 +1,10 @@
 ---
 id: ui-001
 title: "Universal MediaItem and capabilities model"
-status: Todo
 priority: P1
 tags: [v1, ui, movies, series]
 epic: Shared UI
-ownerType: human
 created: 2026-10-29
-order: 31
 depends_on: [apk-001]
 ---
 # Universal MediaItem and capabilities model

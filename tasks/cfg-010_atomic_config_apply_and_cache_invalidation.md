@@ -1,13 +1,10 @@
 ---
 id: cfg-010
 title: "Atomic config apply and cache invalidation"
-status: Todo
 priority: P1
 tags: [v1, config]
 epic: Config
-ownerType: human
 created: 2026-10-29
-order: 13
 depends_on: [cfg-003, cfg-008]
 ---
 # Atomic config apply and cache invalidation

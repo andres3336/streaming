@@ -1,13 +1,10 @@
 ---
 id: test-001
 title: "Parser unit tests"
-status: Todo
 priority: P2
 tags: [v1, test]
 epic: Testing
-ownerType: human
 created: 2026-10-29
-order: 35
 depends_on: [liv-001, liv-005, cfg-001]
 ---
 # Parser unit tests

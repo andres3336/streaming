@@ -1,13 +1,10 @@
 ---
 id: liv-006
 title: "Live source mode gist, Xtream or merge"
-status: Todo
 priority: P1
 tags: [v1, channels, config]
 epic: Live TV
-ownerType: human
 created: 2026-10-29
-order: 19
 depends_on: [liv-001, liv-005]
 ---
 # Live source mode gist, Xtream or merge

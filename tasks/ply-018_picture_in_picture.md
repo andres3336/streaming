@@ -1,13 +1,10 @@
 ---
 id: ply-018
 title: "Picture-in-picture"
-status: Backlog
 priority: P4
 tags: [v2, video]
 epic: Player
-ownerType: human
 created: 2026-10-29
-order: 68
 depends_on: [ply-001]
 ---
 # Picture-in-picture

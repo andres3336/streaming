@@ -1,13 +1,10 @@
 ---
 id: ui-008
 title: "Themes and accent color"
-status: Backlog
 priority: P4
 tags: [v2, ui]
 epic: Shared UI
-ownerType: human
 created: 2026-10-29
-order: 65
 depends_on: [ui-002]
 ---
 # Themes and accent color

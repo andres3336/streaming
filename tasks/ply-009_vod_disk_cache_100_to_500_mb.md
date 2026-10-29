@@ -1,13 +1,10 @@
 ---
 id: ply-009
 title: "VOD disk cache 100 to 500 MB"
-status: Todo
 priority: P1
 tags: [v1, cache, video]
 epic: Player
-ownerType: human
 created: 2026-10-29
-order: 28
 depends_on: [ply-001, cfg-001]
 ---
 # VOD disk cache 100 to 500 MB

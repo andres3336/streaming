@@ -1,13 +1,10 @@
 ---
 id: vod-003
 title: "Xtream metadata for movies and series"
-status: Backlog
 priority: P3
 tags: [v1.1, movies, series]
 epic: Movies
-ownerType: human
 created: 2026-10-29
-order: 42
 depends_on: [vod-001, vod-002]
 ---
 # Xtream metadata for movies and series

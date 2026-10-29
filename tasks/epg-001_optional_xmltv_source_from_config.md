@@ -1,13 +1,10 @@
 ---
 id: epg-001
 title: "Optional XMLTV source from config"
-status: Backlog
 priority: P3
 tags: [v1.1, epg]
 epic: EPG
-ownerType: human
 created: 2026-10-29
-order: 57
 depends_on: [cfg-001]
 ---
 # Optional XMLTV source from config

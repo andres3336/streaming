@@ -1,13 +1,10 @@
 ---
 id: liv-005
 title: "Xtream auth and lazy live categories"
-status: Todo
 priority: P1
 tags: [v1, streaming, channels]
 epic: Live TV
-ownerType: human
 created: 2026-10-29
-order: 18
 depends_on: [cfg-001]
 ---
 # Xtream auth and lazy live categories

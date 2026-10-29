@@ -1,13 +1,10 @@
 ---
 id: ui-003
 title: "Simple and Full UI modes"
-status: Todo
 priority: P1
 tags: [v1, ui]
 epic: Shared UI
-ownerType: human
 created: 2026-10-29
-order: 33
 depends_on: [ui-002, cfg-005]
 ---
 # Simple and Full UI modes

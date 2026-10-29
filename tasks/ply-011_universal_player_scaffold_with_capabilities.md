@@ -1,13 +1,10 @@
 ---
 id: ply-011
 title: "Universal player scaffold with capabilities"
-status: Todo
 priority: P1
 tags: [v1, video, ui, movies, series]
 epic: Player
-ownerType: human
 created: 2026-10-29
-order: 30
 depends_on: [ply-003, ui-001]
 ---
 # Universal player scaffold with capabilities

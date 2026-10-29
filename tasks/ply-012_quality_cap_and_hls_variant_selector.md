@@ -1,13 +1,10 @@
 ---
 id: ply-012
 title: "Quality cap and HLS variant selector"
-status: Backlog
 priority: P3
 tags: [v1.1, video]
 epic: Player
-ownerType: human
 created: 2026-10-29
-order: 48
 depends_on: [ply-001]
 ---
 # Quality cap and HLS variant selector

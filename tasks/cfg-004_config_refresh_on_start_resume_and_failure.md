@@ -1,13 +1,10 @@
 ---
 id: cfg-004
 title: "Config refresh on start, resume and failure"
-status: Todo
 priority: P1
 tags: [v1, config]
 epic: Config
-ownerType: human
 created: 2026-10-29
-order: 7
 depends_on: [cfg-002, cfg-003]
 ---
 # Config refresh on start, resume and failure

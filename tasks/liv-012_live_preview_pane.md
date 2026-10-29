@@ -1,13 +1,10 @@
 ---
 id: liv-012
 title: "Live preview pane with session handoff"
-status: Backlog
 priority: P3
 tags: [v1.1, channels, video, ui]
 epic: Live TV
-ownerType: human
 created: 2026-10-29
-order: 73
 depends_on: [liv-002, ply-001, ply-011, ui-002]
 ---
 # Live preview pane with session handoff

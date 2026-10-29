@@ -1,13 +1,10 @@
 ---
 id: test-004
 title: "Cache and storage limit test"
-status: Backlog
 priority: P3
 tags: [v1.1, test, cache]
 epic: Testing
-ownerType: human
 created: 2026-10-29
-order: 59
 depends_on: [ply-010]
 ---
 # Cache and storage limit test

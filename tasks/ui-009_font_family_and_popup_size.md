@@ -1,13 +1,10 @@
 ---
 id: ui-009
 title: "Font family and popup size"
-status: Backlog
 priority: P4
 tags: [v2, ui]
 epic: Shared UI
-ownerType: human
 created: 2026-10-29
-order: 66
 depends_on: [ui-005]
 ---
 # Font family and popup size

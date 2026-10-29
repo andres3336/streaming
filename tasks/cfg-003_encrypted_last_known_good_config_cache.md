@@ -1,13 +1,10 @@
 ---
 id: cfg-003
 title: "Encrypted last-known-good config cache"
-status: Todo
 priority: P1
 tags: [v1, config, security]
 epic: Config
-ownerType: human
 created: 2026-10-29
-order: 6
 depends_on: [cfg-002]
 ---
 # Encrypted last-known-good config cache

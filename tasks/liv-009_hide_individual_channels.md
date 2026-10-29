@@ -1,13 +1,10 @@
 ---
 id: liv-009
 title: "Hide individual channels"
-status: Backlog
 priority: P3
 tags: [v1.1, channels]
 epic: Live TV
-ownerType: human
 created: 2026-10-29
-order: 47
 depends_on: [liv-002]
 ---
 # Hide individual channels

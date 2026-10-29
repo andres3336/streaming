@@ -1,13 +1,10 @@
 ---
 id: cfg-011
 title: "Config history and rollback"
-status: Backlog
 priority: P3
 tags: [v1.1, config]
 epic: Config
-ownerType: human
 created: 2026-10-29
-order: 38
 depends_on: [cfg-004]
 ---
 # Config history and rollback

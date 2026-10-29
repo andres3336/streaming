@@ -1,13 +1,10 @@
 ---
 id: cfg-008
 title: "Source health check"
-status: Todo
 priority: P1
 tags: [v1, config, streaming]
 epic: Config
-ownerType: human
 created: 2026-10-29
-order: 11
 depends_on: [cfg-002, liv-001, liv-005]
 ---
 # Source health check

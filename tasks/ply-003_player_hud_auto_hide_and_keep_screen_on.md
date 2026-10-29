@@ -1,13 +1,10 @@
 ---
 id: ply-003
 title: "Player HUD, auto-hide and keep screen on"
-status: Todo
 priority: P1
 tags: [v1, video, ui]
 epic: Player
-ownerType: human
 created: 2026-10-29
-order: 22
 depends_on: [ply-001, ui-001]
 ---
 # Player HUD, auto-hide and keep screen on

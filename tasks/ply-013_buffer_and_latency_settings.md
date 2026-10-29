@@ -1,13 +1,10 @@
 ---
 id: ply-013
 title: "Buffer and latency settings"
-status: Backlog
 priority: P3
 tags: [v1.1, video]
 epic: Player
-ownerType: human
 created: 2026-10-29
-order: 49
 depends_on: [ply-001]
 ---
 # Buffer and latency settings

@@ -1,13 +1,10 @@
 ---
 id: epg-002
 title: "Now and next in channel rows"
-status: Backlog
 priority: P3
 tags: [v1.1, epg, ui]
 epic: EPG
-ownerType: human
 created: 2026-10-29
-order: 58
 depends_on: [epg-001, liv-002]
 ---
 # Now and next in channel rows

@@ -1,13 +1,10 @@
 ---
 id: liv-007
 title: "Multiple playlists and switcher"
-status: Backlog
 priority: P3
 tags: [v1.1, channels]
 epic: Live TV
-ownerType: human
 created: 2026-10-29
-order: 45
 depends_on: [liv-006]
 ---
 # Multiple playlists and switcher

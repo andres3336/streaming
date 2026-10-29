@@ -1,13 +1,10 @@
 ---
 id: cfg-013
 title: "Push notification for config updates"
-status: Backlog
 priority: P4
 tags: [v2, config]
 epic: Config
-ownerType: human
 created: 2026-10-29
-order: 70
 depends_on: [cfg-004]
 ---
 # Push notification for config updates

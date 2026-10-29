@@ -1,13 +1,10 @@
 ---
 id: cfg-007
 title: "Config validate and publish script"
-status: Todo
 priority: P2
 tags: [v1, config, docs]
 epic: Config
-ownerType: human
 created: 2026-10-29
-order: 10
 depends_on: [cfg-001]
 ---
 # Config validate and publish script

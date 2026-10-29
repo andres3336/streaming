@@ -1,13 +1,10 @@
 ---
 id: epg-003
 title: "Full TV guide grid"
-status: Backlog
 priority: P4
 tags: [v2, epg, ui]
 epic: EPG
-ownerType: human
 created: 2026-10-29
-order: 61
 depends_on: [epg-002]
 ---
 # Full TV guide grid

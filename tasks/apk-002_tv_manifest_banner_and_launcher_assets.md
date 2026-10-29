@@ -1,13 +1,10 @@
 ---
 id: apk-002
 title: "TV manifest, banner and launcher assets"
-status: Todo
 priority: P1
 tags: [v1, apk, ui]
 epic: APK
-ownerType: human
 created: 2026-10-29
-order: 2
 depends_on: [apk-001]
 ---
 # TV manifest, banner and launcher assets

@@ -1,13 +1,10 @@
 ---
 id: ply-006
 title: "Audio and subtitle track pickers"
-status: Todo
 priority: P1
 tags: [v1, video]
 epic: Player
-ownerType: human
 created: 2026-10-29
-order: 25
 depends_on: [ply-001]
 ---
 # Audio and subtitle track pickers

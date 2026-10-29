@@ -1,13 +1,10 @@
 ---
 id: ply-016
 title: "Sleep timer"
-status: Backlog
 priority: P3
 tags: [v1.1, video]
 epic: Player
-ownerType: human
 created: 2026-10-29
-order: 52
 depends_on: [ply-003]
 ---
 # Sleep timer

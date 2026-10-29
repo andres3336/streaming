@@ -1,13 +1,10 @@
 ---
 id: ply-005
 title: "Aspect ratio and zoom modes"
-status: Todo
 priority: P1
 tags: [v1, video, ui]
 epic: Player
-ownerType: human
 created: 2026-10-29
-order: 24
 depends_on: [ply-001]
 ---
 # Aspect ratio and zoom modes

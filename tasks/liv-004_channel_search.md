@@ -1,13 +1,10 @@
 ---
 id: liv-004
 title: "Channel search"
-status: Todo
 priority: P1
 tags: [v1, channels, ui]
 epic: Live TV
-ownerType: human
 created: 2026-10-29
-order: 17
 depends_on: [liv-002]
 ---
 # Channel search

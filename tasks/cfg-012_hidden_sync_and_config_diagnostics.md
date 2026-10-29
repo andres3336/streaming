@@ -1,13 +1,10 @@
 ---
 id: cfg-012
 title: "Hidden sync and config diagnostics"
-status: Backlog
 priority: P3
 tags: [v1.1, config]
 epic: Config
-ownerType: human
 created: 2026-10-29
-order: 39
 depends_on: [cfg-004]
 ---
 # Hidden sync and config diagnostics

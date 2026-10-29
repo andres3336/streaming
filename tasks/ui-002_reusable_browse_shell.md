@@ -1,13 +1,10 @@
 ---
 id: ui-002
 title: "Reusable browse shell"
-status: Todo
 priority: P1
 tags: [v1, ui]
 epic: Shared UI
-ownerType: human
 created: 2026-10-29
-order: 32
 depends_on: [ui-001]
 ---
 # Reusable browse shell

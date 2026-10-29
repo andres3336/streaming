@@ -1,13 +1,10 @@
 ---
 id: cfg-009
 title: "Update-config dialog and retry flow"
-status: Todo
 priority: P1
 tags: [v1, config, ui]
 epic: Config
-ownerType: human
 created: 2026-10-29
-order: 12
 depends_on: [cfg-008, cfg-004]
 ---
 # Update-config dialog and retry flow

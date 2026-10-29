@@ -1,13 +1,10 @@
 ---
 id: vod-001
 title: "Xtream Movies browse"
-status: Backlog
 priority: P3
 tags: [v1.1, movies, streaming]
 epic: Movies
-ownerType: human
 created: 2026-10-29
-order: 40
 depends_on: [liv-005, ui-002]
 ---
 # Xtream Movies browse

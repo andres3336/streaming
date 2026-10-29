@@ -1,13 +1,10 @@
 ---
 id: ply-010
 title: "Cache controls and storage usage"
-status: Todo
 priority: P1
 tags: [v1, cache, storage]
 epic: Player
-ownerType: human
 created: 2026-10-29
-order: 29
 depends_on: [ply-009]
 ---
 # Cache controls and storage usage

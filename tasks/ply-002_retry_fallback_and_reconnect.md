@@ -1,13 +1,10 @@
 ---
 id: ply-002
 title: "Retry, fallback and reconnect"
-status: Todo
 priority: P1
 tags: [v1, streaming]
 epic: Player
-ownerType: human
 created: 2026-10-29
-order: 21
 depends_on: [ply-001]
 ---
 # Retry, fallback and reconnect

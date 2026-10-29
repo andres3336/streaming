@@ -1,13 +1,10 @@
 ---
 id: test-005
 title: "Config update propagation test"
-status: Backlog
 priority: P3
 tags: [v1.1, test, config]
 epic: Testing
-ownerType: human
 created: 2026-10-29
-order: 60
 depends_on: [cfg-010]
 ---
 # Config update propagation test

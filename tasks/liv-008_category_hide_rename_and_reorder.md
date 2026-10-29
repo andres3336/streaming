@@ -1,13 +1,10 @@
 ---
 id: liv-008
 title: "Category hide, rename and reorder"
-status: Backlog
 priority: P3
 tags: [v1.1, channels, ui]
 epic: Live TV
-ownerType: human
 created: 2026-10-29
-order: 46
 depends_on: [liv-002]
 ---
 # Category hide, rename and reorder

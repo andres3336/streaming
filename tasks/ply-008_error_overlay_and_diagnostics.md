@@ -1,13 +1,10 @@
 ---
 id: ply-008
 title: "Error overlay and diagnostics"
-status: Todo
 priority: P1
 tags: [v1, video, test]
 epic: Player
-ownerType: human
 created: 2026-10-29
-order: 27
 depends_on: [ply-001]
 ---
 # Error overlay and diagnostics

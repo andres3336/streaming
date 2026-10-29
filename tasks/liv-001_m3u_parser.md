@@ -1,13 +1,10 @@
 ---
 id: liv-001
 title: "M3U parser"
-status: Todo
 priority: P1
 tags: [v1, channels, streaming]
 epic: Live TV
-ownerType: human
 created: 2026-10-29
-order: 14
 depends_on: [apk-001]
 ---
 # M3U parser

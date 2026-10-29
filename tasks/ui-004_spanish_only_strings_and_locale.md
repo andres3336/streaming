@@ -1,13 +1,10 @@
 ---
 id: ui-004
 title: "Spanish-only strings and locale"
-status: Todo
 priority: P1
 tags: [v1, ui]
 epic: Shared UI
-ownerType: human
 created: 2026-10-29
-order: 34
 depends_on: [apk-001]
 ---
 # Spanish-only strings and locale

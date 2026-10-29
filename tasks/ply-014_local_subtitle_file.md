@@ -1,13 +1,10 @@
 ---
 id: ply-014
 title: "Local subtitle file"
-status: Backlog
 priority: P3
 tags: [v1.1, video]
 epic: Player
-ownerType: human
 created: 2026-10-29
-order: 50
 depends_on: [ply-006]
 ---
 # Local subtitle file

@@ -1,13 +1,10 @@
 ---
 id: test-003
 title: "Config failure and retry test"
-status: Todo
 priority: P2
 tags: [v1, test, config]
 epic: Testing
-ownerType: human
 created: 2026-10-29
-order: 37
 depends_on: [cfg-009, test-002]
 ---
 # Config failure and retry test

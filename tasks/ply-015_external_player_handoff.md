@@ -1,13 +1,10 @@
 ---
 id: ply-015
 title: "External player handoff"
-status: Backlog
 priority: P3
 tags: [v1.1, video]
 epic: Player
-ownerType: human
 created: 2026-10-29
-order: 51
 depends_on: [ply-001]
 ---
 # External player handoff

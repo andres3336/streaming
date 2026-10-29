@@ -1,13 +1,10 @@
 ---
 id: liv-011
 title: "Advanced filters and bulk rename"
-status: Backlog
 priority: P4
 tags: [v2, channels]
 epic: Live TV
-ownerType: human
 created: 2026-10-29
-order: 64
 depends_on: [liv-008]
 ---
 # Advanced filters and bulk rename

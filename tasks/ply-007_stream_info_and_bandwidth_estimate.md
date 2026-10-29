@@ -1,13 +1,10 @@
 ---
 id: ply-007
 title: "Stream info and bandwidth estimate"
-status: Todo
 priority: P1
 tags: [v1, video]
 epic: Player
-ownerType: human
 created: 2026-10-29
-order: 26
 depends_on: [ply-001]
 ---
 # Stream info and bandwidth estimate

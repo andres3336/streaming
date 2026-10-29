@@ -1,13 +1,10 @@
 ---
 id: cfg-006
 title: "First-run loading and retry screen"
-status: Todo
 priority: P1
 tags: [v1, config, ui]
 epic: Config
-ownerType: human
 created: 2026-10-29
-order: 9
 depends_on: [cfg-002]
 ---
 # First-run loading and retry screen

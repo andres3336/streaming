@@ -1,13 +1,10 @@
 ---
 id: apk-003
 title: "Deploy and logcat scripts"
-status: Todo
 priority: P2
 tags: [v1, apk, test]
 epic: APK
-ownerType: human
 created: 2026-10-29
-order: 3
 depends_on: [apk-001]
 ---
 # Deploy and logcat scripts

@@ -1,13 +1,10 @@
 ---
 id: test-002
 title: "On-TV smoke test and first deploy"
-status: Todo
 priority: P2
 tags: [v1, test, apk]
 epic: Testing
-ownerType: human
 created: 2026-10-29
-order: 36
 depends_on: [apk-003, liv-002, ply-001, cfg-002]
 ---
 # On-TV smoke test and first deploy

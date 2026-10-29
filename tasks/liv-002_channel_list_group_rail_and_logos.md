@@ -1,13 +1,10 @@
 ---
 id: liv-002
 title: "Channel list, group rail and logos"
-status: Todo
 priority: P1
 tags: [v1, channels, ui]
 epic: Live TV
-ownerType: human
 created: 2026-10-29
-order: 15
 depends_on: [liv-001, ui-002]
 ---
 # Channel list, group rail and logos
