@@ -1,0 +1,12 @@
+daemon.json
+daemon.lock
+.undo/
+
+# Generated single-file web app. Recreated by `kandown` / `kandown update`.
+kandown.html
+
+# Local extension state. Which extensions you enabled and which you trusted is a
+# per-machine decision, and a committed copy is ignored at load time anyway
+# (see docs/EXTENSIONS.md).
+extensions/enabled.json
+extensions/trust.json

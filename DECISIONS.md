@@ -1,0 +1,96 @@
+# Decisions
+
+Short record of product and architecture decisions. The task board in `tasks/` is the
+implementation plan.
+
+## Identity
+
+- App name: **Streaming**
+- Package: `com.andres3336.streaming`
+- Platform: Android TV / Google TV first
+- Language: **Spanish only**
+- UI strings live in the default `values/strings.xml`; no translation files
+
+## Target device
+
+- Android TV 11 / API 30
+- 32-bit `armeabi-v7a`
+- About 5 GB free storage
+- Streaming is the priority
+
+## Sources
+
+- Curated live channels from a private/secret gist M3U
+- Xtream for live, movies and series
+- Live source mode is configurable: `gist`, `xtream`, or `merge`
+- Grandma profile uses `gist` only, so Xtream's 10k live list is never loaded
+- No Stalker, Jellyfin, Stremio, or DRM
+
+## Remote configuration
+
+- No setup code in V1
+- One APK; the config URL is embedded at build time
+- Config is a JSON file in a secret/unlisted gist
+- The app checks on cold start, on resume, on source failure, and via a hidden manual action
+- **No periodic timer**
+- Last-known-good config is cached and encrypted with Android Keystore
+- New config is validated and applied atomically
+- If Xtream or the M3U source breaks, show a Spanish dialog to fetch config again and retry
+- Do not prompt for a single dead channel
+- No per-device credentials or source configuration
+
+Secret gist caveat: GitHub secret gists are unlisted, not access-controlled. Treat the
+config URL as a password. A truly private source requires a backend, which is out of scope.
+
+## UI and profiles
+
+- One universal browse/player skeleton for live, movies and series
+- `MediaItem` + `MediaCapabilities` drive type-specific slots
+- Live: zapping and optional now/next
+- Movie: seekbar and resume
+- Series: seasons, episodes and next episode
+- Grandma mode is a local, PIN-protected simple mode stored on the TV
+- Simple mode shows live TV only and hides settings, sections and source switching
+- App-level lock only; it is not an Android kiosk/device-owner mode
+
+## Player
+
+- Media3 ExoPlayer only
+- HLS, MPEG-TS, MP4
+- No mpv, no FFmpeg native extension
+- Per-channel User-Agent/Referer headers
+- Retry, fallback and reconnect
+- Audio/subtitle pickers
+- Aspect/zoom: Fit, Fill, Stretch, Original, Force 16:9, Force 4:3
+- Stream info: codec, resolution, FPS, bitrate, buffer, dropped frames, decoder, bandwidth
+- External player handoff in V1.1
+
+## Video cache
+
+- Cache **VOD only**, never live TV
+- Live caching does not improve transmission and adds latency and disk churn
+- Sizes: 100, 250 or 500 MB, LRU eviction
+- Default: 250 MB
+- Clear-on-start is optional and off by default
+- Manual clear cache always available
+- Clearing on exit is not used because process death makes it unreliable
+
+## Non-goals
+
+- Recording, DVR, timeshift, live rewind
+- Catch-up/archive
+- Downloads and offline video
+- Multiview
+- Full EPG grid (now/next is optional in V1.1)
+- mpv/FFmpeg, Widevine/ClearKey DRM
+- TMDB, Trakt, Stremio, Cast, Watch Next, TV Input
+- Full profiles, local sync, per-device config
+- Glass/blur/ambient/animation engines
+- RTL support
+- In-app updates and QR setup
+
+## Licensing
+
+OpenTV and OwnTV are GPL-3.0; StreamVault is source-available and non-commercial.
+Use them as UX references and write clean-room code. Do not copy their source unless
+the project accepts the corresponding license.
