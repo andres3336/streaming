@@ -5,15 +5,13 @@ Detailed specs live in `tasks/`. The change log lives in `HISTORY.md`.
 
 ## Now
 
-- [ ] apk-001 · Toolchain and Android scaffold · P1 · [spec](tasks/apk-001_toolchain_and_android_scaffold.md)
-- [ ] apk-002 · TV manifest, banner and launcher assets · P1 · [spec](tasks/apk-002_tv_manifest_banner_and_launcher_assets.md)
-- [ ] apk-003 · Deploy and logcat scripts · P2 · [spec](tasks/apk-003_deploy_and_logcat_scripts.md)
+- [ ] cfg-001 · Config schema and validator · P1 · [spec](tasks/cfg-001_config_schema_and_validator.md)
+- [ ] cfg-002 · Fetch config from secret gist · P1 · [spec](tasks/cfg-002_fetch_config_from_secret_gist.md)
+- [ ] liv-001 · M3U parser · P1 · [spec](tasks/liv-001_m3u_parser.md)
 
 ## Next
 
 ### Config
-- [ ] cfg-001 · Config schema and validator · P1 · [spec](tasks/cfg-001_config_schema_and_validator.md)
-- [ ] cfg-002 · Fetch config from secret gist · P1 · [spec](tasks/cfg-002_fetch_config_from_secret_gist.md)
 - [ ] cfg-003 · Encrypted last-known-good config cache · P1 · [spec](tasks/cfg-003_encrypted_last_known_good_config_cache.md)
 - [ ] cfg-004 · Config refresh on start, resume and failure · P1 · [spec](tasks/cfg-004_config_refresh_on_start_resume_and_failure.md)
 - [ ] cfg-005 · Grandma mode lock with PIN · P1 · [spec](tasks/cfg-005_grandma_mode_lock_with_pin.md)
@@ -24,7 +22,6 @@ Detailed specs live in `tasks/`. The change log lives in `HISTORY.md`.
 - [ ] cfg-007 · Config validate and publish script · P2 · [spec](tasks/cfg-007_config_validate_and_publish_script.md)
 
 ### Live TV
-- [ ] liv-001 · M3U parser · P1 · [spec](tasks/liv-001_m3u_parser.md)
 - [ ] liv-002 · Channel list, group rail and logos · P1 · [spec](tasks/liv-002_channel_list_group_rail_and_logos.md)
 - [ ] liv-003 · Favorites, recents and last channel · P1 · [spec](tasks/liv-003_favorites_recents_and_last_channel.md)
 - [ ] liv-004 · Channel search · P1 · [spec](tasks/liv-004_channel_search.md)
@@ -112,3 +109,6 @@ Detailed specs live in `tasks/`. The change log lives in `HISTORY.md`.
 ## Done
 
 - [x] 2026-10-29 · Imported 73 task specs from Kandown (see `HISTORY.md`)
+- [x] 2026-10-29 · apk-001 Toolchain and Android scaffold
+- [x] 2026-10-29 · apk-002 TV manifest, banner and launcher assets
+- [x] 2026-10-29 · apk-003 Deploy and logcat scripts
