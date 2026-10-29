@@ -175,9 +175,7 @@ class XtreamClient(
                     XtreamResult.Success(response.body?.string().orEmpty())
                 }
             } catch (error: Exception) {
-                XtreamResult.Failure(
-                    "No se pudo conectar con Xtream: ${error.message ?: "error de red"}",
-                )
+                XtreamResult.Failure("No se pudo conectar con Xtream.")
             }
         }
 

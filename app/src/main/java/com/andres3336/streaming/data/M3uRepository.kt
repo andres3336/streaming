@@ -48,9 +48,7 @@ class M3uRepository(
                 }
             }
         } catch (error: Exception) {
-            M3uFetch.Failure(
-                "No se pudo cargar la lista de canales: ${error.message ?: "error de red"}",
-            )
+            M3uFetch.Failure("No se pudo cargar la lista de canales.")
         }
     }
 }

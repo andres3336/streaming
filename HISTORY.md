@@ -70,3 +70,11 @@ Append-only. Newest entries at the bottom.
   playback is deferred until the player closes.
 - Verified playback survives Home/resume and the manual refresh completes without
   interrupting the UI. Version 0.8.0.
+- Added VOD resume positions and a `Continuar` tab. Positions save every 5 seconds,
+  on stop and on exit; verified a movie resumed from 0:17.
+- Added next-episode auto-play with a 10-second countdown and Reproducir ahora /
+  Cancelar overlay. The queue comes from the Xtream season episodes.
+- Security fix: playback positions are now Keystore AES-GCM encrypted because the
+  stored URLs contain Xtream credentials. The legacy plaintext file is deleted.
+- Sanitized config, playlist, Xtream and player errors so URLs/credentials are not
+  logged or shown. 43 unit tests passing. Version 0.9.0.

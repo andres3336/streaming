@@ -85,11 +85,9 @@ Detailed specs live in `tasks/`. The change log lives in `HISTORY.md`.
 ### Movies
 - [ ] vod-001 · Xtream Movies browse · P3 · [spec](tasks/vod-001_xtream_movies_browse.md)
 - [ ] vod-003 · Xtream metadata for movies and series · P3 · [spec](tasks/vod-003_xtream_metadata_for_movies_and_series.md)
-- [ ] vod-004 · Resume and Continue watching · P3 · [spec](tasks/vod-004_resume_and_continue_watching.md)
 
 ### Series
 - [ ] vod-002 · Xtream Series browse · P3 · [spec](tasks/vod-002_xtream_series_browse.md)
-- [ ] vod-005 · Next episode auto-play · P3 · [spec](tasks/vod-005_next_episode_auto_play.md)
 
 ### EPG
 - [ ] epg-001 · Optional XMLTV source from config · P3 · [spec](tasks/epg-001_optional_xmltv_source_from_config.md)
@@ -106,6 +104,8 @@ Detailed specs live in `tasks/`. The change log lives in `HISTORY.md`.
 - [x] 2026-10-29 · Local device overrides + Ajustes (buffer, quality, aspect, cache, network)
 - [x] 2026-10-29 · ply-009 VOD disk cache 100 to 500 MB
 - [x] 2026-10-29 · cfg-003 Encrypted last-known-good config cache
+- [x] 2026-10-29 · vod-004 VOD resume + Continue watching
+- [x] 2026-10-29 · vod-005 Next episode auto-play (core; toggle pending)
 - [x] 2026-10-29 · apk-001 Toolchain and Android scaffold
 - [x] 2026-10-29 · apk-002 TV manifest, banner and launcher assets
 - [x] 2026-10-29 · apk-003 Deploy and logcat scripts

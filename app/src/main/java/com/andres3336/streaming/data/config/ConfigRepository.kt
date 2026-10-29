@@ -52,9 +52,7 @@ class ConfigRepository(
                 }
             }
         } catch (error: Exception) {
-            ConfigFetch.Failure(
-                "No se pudo conectar con la configuración: ${error.message ?: "error de red"}",
-            )
+            ConfigFetch.Failure("No se pudo conectar con la configuración.")
         }
     }
 }

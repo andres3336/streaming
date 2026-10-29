@@ -82,6 +82,9 @@ import com.andres3336.streaming.data.config.NetworkConfig
 import com.andres3336.streaming.data.config.PlayerConfig
 import com.andres3336.streaming.data.config.SourcesConfig
 import com.andres3336.streaming.data.config.XtreamConfig
+import com.andres3336.streaming.data.playback.PlaybackEntry
+import com.andres3336.streaming.data.playback.PlaybackRequest
+import com.andres3336.streaming.data.playback.PlaybackStore
 import com.andres3336.streaming.data.settings.DeviceSettings
 import com.andres3336.streaming.data.settings.DeviceSettingsStore
 import com.andres3336.streaming.data.settings.SettingsOptions
@@ -99,6 +102,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -130,6 +134,7 @@ private fun StreamingApp() {
     val m3uRepository = remember(client) { M3uRepository(client) }
     val configCache = remember { ConfigCache(context) }
     val settingsStore = remember { DeviceSettingsStore(context) }
+    val playbackStore = remember { PlaybackStore(context) }
     val scope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -139,7 +144,8 @@ private fun StreamingApp() {
     var lastReady by remember { mutableStateOf<AppState.Ready?>(null) }
     var centralConfig by remember { mutableStateOf<AppConfig?>(null) }
     var deviceSettings by remember { mutableStateOf(DeviceSettings()) }
-    var playing by remember { mutableStateOf<Channel?>(null) }
+    var playbackEntries by remember { mutableStateOf<List<PlaybackEntry>>(emptyList()) }
+    var playing by remember { mutableStateOf<PlaybackRequest?>(null) }
     var refreshTick by remember { mutableIntStateOf(0) }
     var refreshing by remember { mutableStateOf(false) }
     var pendingRefresh by remember { mutableStateOf(false) }
@@ -147,6 +153,7 @@ private fun StreamingApp() {
 
     LaunchedEffect(Unit) {
         deviceSettings = withContext(Dispatchers.IO) { settingsStore.load() }
+        playbackEntries = withContext(Dispatchers.IO) { playbackStore.load() }
     }
 
     LaunchedEffect(retry) {
@@ -202,6 +209,39 @@ private fun StreamingApp() {
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
+    val onSelect: (PlaybackRequest) -> Unit = { request ->
+        val savedPosition = playbackEntries
+            .firstOrNull { it.url == request.channel.url && it.isResumable }
+            ?.positionMs
+            ?: 0L
+
+        playing = if (request.startPositionMs > 0L) {
+            request
+        } else {
+            request.copy(startPositionMs = savedPosition)
+        }
+    }
+
+    val onProgress: (Channel, Long, Long) -> Unit = { channel, position, duration ->
+        PlaybackEntry.fromProgress(channel, position, duration)?.let { entry ->
+            val updated = (playbackEntries.filterNot { it.url == channel.url } + entry)
+                .filter(PlaybackEntry::isResumable)
+                .sortedByDescending(PlaybackEntry::updatedAt)
+                .take(50)
+
+            playbackEntries = updated
+            scope.launch(Dispatchers.IO) { playbackStore.save(updated) }
+        }
+    }
+
+    val onFinished: (Channel) -> Unit = { channel ->
+        val updated = playbackEntries.filterNot { it.url == channel.url }
+        if (updated.size != playbackEntries.size) {
+            playbackEntries = updated
+            scope.launch(Dispatchers.IO) { playbackStore.save(updated) }
+        }
+    }
+
     val closePlayback = {
         playing = null
         if (pendingRefresh) {
@@ -220,8 +260,11 @@ private fun StreamingApp() {
             config = effectiveConfig ?: current.config,
             settings = deviceSettings,
             selected = playing,
-            onSelect = { playing = it },
+            onSelect = onSelect,
             onClose = closePlayback,
+            playbackEntries = playbackEntries,
+            onProgress = onProgress,
+            onFinished = onFinished,
             refreshing = refreshing,
             onRefreshConfig = { if (playing == null) refreshTick++ },
             onSettingsChange = { updated ->
@@ -408,9 +451,12 @@ private fun ReadyScreen(
     ready: AppState.Ready,
     config: AppConfig,
     settings: DeviceSettings,
-    selected: Channel?,
-    onSelect: (Channel) -> Unit,
+    selected: PlaybackRequest?,
+    onSelect: (PlaybackRequest) -> Unit,
     onClose: () -> Unit,
+    playbackEntries: List<PlaybackEntry>,
+    onProgress: (Channel, Long, Long) -> Unit,
+    onFinished: (Channel) -> Unit,
     refreshing: Boolean,
     onRefreshConfig: () -> Unit,
     onSettingsChange: (DeviceSettings) -> Unit,
@@ -420,13 +466,16 @@ private fun ReadyScreen(
 
     BackHandler(enabled = selected != null) { onClose() }
 
-    val channel = selected
-    if (channel != null) {
+    val request = selected
+    if (request != null) {
         PlaybackScreen(
-            channel = channel,
+            request = request,
             playerConfig = config.player,
             networkConfig = config.network,
             cacheConfig = config.cache,
+            onProgress = onProgress,
+            onFinished = onFinished,
+            onNext = onSelect,
             onClose = onClose,
         )
         return
@@ -435,9 +484,11 @@ private fun ReadyScreen(
     val xtream = config.sources.xtream
     val showMovies = xtream != null && "movies" in config.ui.sections
     val showSeries = xtream != null && "series" in config.ui.sections
+    val showContinue = playbackEntries.isNotEmpty()
     val activeSection = when {
         section == "movies" && !showMovies -> "live"
         section == "series" && !showSeries -> "live"
+        section == "continue" && !showContinue -> "live"
         else -> section
     }
 
@@ -457,6 +508,7 @@ private fun ReadyScreen(
             text = when (activeSection) {
                 "movies" -> "Xtream · Películas"
                 "series" -> "Xtream · Series"
+                "continue" -> "Continuar viendo"
                 "settings" -> "Ajustes · solo este TV"
                 else -> "${ready.sourceLabel} · ${ready.channels.size} canales"
             },
@@ -468,6 +520,7 @@ private fun ReadyScreen(
             section = activeSection,
             showMovies = showMovies,
             showSeries = showSeries,
+            showContinue = showContinue,
             showSettings = true,
             onSelect = { section = it },
         )
@@ -480,7 +533,7 @@ private fun ReadyScreen(
                         XtreamMoviesScreen(
                             xtream = xtream,
                             playerConfig = config.player,
-                            onPlay = { onSelect(it) },
+                            onPlay = { onSelect(PlaybackRequest(it)) },
                         )
                     }
                 }
@@ -490,10 +543,15 @@ private fun ReadyScreen(
                         XtreamSeriesScreen(
                             xtream = xtream,
                             playerConfig = config.player,
-                            onPlay = { onSelect(it) },
+                            onPlay = onSelect,
                         )
                     }
                 }
+
+                "continue" -> ContinueWatchingScreen(
+                    entries = playbackEntries,
+                    onSelect = onSelect,
+                )
 
                 "settings" -> SettingsScreen(
                     config = config,
@@ -504,7 +562,7 @@ private fun ReadyScreen(
                     onClearCache = { VideoCache.clear(context) },
                 )
 
-                else -> ChannelList(ready.channels) { onSelect(it) }
+                else -> ChannelList(ready.channels) { onSelect(PlaybackRequest(it)) }
             }
         }
     }
@@ -515,11 +573,15 @@ private fun SectionBar(
     section: String,
     showMovies: Boolean,
     showSeries: Boolean,
+    showContinue: Boolean,
     showSettings: Boolean,
     onSelect: (String) -> Unit,
 ) {
     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionButton("En vivo", selected = section == "live") { onSelect("live") }
+        if (showContinue) {
+            SectionButton("Continuar", selected = section == "continue") { onSelect("continue") }
+        }
         if (showMovies) {
             SectionButton("Películas", selected = section == "movies") { onSelect("movies") }
         }
@@ -778,7 +840,7 @@ private fun MovieRow(movie: XtreamMovie, onClick: () -> Unit) {
 private fun XtreamSeriesScreen(
     xtream: XtreamConfig,
     playerConfig: PlayerConfig,
-    onPlay: (Channel) -> Unit,
+    onPlay: (PlaybackRequest) -> Unit,
 ) {
     val client = remember(xtream, playerConfig.userAgent) {
         XtreamClient(xtream, userAgent = playerConfig.userAgent)
@@ -931,7 +993,7 @@ private fun SeriesDetail(
     client: XtreamClient,
     series: XtreamSeries,
     onBack: () -> Unit,
-    onPlay: (Channel) -> Unit,
+    onPlay: (PlaybackRequest) -> Unit,
 ) {
     var info by remember(series.id) { mutableStateOf<XtreamSeriesInfo?>(null) }
     var loading by remember { mutableStateOf(true) }
@@ -996,41 +1058,55 @@ private fun SeriesDetail(
                     CenteredMessage("No hay episodios")
                 }
 
-                else -> LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    seriesInfo.seasons.forEach { season ->
-                        item(key = "season-${season.number}") {
-                            Text(
-                                text = "Temporada ${season.number}",
-                                color = Color(0xFF93C5FD),
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
-                            )
-                        }
-                        items(season.episodes) { episode ->
-                            Button(
-                                onClick = {
-                                    onPlay(
-                                        Channel(
-                                            name = "${series.name} T${episode.season}E${episode.episode} · ${episode.title}",
-                                            url = client.episodeUrl(episode),
-                                            group = "Series",
-                                            logo = series.cover,
-                                            tvgId = episode.id,
-                                            isVod = true,
-                                        ),
-                                    )
-                                },
-                                modifier = Modifier.fillMaxWidth(),
-                            ) {
+                else -> {
+                    val allEpisodes = seriesInfo.seasons
+                        .flatMap { it.episodes }
+                        .sortedWith(compareBy({ it.season }, { it.episode }))
+
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        seriesInfo.seasons.forEach { season ->
+                            item(key = "season-${season.number}") {
                                 Text(
-                                    text = "T${episode.season} E${episode.episode} · ${episode.title}",
-                                    fontSize = 17.sp,
-                                    maxLines = 1,
+                                    text = "Temporada ${season.number}",
+                                    color = Color(0xFF93C5FD),
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
                                 )
+                            }
+                            items(season.episodes) { episode ->
+                                Button(
+                                    onClick = {
+                                        val queue = allEpisodes.map { item ->
+                                            Channel(
+                                                name = "${series.name} T${item.season}E${item.episode} · ${item.title}",
+                                                url = client.episodeUrl(item),
+                                                group = "Series",
+                                                logo = series.cover,
+                                                tvgId = item.id,
+                                                isVod = true,
+                                            )
+                                        }
+                                        val index = allEpisodes.indexOf(episode).coerceAtLeast(0)
+                                        onPlay(
+                                            PlaybackRequest(
+                                                channel = queue[index],
+                                                queue = queue,
+                                                index = index,
+                                            ),
+                                        )
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                ) {
+                                    Text(
+                                        text = "T${episode.season} E${episode.episode} · ${episode.title}",
+                                        fontSize = 17.sp,
+                                        maxLines = 1,
+                                    )
+                                }
                             }
                         }
                     }
@@ -1091,6 +1167,69 @@ private fun ChannelInitial(name: String) {
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
         )
+    }
+}
+
+@Composable
+private fun ContinueWatchingScreen(
+    entries: List<PlaybackEntry>,
+    onSelect: (PlaybackRequest) -> Unit,
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        items(entries, key = { it.url }) { entry ->
+            Button(
+                onClick = {
+                    onSelect(PlaybackRequest(entry.toChannel(), startPositionMs = entry.positionMs))
+                },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    AsyncImage(
+                        model = entry.logo,
+                        contentDescription = null,
+                        placeholder = painterResource(R.drawable.ic_channel_placeholder),
+                        error = painterResource(R.drawable.ic_channel_placeholder),
+                        fallback = painterResource(R.drawable.ic_channel_placeholder),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .width(48.dp)
+                            .height(72.dp),
+                    )
+                    Spacer(Modifier.width(16.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = entry.name,
+                            color = Color.White,
+                            fontSize = 18.sp,
+                            maxLines = 1,
+                        )
+                        Text(
+                            text = "${formatDuration(entry.positionMs)} / ${formatDuration(entry.durationMs)}",
+                            color = Color(0xFF94A3B8),
+                            fontSize = 14.sp,
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+private fun formatDuration(ms: Long): String {
+    val totalSeconds = (ms / 1000).coerceAtLeast(0)
+    val hours = totalSeconds / 3600
+    val minutes = (totalSeconds % 3600) / 60
+    val seconds = totalSeconds % 60
+    return if (hours > 0) {
+        String.format(Locale.US, "%d:%02d:%02d", hours, minutes, seconds)
+    } else {
+        String.format(Locale.US, "%d:%02d", minutes, seconds)
     }
 }
 
@@ -1279,12 +1418,16 @@ private fun ChoiceRow(
 
 @Composable
 private fun PlaybackScreen(
-    channel: Channel,
+    request: PlaybackRequest,
     playerConfig: PlayerConfig,
     networkConfig: NetworkConfig,
     cacheConfig: CacheConfig,
+    onProgress: (Channel, Long, Long) -> Unit,
+    onFinished: (Channel) -> Unit,
+    onNext: (PlaybackRequest) -> Unit,
     onClose: () -> Unit,
 ) {
+    val channel = request.channel
     val context = LocalContext.current
     val allowed = remember(networkConfig.wifiOnly) {
         NetworkPolicy.isAllowed(context, networkConfig.wifiOnly)
@@ -1297,7 +1440,10 @@ private fun PlaybackScreen(
     var retryToken by remember(channel) { mutableIntStateOf(0) }
     var autoRetries by remember(channel) { mutableIntStateOf(0) }
     var errorMessage by remember(channel) { mutableStateOf<String?>(null) }
+    var showNext by remember(channel) { mutableStateOf(false) }
+    var countdown by remember(channel) { mutableIntStateOf(10) }
     val retryFocus = remember { FocusRequester() }
+    val nextFocus = remember { FocusRequester() }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val player = remember(channel, playerConfig, networkConfig, cacheConfig, retryToken) {
@@ -1305,10 +1451,18 @@ private fun PlaybackScreen(
             exoPlayer.addListener(object : Player.Listener {
                 override fun onPlaybackStateChanged(playbackState: Int) {
                     if (BuildConfig.DEBUG) Log.d("Streaming", "state=$playbackState")
+
+                    if (playbackState == Player.STATE_ENDED && channel.isVod) {
+                        onFinished(channel)
+                        if (request.next != null) {
+                            countdown = 10
+                            showNext = true
+                        }
+                    }
                 }
 
                 override fun onPlayerError(error: PlaybackException) {
-                    Log.e("Streaming", "player error", error)
+                    Log.e("Streaming", "player error ${error.errorCodeName}")
                     errorMessage = friendlyPlaybackError(error)
                 }
 
@@ -1328,6 +1482,41 @@ private fun PlaybackScreen(
     LaunchedEffect(player) {
         player.prepare()
         player.playWhenReady = true
+        if (request.startPositionMs > 0L) {
+            player.seekTo(request.startPositionMs)
+        }
+    }
+
+    LaunchedEffect(player, channel) {
+        if (!channel.isVod) return@LaunchedEffect
+
+        while (true) {
+            delay(5_000)
+            val duration = player.duration
+            if (duration > 0L) {
+                onProgress(channel, player.currentPosition, duration)
+            }
+        }
+    }
+
+    LaunchedEffect(showNext, countdown) {
+        if (!showNext) return@LaunchedEffect
+
+        if (countdown <= 0) {
+            showNext = false
+            request.nextRequest()?.let(onNext)
+            return@LaunchedEffect
+        }
+
+        delay(1_000)
+        countdown -= 1
+    }
+
+    LaunchedEffect(showNext) {
+        if (showNext) {
+            delay(150)
+            runCatching { nextFocus.requestFocus() }
+        }
     }
 
     LaunchedEffect(errorMessage, channel.isVod) {
@@ -1346,16 +1535,30 @@ private fun PlaybackScreen(
         }
     }
 
-    DisposableEffect(player) {
-        onDispose { player.release() }
+    DisposableEffect(player, channel) {
+        onDispose {
+            if (channel.isVod) {
+                val duration = player.duration
+                if (duration > 0L) {
+                    onProgress(channel, player.currentPosition, duration)
+                }
+            }
+            player.release()
+        }
     }
 
-    DisposableEffect(lifecycleOwner, player) {
+    DisposableEffect(lifecycleOwner, player, channel) {
         var resumeOnStart = false
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_STOP -> {
                     resumeOnStart = player.isPlaying
+                    if (channel.isVod) {
+                        val duration = player.duration
+                        if (duration > 0L) {
+                            onProgress(channel, player.currentPosition, duration)
+                        }
+                    }
                     player.pause()
                 }
 
@@ -1408,6 +1611,72 @@ private fun PlaybackScreen(
                 },
                 onClose = onClose,
             )
+        }
+
+        if (showNext) {
+            NextEpisodeOverlay(
+                title = request.next?.name.orEmpty(),
+                seconds = countdown,
+                focusRequester = nextFocus,
+                onPlayNow = {
+                    showNext = false
+                    request.nextRequest()?.let(onNext)
+                },
+                onCancel = { showNext = false },
+            )
+        }
+    }
+}
+
+@Composable
+private fun NextEpisodeOverlay(
+    title: String,
+    seconds: Int,
+    focusRequester: FocusRequester,
+    onPlayNow: () -> Unit,
+    onCancel: () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xCC000000))
+            .padding(48.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "Siguiente episodio",
+                color = Color.White,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = title,
+                color = Color(0xFF94A3B8),
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center,
+                maxLines = 2,
+            )
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = "Se reproduce en $seconds s",
+                color = Color(0xFF3B82F6),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(Modifier.height(20.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Button(
+                    onClick = onPlayNow,
+                    modifier = Modifier.focusRequester(focusRequester),
+                ) {
+                    Text("Reproducir ahora", fontSize = 18.sp)
+                }
+                Button(onClick = onCancel) {
+                    Text("Cancelar", fontSize = 18.sp)
+                }
+            }
         }
     }
 }
