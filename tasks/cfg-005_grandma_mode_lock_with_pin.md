@@ -1,8 +1,8 @@
 ---
 id: cfg-005
 title: "Grandma mode lock with PIN"
-priority: P1
-tags: [v1, config, ui, security]
+priority: P3
+tags: [v2, config, ui, security]
 epic: Config
 created: 2026-10-29
 depends_on: [cfg-001, ui-003]
@@ -23,4 +23,6 @@ A local, PIN-protected simple mode so one TV shows only the curated gist live li
 
 ## Notes
 
+Deferred to v2. V1 has no simple mode and no PIN. The v2 PIN/no-PIN policy is not
+decided yet.
 See `DECISIONS.md` for project-wide scope and non-goals.

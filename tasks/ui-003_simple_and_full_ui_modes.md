@@ -1,8 +1,8 @@
 ---
 id: ui-003
 title: "Simple and Full UI modes"
-priority: P1
-tags: [v1, ui]
+priority: P3
+tags: [v2, ui]
 epic: Shared UI
 created: 2026-10-29
 depends_on: [ui-002, cfg-005]
@@ -22,4 +22,5 @@ The same APK can behave as a locked grandma TV or a full family TV.
 
 ## Notes
 
+Deferred to v2. V1 uses one UI for every TV.
 See `DECISIONS.md` for project-wide scope and non-goals.

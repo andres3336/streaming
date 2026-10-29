@@ -8,7 +8,7 @@ import okhttp3.Request
 sealed interface ConfigFetch {
     data object MissingUrl : ConfigFetch
     data object NotModified : ConfigFetch
-    data class Success(val config: AppConfig, val etag: String?) : ConfigFetch
+    data class Success(val config: AppConfig, val etag: String?, val raw: String) : ConfigFetch
     data class Failure(val message: String) : ConfigFetch
 }
 
@@ -41,6 +41,7 @@ class ConfigRepository(
                             is ConfigResult.Valid -> ConfigFetch.Success(
                                 config = parsed.config,
                                 etag = response.header("ETag"),
+                                raw = body,
                             )
 
                             is ConfigResult.Invalid -> ConfigFetch.Failure(

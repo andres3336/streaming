@@ -54,3 +54,8 @@ Append-only. Newest entries at the bottom.
   VOD-only Media3 SimpleCache.
 - Verified on the TV: buffer persisted across restart, the VOD cache grew to ~13 MB,
   and clearing removed the cache directory. 34 unit tests passing. Version 0.5.0.
+- Added the encrypted last-known-good config cache: Android Keystore AES-GCM, atomic
+  write, and fallback when the gist is unreachable.
+- Verified the fallback by building against an unreachable config URL: the app started
+  from the cache, loaded the real playlist and showed `Gist · caché`. The cache file
+  contains no plaintext credentials or playlist URL. Version 0.6.0.

@@ -71,9 +71,12 @@ import com.andres3336.streaming.data.M3uParser
 import com.andres3336.streaming.data.M3uRepository
 import com.andres3336.streaming.data.config.ConfigFetch
 import com.andres3336.streaming.data.config.ConfigRepository
+import com.andres3336.streaming.data.config.ConfigCache
+import com.andres3336.streaming.data.config.ConfigResult
 import com.andres3336.streaming.data.config.AppConfig
 import com.andres3336.streaming.data.config.CacheConfig
 import com.andres3336.streaming.data.config.ConfigMerger
+import com.andres3336.streaming.data.config.ConfigParser
 import com.andres3336.streaming.data.config.LiveMode
 import com.andres3336.streaming.data.config.NetworkConfig
 import com.andres3336.streaming.data.config.PlayerConfig
@@ -125,6 +128,7 @@ private fun StreamingApp() {
     val client = remember { OkHttpClient() }
     val configRepository = remember(client) { ConfigRepository(BuildConfig.CONFIG_URL, client) }
     val m3uRepository = remember(client) { M3uRepository(client) }
+    val configCache = remember { ConfigCache(context) }
     val settingsStore = remember { DeviceSettingsStore(context) }
     val scope = rememberCoroutineScope()
 
@@ -141,7 +145,7 @@ private fun StreamingApp() {
 
     LaunchedEffect(retry) {
         state = AppState.Loading
-        val loaded = loadApp(context, configRepository, m3uRepository, etag, lastReady)
+        val loaded = loadApp(context, configRepository, m3uRepository, configCache, etag, lastReady)
         state = loaded
         if (loaded is AppState.Ready) {
             lastReady = loaded
@@ -171,6 +175,7 @@ private suspend fun loadApp(
     context: Context,
     configRepository: ConfigRepository,
     m3uRepository: M3uRepository,
+    configCache: ConfigCache,
     etag: String?,
     lastReady: AppState.Ready?,
 ): AppState {
@@ -193,32 +198,69 @@ private suspend fun loadApp(
 
     return when (val fetched = configRepository.fetch(etag)) {
         is ConfigFetch.MissingUrl -> AppState.Error("Falta la URL de configuración")
+
         is ConfigFetch.NotModified -> lastReady
+            ?: loadCached(configCache, m3uRepository)
             ?: AppState.Error("La configuración no cambió y no hay copia local")
 
-        is ConfigFetch.Failure -> AppState.Error(fetched.message)
-        is ConfigFetch.Success -> {
-            val config = fetched.config
-            val m3uUrl = config.sources.m3uUrl
-            if (m3uUrl == null) {
-                AppState.Error("La configuración no incluye una lista M3U")
-            } else {
-                when (val playlist = m3uRepository.load(
-                    url = m3uUrl,
-                    userAgent = config.player.userAgent,
-                    headers = config.player.headers,
-                )) {
-                    is M3uFetch.Success -> AppState.Ready(
-                        channels = playlist.channels,
-                        config = config,
-                        sourceLabel = if (config.sources.liveMode == LiveMode.GIST) "Gist" else "Remoto",
-                        etag = fetched.etag,
-                    )
+        is ConfigFetch.Failure -> loadCached(configCache, m3uRepository)
+            ?: AppState.Error(fetched.message)
 
-                    is M3uFetch.Failure -> AppState.Error(playlist.message)
-                }
-            }
+        is ConfigFetch.Success -> {
+            configCache.save(fetched.raw)
+            loadFromConfig(
+                config = fetched.config,
+                etag = fetched.etag,
+                sourceLabel = if (fetched.config.sources.liveMode == LiveMode.GIST) {
+                    "Gist"
+                } else {
+                    "Remoto"
+                },
+                m3uRepository = m3uRepository,
+            )
         }
+    }
+}
+
+private suspend fun loadCached(
+    configCache: ConfigCache,
+    m3uRepository: M3uRepository,
+): AppState? {
+    val cached = configCache.load() ?: return null
+    val parsed = ConfigParser.parse(cached)
+    if (parsed !is ConfigResult.Valid) return null
+
+    val config = parsed.config
+    return loadFromConfig(
+        config = config,
+        etag = null,
+        sourceLabel = if (config.sources.liveMode == LiveMode.GIST) "Gist · caché" else "Remoto · caché",
+        m3uRepository = m3uRepository,
+    )
+}
+
+private suspend fun loadFromConfig(
+    config: AppConfig,
+    etag: String?,
+    sourceLabel: String,
+    m3uRepository: M3uRepository,
+): AppState {
+    val m3uUrl = config.sources.m3uUrl
+        ?: return AppState.Error("La configuración no incluye una lista M3U")
+
+    return when (val playlist = m3uRepository.load(
+        url = m3uUrl,
+        userAgent = config.player.userAgent,
+        headers = config.player.headers,
+    )) {
+        is M3uFetch.Success -> AppState.Ready(
+            channels = playlist.channels,
+            config = config,
+            sourceLabel = sourceLabel,
+            etag = etag,
+        )
+
+        is M3uFetch.Failure -> AppState.Error(playlist.message)
     }
 }
 

@@ -41,6 +41,7 @@ class ConfigRepositoryTest {
         val success = result as ConfigFetch.Success
         assertEquals(1, success.config.version)
         assertEquals("\"v1\"", success.etag)
+        assertTrue(success.raw.contains("\"version\""))
     }
 
     @Test

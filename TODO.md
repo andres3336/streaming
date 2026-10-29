@@ -7,13 +7,11 @@ Detailed specs live in `tasks/`. The change log lives in `HISTORY.md`.
 
 - [ ] liv-002 · Channel list, group rail and logos · P1 · [spec](tasks/liv-002_channel_list_group_rail_and_logos.md)
 - [ ] ply-002 · Retry, fallback and reconnect · P1 · [spec](tasks/ply-002_retry_fallback_and_reconnect.md)
-- [ ] cfg-003 · Encrypted last-known-good config cache · P1 · [spec](tasks/cfg-003_encrypted_last_known_good_config_cache.md)
+- [ ] cfg-004 · Config refresh on start, resume and failure · P1 · [spec](tasks/cfg-004_config_refresh_on_start_resume_and_failure.md)
 
 ## Next
 
 ### Config
-- [ ] cfg-004 · Config refresh on start, resume and failure · P1 · [spec](tasks/cfg-004_config_refresh_on_start_resume_and_failure.md)
-- [ ] cfg-005 · Grandma mode lock with PIN · P1 · [spec](tasks/cfg-005_grandma_mode_lock_with_pin.md)
 - [ ] cfg-006 · First-run loading and retry screen · P1 · [spec](tasks/cfg-006_first_run_loading_and_retry_screen.md)
 - [ ] cfg-008 · Source health check · P1 · [spec](tasks/cfg-008_source_health_check.md)
 - [ ] cfg-009 · Update-config dialog and retry flow · P1 · [spec](tasks/cfg-009_update_config_dialog_and_retry_flow.md)
@@ -39,7 +37,6 @@ Detailed specs live in `tasks/`. The change log lives in `HISTORY.md`.
 ### Shared UI
 - [ ] ui-001 · Universal MediaItem and capabilities model · P1 · [spec](tasks/ui-001_universal_mediaitem_and_capabilities_model.md)
 - [ ] ui-002 · Reusable browse shell · P1 · [spec](tasks/ui-002_reusable_browse_shell.md)
-- [ ] ui-003 · Simple and Full UI modes · P1 · [spec](tasks/ui-003_simple_and_full_ui_modes.md)
 - [ ] ui-004 · Spanish-only strings and locale · P1 · [spec](tasks/ui-004_spanish_only_strings_and_locale.md)
 
 ### Testing
@@ -50,6 +47,7 @@ Detailed specs live in `tasks/`. The change log lives in `HISTORY.md`.
 ## Later
 
 ### Config
+- [ ] cfg-005 · Grandma mode lock with PIN · P3 · [spec](tasks/cfg-005_grandma_mode_lock_with_pin.md) *(v2)*
 - [ ] cfg-011 · Config history and rollback · P3 · [spec](tasks/cfg-011_config_history_and_rollback.md)
 - [ ] cfg-012 · Hidden sync and config diagnostics · P3 · [spec](tasks/cfg-012_hidden_sync_and_config_diagnostics.md)
 - [ ] cfg-013 · Push notification for config updates · P4 · [spec](tasks/cfg-013_push_notification_for_config_updates.md)
@@ -75,6 +73,7 @@ Detailed specs live in `tasks/`. The change log lives in `HISTORY.md`.
 - [ ] ply-019 · Audio-only mode · P4 · [spec](tasks/ply-019_audio_only_mode.md)
 
 ### Shared UI
+- [ ] ui-003 · Simple and Full UI modes · P3 · [spec](tasks/ui-003_simple_and_full_ui_modes.md) *(v2)*
 - [ ] ui-005 · Font size and UI scale · P3 · [spec](tasks/ui-005_font_size_and_ui_scale.md)
 - [ ] ui-006 · Navigation rail and player bar layouts · P3 · [spec](tasks/ui-006_navigation_rail_and_player_bar_layouts.md)
 - [ ] ui-007 · Settings hub behind PIN · P3 · [spec](tasks/ui-007_settings_hub_behind_pin.md)
@@ -106,6 +105,7 @@ Detailed specs live in `tasks/`. The change log lives in `HISTORY.md`.
 - [x] 2026-10-29 · Imported 73 task specs from Kandown (see `HISTORY.md`)
 - [x] 2026-10-29 · Local device overrides + Ajustes (buffer, quality, aspect, cache, network)
 - [x] 2026-10-29 · ply-009 VOD disk cache 100 to 500 MB
+- [x] 2026-10-29 · cfg-003 Encrypted last-known-good config cache
 - [x] 2026-10-29 · apk-001 Toolchain and Android scaffold
 - [x] 2026-10-29 · apk-002 TV manifest, banner and launcher assets
 - [x] 2026-10-29 · apk-003 Deploy and logcat scripts

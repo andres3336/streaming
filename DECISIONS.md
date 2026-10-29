@@ -49,8 +49,8 @@ config URL as a password. A truly private source requires a backend, which is ou
 - Live: zapping and optional now/next
 - Movie: seekbar and resume
 - Series: seasons, episodes and next episode
-- Grandma mode is a local, PIN-protected simple mode stored on the TV
-- Simple mode shows live TV only and hides settings, sections and source switching
+- Grandma/abuela mode is deferred to v2; V1 has one UI and no PIN
+- V2 may show live TV only and hide settings, sections and source switching
 - App-level lock only; it is not an Android kiosk/device-owner mode
 
 ## Player
