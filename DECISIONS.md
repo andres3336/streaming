@@ -48,7 +48,8 @@ config URL as a password. A truly private source requires a backend, which is ou
 - Flat, monochrome dark UI with one slate-blue accent (`#485584`)
 - Solid fills and 1 px borders only: no transparency, gradients, glass or focus scaling
 - The only non-opaque color is the modal backdrop over playing video
-- Icon-only navigation pill; section titles live in the content, not in a top bar
+- Horizontal top navigation bar with icon and label items; section titles live in the
+  content below it
 - Keycap hint strip in the bottom-right of every section
 - The app owns its text scale: the TV's system font scale is ignored so layouts stay stable
 - Hero banners put the text on a solid panel next to the artwork, never on a photo

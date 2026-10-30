@@ -1796,63 +1796,73 @@ private fun ChannelList(
         }
     }
 
+    var searchOpen by remember { mutableStateOf(false) }
+    val searchFocus = remember { FocusRequester() }
+    LaunchedEffect(searchOpen) {
+        if (searchOpen) {
+            delay(150)
+            runCatching { searchFocus.requestFocus() }
+        }
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            BasicTextField(
-                value = query,
-                onValueChange = onQueryChange,
-                singleLine = true,
-                textStyle = TextStyle(color = StreamColors.TextPrimary, fontSize = 15.sp),
-                cursorBrush = SolidColor(StreamColors.AccentBright),
-                modifier = Modifier
-                    .weight(1f)
-                    .height(40.dp)
-                    .background(StreamColors.SurfaceSunken, RoundedCornerShape(10.dp))
-                    .border(1.dp, StreamColors.Border, RoundedCornerShape(10.dp))
-                    .onPreviewKeyEvent { event ->
-                        if (event.type != KeyEventType.KeyDown) {
-                            return@onPreviewKeyEvent false
-                        }
-
-                        when (event.nativeKeyEvent.keyCode) {
-                            AndroidKeyEvent.KEYCODE_DPAD_DOWN -> {
-                                focusManager.moveFocus(FocusDirection.Down)
-                                true
+            if (!searchOpen) {
+                QuickChip(label = "Buscar", onClick = { searchOpen = true })
+                if (query.isNotEmpty()) {
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = "Filtro: $query",
+                        color = StreamColors.AccentBright,
+                        fontSize = 11.sp,
+                        maxLines = 1,
+                        modifier = Modifier.weight(1f),
+                    )
+                    QuickChip(label = "Limpiar", onClick = { onQueryChange("") })
+                } else {
+                    Spacer(Modifier.weight(1f))
+                }
+            } else {
+                BasicTextField(
+                    value = query,
+                    onValueChange = onQueryChange,
+                    singleLine = true,
+                    textStyle = TextStyle(color = StreamColors.TextPrimary, fontSize = 15.sp),
+                    cursorBrush = SolidColor(StreamColors.AccentBright),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(40.dp)
+                        .background(StreamColors.SurfaceSunken, RoundedCornerShape(10.dp))
+                        .border(1.dp, StreamColors.Border, RoundedCornerShape(10.dp))
+                        .focusRequester(searchFocus),
+                    decorationBox = { innerTextField ->
+                        Box(
+                            modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp),
+                            contentAlignment = Alignment.CenterStart,
+                        ) {
+                            if (query.isEmpty()) {
+                                Text(
+                                    text = "Buscar canal o grupo\u2026",
+                                    color = StreamColors.TextMuted,
+                                    fontSize = 15.sp,
+                                    maxLines = 1,
+                                )
                             }
-
-                            AndroidKeyEvent.KEYCODE_DPAD_UP -> {
-                                focusManager.moveFocus(FocusDirection.Up)
-                                true
-                            }
-
-                            else -> false
+                            innerTextField()
                         }
                     },
-                decorationBox = { innerTextField ->
-                    Box(
-                        modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp),
-                        contentAlignment = Alignment.CenterStart,
-                    ) {
-                        if (query.isEmpty()) {
-                            Text(
-                                text = "Buscar canal o grupo…",
-                                color = StreamColors.TextMuted,
-                                fontSize = 15.sp,
-                                maxLines = 1,
-                            )
-                        }
-                        innerTextField()
-                    }
-                },
-            )
-            if (query.isNotEmpty()) {
+                )
                 Spacer(Modifier.width(8.dp))
-                Button(onClick = { onQueryChange("") }) {
-                    Text("Limpiar", fontSize = 13.sp)
-                }
+                QuickChip(
+                    label = "Cerrar",
+                    onClick = {
+                        onQueryChange("")
+                        searchOpen = false
+                    },
+                )
             }
             Spacer(Modifier.width(10.dp))
             Text(
@@ -3382,10 +3392,30 @@ private fun HomeScreen(
     }
 
     val heroEntry = playbackEntries.firstOrNull()
-    val heroMovie = movies.firstOrNull()
+    val heroMovieBase = movies.firstOrNull()
     val heroChannel = channels.firstOrNull {
         epgGuide?.nowNext(it, nowMs)?.current != null
     } ?: channels.firstOrNull()
+
+    var heroInfo by remember(heroMovieBase?.id) { mutableStateOf<XtreamMovie?>(null) }
+    LaunchedEffect(heroMovieBase?.id) {
+        val source = client ?: return@LaunchedEffect
+        val base = heroMovieBase ?: return@LaunchedEffect
+        if (heroInfo?.id == base.id) return@LaunchedEffect
+        delay(200)
+        val result = source.vodInfo(base.id)
+        if (result is XtreamResult.Success) heroInfo = result.value
+    }
+    val heroMovie = heroMovieBase?.let { base ->
+        val detail = heroInfo?.takeIf { it.id == base.id } ?: return@let base
+        base.copy(
+            plot = detail.plot ?: base.plot,
+            genre = detail.genre ?: base.genre,
+            year = detail.year ?: base.year,
+            rating = detail.rating ?: base.rating,
+            backdrop = detail.backdrop ?: base.backdrop,
+        )
+    }
 
     val hero: HomeHero = when {
         heroEntry != null -> HomeHero(
@@ -3561,6 +3591,7 @@ private fun HomeScreen(
                 onPrimary = hero.primary,
                 secondaryLabel = hero.secondaryLabel,
                 onSecondary = hero.secondary,
+                height = 250,
             )
         }
         if (continueCards.isNotEmpty()) {

@@ -8,8 +8,8 @@ Target device: Google TV / Android TV, 32-bit ARM, Android 11, limited storage.
 
 Version 0.16.0 is the flat visual pass. The app now uses a monochrome dark palette
 with a single slate-blue accent (`#485584`), solid fills and 1 px borders: no
-transparency, gradients or motion. The shell is an icon-only navigation pill with a
-source chip, clock and keycap hints, plus a new **Inicio** landing screen with a hero
+transparency, gradients or motion. The shell is a horizontal top navigation bar
+with icon and label items, a source chip, clock and keycap hints, plus a new **Inicio** landing screen with a hero
 and rows. Live TV browses with a right-hand preview pane and the EPG below it; movies
 and series show a hero for the focused poster and the synopsis under it. Live sources
 are merged into one **TV** destination with `En vivo` / `Canales` chips, and the app

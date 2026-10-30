@@ -21,8 +21,8 @@ android {
         applicationId = "com.andres3336.streaming"
         minSdk = 23
         targetSdk = 36
-        versionCode = 18
-        versionName = "0.16.0"
+        versionCode = 19
+        versionName = "0.16.1"
 
         val escapedUrl = configUrl.replace("\\", "\\\\").replace("\"", "\\\"")
         buildConfigField("String", "CONFIG_URL", "\"$escapedUrl\"")

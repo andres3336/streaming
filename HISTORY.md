@@ -243,3 +243,7 @@ Append-only. Newest entries at the bottom.
 - Verified on the TV at 1280x720: home hero and rows, live list plus preview and EPG,
   movie/series hero-on-focus, movie detail preview, series episodes and Ajustes.
   129 unit tests passing. Version 0.16.0.
+- Moved the navigation from the left pill to a horizontal top bar with icon and label
+  items, so Up from the content reaches the sections directly. The inline channel
+  search is now a `Buscar` button that opens the field on demand, because the always
+  visible field used to trap Up and open the keyboard. Version 0.16.1.

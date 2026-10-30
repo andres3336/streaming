@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,7 +46,7 @@ import androidx.tv.material3.Text
 import kotlinx.coroutines.delay
 import java.util.Calendar
 
-/** One entry of the left navigation pill. */
+/** One entry of the top navigation bar. */
 data class NavDestination(
     val id: String,
     val label: String,
@@ -58,10 +59,12 @@ data class Hint(
 )
 
 /**
- * App-wide TV shell: an icon-only navigation pill on the left, a status row with
- * the source chips and the clock, the screen content, and a keycap hint strip.
+ * App-wide TV shell: a horizontal navigation bar on top, the screen title, the
+ * content and a keycap hint strip.
  *
  * The shell is flat: solid fills, 1 dp borders, no transparency and no motion.
+ * A top bar is used instead of a side rail because it is the row the D-pad reaches
+ * first with Up, which makes the sections reliably navigable with a remote.
  */
 @Composable
 fun AppShell(
@@ -76,201 +79,189 @@ fun AppShell(
     hints: List<Hint> = emptyList(),
     content: @Composable () -> Unit,
 ) {
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(StreamColors.Background)
-            .padding(start = 16.dp, end = 20.dp, top = 16.dp, bottom = 12.dp),
+            .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 10.dp),
     ) {
-        NavigationPill(
+        TopNavBar(
             section = section,
             destinations = destinations,
             onSelect = onSelect,
             onHome = onHome,
+            chips = chips,
         )
-        Spacer(Modifier.width(Dimens.SectionGap))
-        Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
-            StatusRow(
-                title = title,
-                subtitle = subtitle,
-                showTitle = showTitle,
-                chips = chips,
-            )
+
+        if (showTitle && title.isNotBlank()) {
             Spacer(Modifier.height(10.dp))
-            Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
-                content()
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Bottom,
+            ) {
+                Text(
+                    text = title,
+                    color = StreamColors.TextPrimary,
+                    fontSize = 26.sp,
+                    fontWeight = FontWeight.Black,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                if (!subtitle.isNullOrBlank()) {
+                    Spacer(Modifier.width(10.dp))
+                    Text(
+                        text = subtitle,
+                        color = StreamColors.TextMuted,
+                        fontSize = 11.sp,
+                        maxLines = 1,
+                        modifier = Modifier.padding(bottom = 4.dp),
+                    )
+                }
             }
-            if (hints.isNotEmpty()) {
-                Spacer(Modifier.height(6.dp))
-                HintBar(hints)
-            }
+        }
+        Spacer(Modifier.height(10.dp))
+
+        Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+            content()
+        }
+
+        if (hints.isNotEmpty()) {
+            Spacer(Modifier.height(6.dp))
+            HintBar(hints)
         }
     }
 }
 
 @Composable
-private fun NavigationPill(
+private fun TopNavBar(
     section: String,
     destinations: List<NavDestination>,
     onSelect: (String) -> Unit,
     onHome: (() -> Unit)?,
+    chips: @Composable RowScope.() -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .width(Dimens.RailWidth)
-            .fillMaxHeight()
-            .background(StreamColors.Surface, RoundedCornerShape(Dimens.RailCorner))
-            .padding(Dimens.RailPadding),
-        verticalArrangement = Arrangement.spacedBy(Dimens.RailGap),
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Row(
+        modifier = Modifier.fillMaxWidth().height(44.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         HomeTile(onClick = onHome)
-        Spacer(Modifier.height(2.dp))
+        Spacer(Modifier.width(4.dp))
         destinations.forEach { destination ->
-            NavigationPillItem(
+            TopNavItem(
                 destination = destination,
                 selected = section == destination.id,
-                modifier = Modifier.weight(1f),
                 onClick = { onSelect(destination.id) },
             )
         }
-        ProfileDot()
+        Spacer(Modifier.weight(1f))
+        chips()
+        Spacer(Modifier.width(10.dp))
+        Clock()
     }
 }
 
 @Composable
 private fun HomeTile(onClick: (() -> Unit)?) {
-    val shape = RoundedCornerShape(14.dp)
-    Box(
-        modifier = Modifier
-            .size(Dimens.RailWidth - Dimens.RailPadding * 2)
-            .background(StreamColors.Accent, shape),
-        contentAlignment = Alignment.Center,
-    ) {
-        Surface(
-            onClick = { onClick?.invoke() },
-            enabled = onClick != null,
-            shape = ClickableSurfaceDefaults.shape(shape = shape),
-            colors = ClickableSurfaceDefaults.colors(
-                containerColor = Color.Transparent,
-                contentColor = StreamColors.OnAccent,
-                focusedContainerColor = StreamColors.Accent,
-                focusedContentColor = StreamColors.OnAccent,
-            ),
-            scale = ClickableSurfaceDefaults.scale(focusedScale = 1f, pressedScale = 1f),
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(
-                    text = "S",
-                    color = StreamColors.OnAccent,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Black,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun NavigationPillItem(
-    destination: NavDestination,
-    selected: Boolean,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-) {
-    val shape = RoundedCornerShape(Dimens.RailItemCorner)
-    var focused by remember { mutableStateOf(false) }
-    val container = when {
-        focused && !selected -> StreamColors.SurfaceRaised
-        selected -> StreamColors.Accent
-        else -> Color.Transparent
-    }
-    val glyph = when {
-        selected -> StreamColors.OnAccent
-        focused -> StreamColors.TextPrimary
-        else -> StreamColors.TextSecondary
-    }
-    val border = when {
-        focused -> StreamColors.AccentBright
-        else -> Color.Transparent
-    }
-
+    val shape = RoundedCornerShape(10.dp)
     Surface(
-        onClick = onClick,
-        modifier = modifier
-            .fillMaxWidth()
-            .border(1.dp, border, shape),
+        onClick = { onClick?.invoke() },
+        enabled = onClick != null,
         shape = ClickableSurfaceDefaults.shape(shape = shape),
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = container,
-            contentColor = glyph,
-            focusedContainerColor = container,
-            focusedContentColor = glyph,
+            containerColor = StreamColors.Accent,
+            contentColor = StreamColors.OnAccent,
+            focusedContainerColor = StreamColors.Accent,
+            focusedContentColor = StreamColors.OnAccent,
         ),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f, pressedScale = 1f),
+        modifier = Modifier.size(40.dp),
     ) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            NavGlyph(
-                id = destination.id,
-                color = glyph,
+            Text(
+                text = "S",
+                color = StreamColors.OnAccent,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Black,
             )
         }
     }
 }
 
 @Composable
-private fun ProfileDot() {
-    Box(
+private fun TopNavItem(
+    destination: NavDestination,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    val shape = RoundedCornerShape(10.dp)
+    var focused by remember { mutableStateOf(false) }
+    val container = when {
+        selected -> StreamColors.Accent
+        focused -> StreamColors.SurfaceRaised
+        else -> Color.Transparent
+    }
+    val content = when {
+        selected -> StreamColors.OnAccent
+        focused -> StreamColors.TextPrimary
+        else -> StreamColors.TextSecondary
+    }
+
+    Surface(
+        onClick = onClick,
         modifier = Modifier
-            .padding(vertical = 4.dp)
-            .size(34.dp)
-            .background(StreamColors.SurfaceRaised, CircleShape)
-            .border(1.dp, StreamColors.Border, CircleShape),
-        contentAlignment = Alignment.Center,
+            .height(36.dp)
+            .border(
+                width = 1.dp,
+                color = if (focused) StreamColors.AccentBright else Color.Transparent,
+                shape = shape,
+            )
+            .onFocusChanged { focused = it.isFocused },
+        shape = ClickableSurfaceDefaults.shape(shape = shape),
+        colors = ClickableSurfaceDefaults.colors(
+            containerColor = container,
+            contentColor = content,
+            focusedContainerColor = container,
+            focusedContentColor = content,
+        ),
+        scale = ClickableSurfaceDefaults.scale(focusedScale = 1f, pressedScale = 1f),
     ) {
-        Text(
-            text = "S",
-            color = StreamColors.TextSecondary,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
-        )
-    }
-}
-
-@Composable
-private fun PlayGlyph(color: Color, modifier: Modifier = Modifier) {
-    Canvas(modifier = modifier) {
-        val path = Path().apply {
-            moveTo(size.width * 0.22f, size.height * 0.1f)
-            lineTo(size.width * 0.9f, size.height * 0.5f)
-            lineTo(size.width * 0.22f, size.height * 0.9f)
-            close()
+        Row(
+            modifier = Modifier.fillMaxHeight().padding(horizontal = 9.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            NavGlyph(id = destination.id, color = content, size = 15.dp)
+            Spacer(Modifier.width(6.dp))
+            Text(
+                text = destination.label,
+                fontSize = 11.sp,
+                fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+                maxLines = 1,
+            )
         }
-        drawPath(path, color)
     }
 }
 
 @Composable
-private fun NavGlyph(id: String, color: Color) {
-    Canvas(modifier = Modifier.size(24.dp)) {
-        val stroke = Stroke(
-            width = size.minDimension * 0.12f,
-            cap = StrokeCap.Round,
-        )
-        val corner = CornerRadius(size.width * 0.08f, size.width * 0.08f)
+private fun NavGlyph(id: String, color: Color, size: Dp = 16.dp) {
+    Canvas(modifier = Modifier.size(size)) {
+        val w = this.size.width
+        val h = this.size.height
+        val dim = this.size.minDimension
+        val stroke = Stroke(width = dim * 0.13f, cap = StrokeCap.Round)
+        val corner = CornerRadius(w * 0.08f, w * 0.08f)
         when (id) {
             "home" -> {
                 val roof = Path().apply {
-                    moveTo(size.width * 0.1f, size.height * 0.48f)
-                    lineTo(size.width * 0.5f, size.height * 0.14f)
-                    lineTo(size.width * 0.9f, size.height * 0.48f)
+                    moveTo(w * 0.1f, h * 0.48f)
+                    lineTo(w * 0.5f, h * 0.14f)
+                    lineTo(w * 0.9f, h * 0.48f)
                 }
                 drawPath(roof, color, style = stroke)
                 drawRoundRect(
                     color = color,
-                    topLeft = Offset(size.width * 0.2f, size.height * 0.44f),
-                    size = Size(size.width * 0.6f, size.height * 0.42f),
+                    topLeft = Offset(w * 0.2f, h * 0.44f),
+                    size = Size(w * 0.6f, h * 0.42f),
                     cornerRadius = corner,
                     style = stroke,
                 )
@@ -278,9 +269,9 @@ private fun NavGlyph(id: String, color: Color) {
 
             "live" -> {
                 val path = Path().apply {
-                    moveTo(size.width * 0.2f, size.height * 0.12f)
-                    lineTo(size.width * 0.88f, size.height * 0.5f)
-                    lineTo(size.width * 0.2f, size.height * 0.88f)
+                    moveTo(w * 0.2f, h * 0.12f)
+                    lineTo(w * 0.88f, h * 0.5f)
+                    lineTo(w * 0.2f, h * 0.88f)
                     close()
                 }
                 drawPath(path, color)
@@ -289,22 +280,22 @@ private fun NavGlyph(id: String, color: Color) {
             "tv" -> {
                 drawRoundRect(
                     color = color,
-                    topLeft = Offset(size.width * 0.06f, size.height * 0.16f),
-                    size = Size(size.width * 0.88f, size.height * 0.56f),
+                    topLeft = Offset(w * 0.06f, h * 0.16f),
+                    size = Size(w * 0.88f, h * 0.56f),
                     cornerRadius = corner,
                     style = stroke,
                 )
                 drawLine(
                     color = color,
-                    start = Offset(size.width * 0.5f, size.height * 0.72f),
-                    end = Offset(size.width * 0.5f, size.height * 0.86f),
+                    start = Offset(w * 0.5f, h * 0.72f),
+                    end = Offset(w * 0.5f, h * 0.86f),
                     strokeWidth = stroke.width,
                     cap = StrokeCap.Round,
                 )
                 drawLine(
                     color = color,
-                    start = Offset(size.width * 0.32f, size.height * 0.88f),
-                    end = Offset(size.width * 0.68f, size.height * 0.88f),
+                    start = Offset(w * 0.32f, h * 0.88f),
+                    end = Offset(w * 0.68f, h * 0.88f),
                     strokeWidth = stroke.width,
                     cap = StrokeCap.Round,
                 )
@@ -314,8 +305,8 @@ private fun NavGlyph(id: String, color: Color) {
                 listOf(0.22f, 0.5f, 0.78f).forEach { y ->
                     drawLine(
                         color = color,
-                        start = Offset(size.width * 0.1f, size.height * y),
-                        end = Offset(size.width * 0.9f, size.height * y),
+                        start = Offset(w * 0.1f, h * y),
+                        end = Offset(w * 0.9f, h * y),
                         strokeWidth = stroke.width,
                         cap = StrokeCap.Round,
                     )
@@ -325,22 +316,22 @@ private fun NavGlyph(id: String, color: Color) {
             "movies" -> {
                 drawRoundRect(
                     color = color,
-                    topLeft = Offset(size.width * 0.08f, size.height * 0.18f),
-                    size = Size(size.width * 0.84f, size.height * 0.64f),
+                    topLeft = Offset(w * 0.08f, h * 0.18f),
+                    size = Size(w * 0.84f, h * 0.64f),
                     cornerRadius = corner,
                     style = stroke,
                 )
                 drawLine(
                     color = color,
-                    start = Offset(size.width * 0.55f, size.height * 0.36f),
-                    end = Offset(size.width * 0.78f, size.height * 0.5f),
+                    start = Offset(w * 0.55f, h * 0.36f),
+                    end = Offset(w * 0.78f, h * 0.5f),
                     strokeWidth = stroke.width,
                     cap = StrokeCap.Round,
                 )
                 drawLine(
                     color = color,
-                    start = Offset(size.width * 0.78f, size.height * 0.5f),
-                    end = Offset(size.width * 0.55f, size.height * 0.64f),
+                    start = Offset(w * 0.78f, h * 0.5f),
+                    end = Offset(w * 0.55f, h * 0.64f),
                     strokeWidth = stroke.width,
                     cap = StrokeCap.Round,
                 )
@@ -349,15 +340,15 @@ private fun NavGlyph(id: String, color: Color) {
             "series" -> {
                 drawRoundRect(
                     color = color,
-                    topLeft = Offset(size.width * 0.22f, size.height * 0.1f),
-                    size = Size(size.width * 0.7f, size.height * 0.46f),
+                    topLeft = Offset(w * 0.22f, h * 0.1f),
+                    size = Size(w * 0.7f, h * 0.46f),
                     cornerRadius = corner,
                     style = stroke,
                 )
                 drawRoundRect(
                     color = color,
-                    topLeft = Offset(size.width * 0.08f, size.height * 0.44f),
-                    size = Size(size.width * 0.7f, size.height * 0.46f),
+                    topLeft = Offset(w * 0.08f, h * 0.44f),
+                    size = Size(w * 0.7f, h * 0.46f),
                     cornerRadius = corner,
                     style = stroke,
                 )
@@ -366,14 +357,14 @@ private fun NavGlyph(id: String, color: Color) {
             "search" -> {
                 drawCircle(
                     color = color,
-                    radius = size.width * 0.26f,
-                    center = Offset(size.width * 0.42f, size.height * 0.42f),
+                    radius = w * 0.26f,
+                    center = Offset(w * 0.42f, h * 0.42f),
                     style = stroke,
                 )
                 drawLine(
                     color = color,
-                    start = Offset(size.width * 0.62f, size.height * 0.62f),
-                    end = Offset(size.width * 0.9f, size.height * 0.9f),
+                    start = Offset(w * 0.62f, h * 0.62f),
+                    end = Offset(w * 0.9f, h * 0.9f),
                     strokeWidth = stroke.width,
                     cap = StrokeCap.Round,
                 )
@@ -382,21 +373,21 @@ private fun NavGlyph(id: String, color: Color) {
             "continue" -> {
                 drawCircle(
                     color = color,
-                    radius = size.width * 0.36f,
-                    center = Offset(size.width * 0.5f, size.height * 0.5f),
+                    radius = w * 0.36f,
+                    center = Offset(w * 0.5f, h * 0.5f),
                     style = stroke,
                 )
                 drawLine(
                     color = color,
-                    start = Offset(size.width * 0.5f, size.height * 0.3f),
-                    end = Offset(size.width * 0.5f, size.height * 0.52f),
+                    start = Offset(w * 0.5f, h * 0.3f),
+                    end = Offset(w * 0.5f, h * 0.52f),
                     strokeWidth = stroke.width,
                     cap = StrokeCap.Round,
                 )
                 drawLine(
                     color = color,
-                    start = Offset(size.width * 0.5f, size.height * 0.52f),
-                    end = Offset(size.width * 0.66f, size.height * 0.62f),
+                    start = Offset(w * 0.5f, h * 0.52f),
+                    end = Offset(w * 0.66f, h * 0.62f),
                     strokeWidth = stroke.width,
                     cap = StrokeCap.Round,
                 )
@@ -406,65 +397,22 @@ private fun NavGlyph(id: String, color: Color) {
                 listOf(0.3f, 0.55f, 0.8f).forEachIndexed { index, y ->
                     drawLine(
                         color = color,
-                        start = Offset(size.width * 0.1f, size.height * y),
-                        end = Offset(size.width * 0.9f, size.height * y),
+                        start = Offset(w * 0.1f, h * y),
+                        end = Offset(w * 0.9f, h * y),
                         strokeWidth = stroke.width,
                         cap = StrokeCap.Round,
                     )
                     drawCircle(
                         color = color,
-                        radius = size.width * 0.09f,
+                        radius = w * 0.09f,
                         center = Offset(
-                            size.width * if (index % 2 == 0) 0.62f else 0.35f,
-                            size.height * y,
+                            w * if (index % 2 == 0) 0.62f else 0.35f,
+                            h * y,
                         ),
                     )
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun StatusRow(
-    title: String,
-    subtitle: String?,
-    showTitle: Boolean,
-    chips: @Composable RowScope.() -> Unit,
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth().height(Dimens.TopBarHeight),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        if (showTitle) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    color = StreamColors.TextPrimary,
-                    fontSize = TextSizes.ScreenTitle,
-                    fontWeight = FontWeight.Black,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                if (!subtitle.isNullOrBlank()) {
-                    Text(
-                        text = subtitle,
-                        color = StreamColors.TextSecondary,
-                        fontSize = TextSizes.Small,
-                        maxLines = 1,
-                    )
-                }
-            }
-        } else {
-            Spacer(Modifier.weight(1f))
-        }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            content = chips,
-        )
-        Spacer(Modifier.width(10.dp))
-        Clock()
     }
 }
 
@@ -488,14 +436,14 @@ private fun Clock() {
         Text(
             text = "%02d:%02d".format(hour, minute),
             color = StreamColors.TextPrimary,
-            fontSize = 32.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.Black,
         )
         if (day.isNotEmpty()) {
             Text(
                 text = day,
                 color = StreamColors.TextMuted,
-                fontSize = 11.sp,
+                fontSize = 9.sp,
                 maxLines = 1,
             )
         }
