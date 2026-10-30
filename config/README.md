@@ -24,9 +24,29 @@ Hardware-specific settings are stored on the TV in
 app defaults < gist config < local device settings
 ```
 
-Ajustes writes only the changed keys: buffer, quality cap, aspect, cache size, WiFi-only
-and max bitrate. Sources, credentials, EPG and force-update stay central-only.
+Ajustes writes only the changed keys: buffer, quality cap, aspect, cache size,
+clear-on-start, WiFi-only and max bitrate. Sources, credentials, EPG and force-update
+stay central-only.
 
 Validation rules are implemented in `ConfigParser.kt` and mirrored by `schema.json`.
 Never commit the real config URL, Xtream credentials, or a filled-in sample.
+
+## Validate and publish
+
+Validate a filled config before pasting it into the gist:
+
+```bash
+./scripts/config-validate.sh /path/to/config.json
+```
+
+The script checks JSON syntax, `config/schema.json` and the source/mode
+combinations. It never prints the config contents.
+
+To publish: edit the secret gist, replace `config.json`, save, then use
+`Ajustes → Actualizar configuración` or restart the app. The app also refreshes
+on resume.
+
+To roll back, open the gist on GitHub, choose **Revisions**, select the previous
+revision and **Restore**. Locally, the encrypted last-known-good config and the
+playlist/xtream caches keep the TV usable while a bad revision is fixed.
 

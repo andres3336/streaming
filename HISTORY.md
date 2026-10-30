@@ -114,3 +114,28 @@ Append-only. Newest entries at the bottom.
   error screen focused `Actualizar configuración`, issued a second forced config
   request and kept the recovery prompt without crashing. Restored the real config.
 - Added the blocking `forceUpdate` prompt. 70 unit tests passing. Version 0.11.0.
+- Added an encrypted offline playlist cache and non-reversible source identities.
+  A changed M3U URL/headers or Xtream account invalidates only that source's cache.
+  Verified a cold start with the playlist host down: the TV showed `Lista en caché`
+  with the last channel list.
+- Added Xtream login/status, live categories, lazy per-category streams and an
+  encrypted Xtream catalog cache. Verified `xtream` mode (real category rail and lazy
+  streams) and `merge` mode (106 merged channels, deduped, with `Xtream` provider
+  labels) on the TV.
+- Added the group rail, channel numbers, stable list keys and a reusable browse shell
+  shared by Live/Movies/Series, with a shared poster row and optional detail slot.
+- Added the remaining aspect modes (stretch, force 16:9 and 4:3) with an in-player
+  control and persistence. Verified cycling to 4:3 and that the setting survives into
+  Ajustes.
+- Added the HLS→TS fallback, source-failure recovery event and a bounded sanitized
+  error log. Verified an unreachable channel logs
+  `ERROR_CODE_IO_NETWORK_CONNECTION_FAILED` without URLs or credentials.
+- Added cache usage in MB, clear-now and clear-on-start. Verified the cache dropped
+  from 26 MB to 0 MB after a restart with clear-on-start enabled, then restored the
+  setting to No.
+- Added `scripts/config-validate.sh` with schema validation, publish instructions and
+  gist rollback documentation. Verified against `config/sample-config.json`.
+- Verified config propagation on the TV with a local config/playlist server: a changed
+  config applied after a cold restart and after Home/resume, and a changed M3U URL
+  invalidated the old playlist cache.
+- 87 unit tests passing. Version 0.12.0. V1 is complete.

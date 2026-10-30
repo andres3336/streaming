@@ -26,6 +26,7 @@ object ConfigMerger {
             sizeMb = local.cacheSizeMb
                 ?.takeIf { it in SettingsOptions.CACHE_SIZES }
                 ?: config.cache.sizeMb,
+            clearOnStart = local.clearOnStart ?: config.cache.clearOnStart,
         )
 
         val network = config.network.copy(

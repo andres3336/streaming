@@ -9,4 +9,6 @@ data class Channel(
     val userAgent: String? = null,
     val referer: String? = null,
     val isVod: Boolean = false,
+    val fallbackUrl: String? = null,
+    val provider: String? = null,
 )

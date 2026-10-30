@@ -12,7 +12,7 @@ class ConfigMergerTest {
         version = 2,
         sources = SourcesConfig(LiveMode.GIST),
         player = PlayerConfig(bufferMs = 3000, qualityCap = "auto", aspectMode = "fit"),
-        cache = CacheConfig(sizeMb = 250),
+        cache = CacheConfig(sizeMb = 250, clearOnStart = false),
         network = NetworkConfig(wifiOnly = false, maxBitrateKbps = 0),
     )
 
@@ -25,6 +25,7 @@ class ConfigMergerTest {
                 qualityCap = "720p",
                 aspectMode = "fill",
                 cacheSizeMb = 500,
+                clearOnStart = true,
                 wifiOnly = true,
                 maxBitrateKbps = 8000,
             ),
@@ -34,6 +35,7 @@ class ConfigMergerTest {
         assertEquals("720p", merged.player.qualityCap)
         assertEquals("fill", merged.player.aspectMode)
         assertEquals(500, merged.cache.sizeMb)
+        assertTrue(merged.cache.clearOnStart)
         assertTrue(merged.network.wifiOnly)
         assertEquals(8000, merged.network.maxBitrateKbps)
     }
@@ -46,6 +48,7 @@ class ConfigMergerTest {
         assertEquals("auto", merged.player.qualityCap)
         assertEquals("fit", merged.player.aspectMode)
         assertEquals(250, merged.cache.sizeMb)
+        assertFalse(merged.cache.clearOnStart)
         assertFalse(merged.network.wifiOnly)
         assertEquals(0, merged.network.maxBitrateKbps)
     }

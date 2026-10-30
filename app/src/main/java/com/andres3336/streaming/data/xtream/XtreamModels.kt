@@ -10,6 +10,14 @@ data class XtreamCategory(
     val name: String,
 )
 
+data class XtreamLiveStream(
+    val id: String,
+    val name: String,
+    val logo: String?,
+    val categoryId: String,
+    val epgChannelId: String?,
+)
+
 data class XtreamMovie(
     val id: String,
     val name: String,

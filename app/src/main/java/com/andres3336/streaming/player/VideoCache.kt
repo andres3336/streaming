@@ -38,4 +38,12 @@ object VideoCache {
         currentSizeMb = -1
         File(context.applicationContext.filesDir, "video_cache").deleteRecursively()
     }
+
+    fun sizeBytes(context: Context): Long {
+        val directory = File(context.applicationContext.filesDir, "video_cache")
+        if (!directory.exists()) return 0L
+        return directory.walkTopDown().filter(File::isFile).sumOf(File::length)
+    }
+
+    fun sizeMb(context: Context): Long = sizeBytes(context) / (1024L * 1024L)
 }

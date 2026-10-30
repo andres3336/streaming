@@ -1,7 +1,7 @@
 # Streaming — V1 reconciled TODO
 
 **Last reconciled:** 2026-10-29  
-**App:** Streaming 0.11.0 (`versionCode 11`)  
+**App:** Streaming 0.12.0 (`versionCode 12`)  
 **TV:** `192.168.100.16:5555` — MOTOROLA GOOGLE TV, Android 11 / API 30, armeabi-v7a  
 **Specs:** 74 tasks in `tasks/`  
 **Change log:** `HISTORY.md`  
@@ -20,45 +20,47 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 
 ## Current state
 
-- **Live:** curated 55-channel gist playlist, group `TV`, logos/initials, auto-focus,
-  favorites, recents, last channel, CH+/CH− and media-key zapping, channel search.
+- **Live:** curated gist, Xtream or merge modes; lazy Xtream categories; group rail;
+  channel numbers; logos/initials; favorites, recents, last channel; CH+/CH− and
+  media-key zapping; channel search; merged deduplication with provider labels.
 - **Movies:** Xtream categories, posters, playback (1920x960 verified).
 - **Series:** Xtream categories, seasons/episodes, playback, next-episode queue.
-- **Player:** audio/subtitle pickers with immediate apply and clear off state.
-- **Config:** permanent gist, no-cache fetch, encrypted last-known-good cache,
-  refresh on resume, manual update, source health check, update-config retry dialog,
-  forceUpdate prompt, safe apply only when not playing.
-- **Ajustes:** buffer, quality cap, aspect, VOD cache size/clear, WiFi/Ethernet-only,
-  max bitrate. Local overrides merge on top of the gist.
+- **Player:** audio/subtitle pickers, aspect modes (fit/fill/stretch/zoom/original/
+  16:9/4:3), HLS→TS fallback, source-failure recovery, stream info.
+- **Config:** permanent gist, no-cache fetch, encrypted last-known-good config and
+  offline playlist cache, source identities for selective invalidation, refresh on
+  resume, manual update, source health check, update-config retry dialog,
+  forceUpdate prompt, validate/publish script.
+- **Ajustes:** buffer, quality cap, aspect, VOD cache size/clear/clear-on-start,
+  storage usage, WiFi/Ethernet-only, max bitrate, source health, error log.
+  Local overrides merge on top of the gist.
 - **Playback:** ExoPlayer HLS/TS/MP4, headers, retry/backoff, live auto-reconnect,
   Spanish error overlay, VOD cache, resume/Continue, next-episode countdown.
-- **Diagnostics:** in-player stream info (codec, resolution, FPS, bitrate, buffer,
-  dropped frames, decoder, bandwidth) with host-only source masking.
-- **Security:** config cache, playback positions and live state use Keystore AES-GCM;
-  errors do not log/display URLs.
-- **Tests:** 70 unit tests passing.
+- **Diagnostics:** in-player stream info, bounded sanitized error log, host-only
+  source masking.
+- **Security:** config cache, playback positions, live state, playlist cache and
+  Xtream catalog cache use Keystore AES-GCM; errors do not log/display URLs.
+- **Tests:** 87 unit tests passing.
 
 ## Now (max 3)
 
-- [ ] `cfg-016` · Offline playlist cache · [spec](tasks/cfg-016_offline_playlist_cache.md) — Cache the channel list for a true offline start.
-- [ ] `liv-005` · Xtream auth and lazy live categories · [spec](tasks/liv-005_xtream_auth_and_lazy_live_categories.md) — Xtream auth + VOD catalog done; live categories/lazy loading pending.
-- [ ] `liv-006` · Live source mode gist, Xtream or merge · [spec](tasks/liv-006_live_source_mode_gist_xtream_or_merge.md) — Gist live works; Xtream VOD works; xtream/merge live mode pending.
+- [ ] `epg-001` · Optional XMLTV source from config · [spec](tasks/epg-001_optional_xmltv_source_from_config.md)
+- [ ] `epg-002` · Now and next in channel rows · [spec](tasks/epg-002_now_and_next_in_channel_rows.md)
 
-## Next (V1)
+## Next (V1.1)
 
-- [ ] `cfg-007` · Config validate and publish script · [spec](tasks/cfg-007_config_validate_and_publish_script.md) — Config validate/publish script.
-- [ ] `test-004` · Cache and storage limit test · [spec](tasks/test-004_cache_and_storage_limit_test.md) — Cache and storage limit test.
-- [ ] `test-005` · Config update propagation test · [spec](tasks/test-005_config_update_propagation_test.md) — Config update propagation test.
-
-## Polish (V1, small)
-
-- [ ] `liv-002` · Channel list, group rail and logos · [spec](tasks/liv-002_channel_list_group_rail_and_logos.md) — Lazy rows, logos/initials, group headers and auto-focus done; group rail/channel numbers pending.
-- [ ] `ply-002` · Retry, fallback and reconnect · [spec](tasks/ply-002_retry_fallback_and_reconnect.md) — Bounded retry/backoff + live auto-reconnect done; HLS→TS fallback and source-failure event pending.
-- [ ] `ply-005` · Aspect ratio and zoom modes · [spec](tasks/ply-005_aspect_ratio_and_zoom_modes.md) — Fit/fill/zoom/original done; forced 16:9/4:3 pending.
-- [ ] `ply-008` · Error overlay and diagnostics · [spec](tasks/ply-008_error_overlay_and_diagnostics.md) — Spanish error overlay + Reintentar/Cerrar done; bounded error log pending.
-- [ ] `ply-010` · Cache controls and storage usage · [spec](tasks/ply-010_cache_controls_and_storage_usage.md) — Cache size + clear done; storage usage display pending.
-- [ ] `cfg-010` · Atomic config apply and cache invalidation · [spec](tasks/cfg-010_atomic_config_apply_and_cache_invalidation.md) — Atomic cache write + state swap done; cache invalidation/publish flow partial.
-- [ ] `ui-002` · Reusable browse shell · [spec](tasks/ui-002_reusable_browse_shell.md) — Tabs/screens exist; no reusable browse-shell abstraction yet.
+- [ ] `liv-007` · Multiple playlists and switcher · [spec](tasks/liv-007_multiple_playlists_and_switcher.md)
+- [ ] `ply-011` · Universal player scaffold with capabilities · [spec](tasks/ply-011_universal_player_scaffold_with_capabilities.md) — Architecture/refactor; not user-visible.
+- [ ] `ply-012` · Quality cap and HLS variant selector · [spec](tasks/ply-012_quality_cap_and_hls_variant_selector.md)
+- [ ] `ply-013` · Buffer and latency settings · [spec](tasks/ply-013_buffer_and_latency_settings.md)
+- [ ] `ply-014` · Local subtitle file · [spec](tasks/ply-014_local_subtitle_file.md)
+- [ ] `ply-015` · External player handoff · [spec](tasks/ply-015_external_player_handoff.md)
+- [ ] `ply-017` · Playback speed and media keys · [spec](tasks/ply-017_playback_speed_and_media_keys.md)
+- [ ] `ui-001` · Universal MediaItem and capabilities model · [spec](tasks/ui-001_universal_mediaitem_and_capabilities_model.md) — Architecture/refactor; not user-visible.
+- [ ] `ui-005` · Font size and UI scale · [spec](tasks/ui-005_font_size_and_ui_scale.md)
+- [ ] `ui-006` · Navigation rail and player bar layouts · [spec](tasks/ui-006_navigation_rail_and_player_bar_layouts.md)
+- [ ] `vod-003` · Xtream metadata for movies and series · [spec](tasks/vod-003_xtream_metadata_for_movies_and_series.md)
+- [ ] `vod-006` · Universal search across live and VOD · [spec](tasks/vod-006_universal_search_across_live_and_vod.md) — Spec is tagged v2; keep here unless the roadmap changes.
 
 ## Done
 
@@ -90,23 +92,19 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 - [x] 2026-10-29 · `cfg-008` · Source health check · [spec](tasks/cfg-008_source_health_check.md) — M3U and Xtream checks, mode-aware, manual check in Ajustes.
 - [x] 2026-10-29 · `cfg-009` · Update-config dialog and retry flow · [spec](tasks/cfg-009_update_config_dialog_and_retry_flow.md) — Spanish two-button recovery, forced config fetch, old config retained on failure.
 - [x] 2026-10-29 · `cfg-004` · Config refresh on start, resume and failure · [spec](tasks/cfg-004_config_refresh_on_start_resume_and_failure.md) — Start/resume/manual refresh, safe apply and forceUpdate blocking prompt.
-
-## Deferred — v1.1
-
-- `epg-001` · Optional XMLTV source from config · [spec](tasks/epg-001_optional_xmltv_source_from_config.md)
-- `epg-002` · Now and next in channel rows · [spec](tasks/epg-002_now_and_next_in_channel_rows.md)
-- `liv-007` · Multiple playlists and switcher · [spec](tasks/liv-007_multiple_playlists_and_switcher.md)
-- `ply-011` · Universal player scaffold with capabilities · [spec](tasks/ply-011_universal_player_scaffold_with_capabilities.md) — Architecture/refactor; not user-visible.
-- `ply-012` · Quality cap and HLS variant selector · [spec](tasks/ply-012_quality_cap_and_hls_variant_selector.md)
-- `ply-013` · Buffer and latency settings · [spec](tasks/ply-013_buffer_and_latency_settings.md)
-- `ply-014` · Local subtitle file · [spec](tasks/ply-014_local_subtitle_file.md)
-- `ply-015` · External player handoff · [spec](tasks/ply-015_external_player_handoff.md)
-- `ply-017` · Playback speed and media keys · [spec](tasks/ply-017_playback_speed_and_media_keys.md)
-- `ui-001` · Universal MediaItem and capabilities model · [spec](tasks/ui-001_universal_mediaitem_and_capabilities_model.md) — Architecture/refactor; not user-visible.
-- `ui-005` · Font size and UI scale · [spec](tasks/ui-005_font_size_and_ui_scale.md)
-- `ui-006` · Navigation rail and player bar layouts · [spec](tasks/ui-006_navigation_rail_and_player_bar_layouts.md)
-- `vod-003` · Xtream metadata for movies and series · [spec](tasks/vod-003_xtream_metadata_for_movies_and_series.md)
-- `vod-006` · Universal search across live and VOD · [spec](tasks/vod-006_universal_search_across_live_and_vod.md) — Spec is tagged v2; keep here unless the roadmap changes.
+- [x] 2026-10-29 · `cfg-016` · Offline playlist cache · [spec](tasks/cfg-016_offline_playlist_cache.md) — Encrypted channel cache with source identity; verified cold start with playlist host down.
+- [x] 2026-10-29 · `liv-005` · Xtream auth and lazy live categories · [spec](tasks/liv-005_xtream_auth_and_lazy_live_categories.md) — Login/status, live categories, lazy streams, encrypted category payloads.
+- [x] 2026-10-29 · `liv-006` · Live source mode gist, Xtream or merge · [spec](tasks/liv-006_live_source_mode_gist_xtream_or_merge.md) — Mode-aware sources, lazy Xtream, merge with dedupe and provider labels.
+- [x] 2026-10-29 · `cfg-007` · Config validate and publish script · [spec](tasks/cfg-007_config_validate_and_publish_script.md) — Schema validation, publish instructions and gist rollback docs.
+- [x] 2026-10-29 · `test-004` · Cache and storage limit test · [spec](tasks/test-004_cache_and_storage_limit_test.md) — 100/250/500 MB controls, usage display, clear-on-start verified 26 MB → 0.
+- [x] 2026-10-29 · `test-005` · Config update propagation test · [spec](tasks/test-005_config_update_propagation_test.md) — Gist/config changes applied on restart and resume; source cache invalidated.
+- [x] 2026-10-29 · `liv-002` · Channel list, group rail and logos · [spec](tasks/liv-002_channel_list_group_rail_and_logos.md) — Group rail, channel numbers, stable keys, logos/initials and favorite state.
+- [x] 2026-10-29 · `ply-002` · Retry, fallback and reconnect · [spec](tasks/ply-002_retry_fallback_and_reconnect.md) — Bounded retry, HLS→TS fallback, auto-reconnect and source-failure recovery.
+- [x] 2026-10-29 · `ply-005` · Aspect ratio and zoom modes · [spec](tasks/ply-005_aspect_ratio_and_zoom_modes.md) — Fit/fill/stretch/zoom/original/16:9/4:3 with in-player control and persistence.
+- [x] 2026-10-29 · `ply-008` · Error overlay and diagnostics · [spec](tasks/ply-008_error_overlay_and_diagnostics.md) — Spanish overlay, bounded sanitized error log, no URLs.
+- [x] 2026-10-29 · `ply-010` · Cache controls and storage usage · [spec](tasks/ply-010_cache_controls_and_storage_usage.md) — Usage in MB, clear now, clear on start, live-not-cached note.
+- [x] 2026-10-29 · `cfg-010` · Atomic config apply and cache invalidation · [spec](tasks/cfg-010_atomic_config_apply_and_cache_invalidation.md) — Source identities invalidate only the affected M3U/Xtream cache; live state preserved.
+- [x] 2026-10-29 · `ui-002` · Reusable browse shell · [spec](tasks/ui-002_reusable_browse_shell.md) — Shared shell, category rail, poster row, optional detail slot and focus handling.
 
 ## Deferred — v2
 
@@ -162,21 +160,21 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 | [`cfg-004`](tasks/cfg-004_config_refresh_on_start_resume_and_failure.md) | Config refresh on start, resume and failure | Done | Start/resume/manual refresh, safe apply and forceUpdate blocking prompt. |
 | [`cfg-008`](tasks/cfg-008_source_health_check.md) | Source health check | Done | M3U and Xtream checks, mode-aware, manual check in Ajustes. |
 | [`cfg-009`](tasks/cfg-009_update_config_dialog_and_retry_flow.md) | Update-config dialog and retry flow | Done | Spanish two-button recovery, forced config fetch, old config retained on failure. |
-| [`cfg-016`](tasks/cfg-016_offline_playlist_cache.md) | Offline playlist cache | Now | Cache the channel list for a true offline start. |
-| [`liv-005`](tasks/liv-005_xtream_auth_and_lazy_live_categories.md) | Xtream auth and lazy live categories | Now | Xtream auth + VOD catalog done; live categories/lazy loading pending. |
-| [`liv-006`](tasks/liv-006_live_source_mode_gist_xtream_or_merge.md) | Live source mode gist, Xtream or merge | Now | Gist live works; Xtream VOD works; xtream/merge live mode pending. |
-| [`cfg-007`](tasks/cfg-007_config_validate_and_publish_script.md) | Config validate and publish script | Next | Config validate/publish script. |
-| [`test-004`](tasks/test-004_cache_and_storage_limit_test.md) | Cache and storage limit test | Next | Cache and storage limit test. |
-| [`test-005`](tasks/test-005_config_update_propagation_test.md) | Config update propagation test | Next | Config update propagation test. |
-| [`liv-002`](tasks/liv-002_channel_list_group_rail_and_logos.md) | Channel list, group rail and logos | Polish | Lazy rows, logos/initials, group headers and auto-focus done; group rail/channel numbers pending. |
-| [`ply-002`](tasks/ply-002_retry_fallback_and_reconnect.md) | Retry, fallback and reconnect | Polish | Bounded retry/backoff + live auto-reconnect done; HLS→TS fallback and source-failure event pending. |
-| [`ply-005`](tasks/ply-005_aspect_ratio_and_zoom_modes.md) | Aspect ratio and zoom modes | Polish | Fit/fill/zoom/original done; forced 16:9/4:3 pending. |
-| [`ply-008`](tasks/ply-008_error_overlay_and_diagnostics.md) | Error overlay and diagnostics | Polish | Spanish error overlay + Reintentar/Cerrar done; bounded error log pending. |
-| [`ply-010`](tasks/ply-010_cache_controls_and_storage_usage.md) | Cache controls and storage usage | Polish | Cache size + clear done; storage usage display pending. |
-| [`cfg-010`](tasks/cfg-010_atomic_config_apply_and_cache_invalidation.md) | Atomic config apply and cache invalidation | Polish | Atomic cache write + state swap done; cache invalidation/publish flow partial. |
-| [`ui-002`](tasks/ui-002_reusable_browse_shell.md) | Reusable browse shell | Polish | Tabs/screens exist; no reusable browse-shell abstraction yet. |
-| [`epg-001`](tasks/epg-001_optional_xmltv_source_from_config.md) | Optional XMLTV source from config | v1.1 |  |
-| [`epg-002`](tasks/epg-002_now_and_next_in_channel_rows.md) | Now and next in channel rows | v1.1 |  |
+| [`cfg-016`](tasks/cfg-016_offline_playlist_cache.md) | Offline playlist cache | Done | Encrypted channel cache with source identity; offline start verified. |
+| [`liv-005`](tasks/liv-005_xtream_auth_and_lazy_live_categories.md) | Xtream auth and lazy live categories | Done | Login/status, live categories, lazy streams, encrypted category payloads. |
+| [`liv-006`](tasks/liv-006_live_source_mode_gist_xtream_or_merge.md) | Live source mode gist, Xtream or merge | Done | Mode-aware sources, lazy Xtream, merge with dedupe and provider labels. |
+| [`cfg-007`](tasks/cfg-007_config_validate_and_publish_script.md) | Config validate and publish script | Done | Schema validation, publish instructions and gist rollback docs. |
+| [`test-004`](tasks/test-004_cache_and_storage_limit_test.md) | Cache and storage limit test | Done | 100/250/500 MB controls, usage display, clear-on-start verified 26 MB → 0. |
+| [`test-005`](tasks/test-005_config_update_propagation_test.md) | Config update propagation test | Done | Changes applied on restart and resume; source cache invalidated. |
+| [`liv-002`](tasks/liv-002_channel_list_group_rail_and_logos.md) | Channel list, group rail and logos | Done | Group rail, channel numbers, stable keys, logos/initials and favorite state. |
+| [`ply-002`](tasks/ply-002_retry_fallback_and_reconnect.md) | Retry, fallback and reconnect | Done | Bounded retry, HLS→TS fallback, auto-reconnect and source-failure recovery. |
+| [`ply-005`](tasks/ply-005_aspect_ratio_and_zoom_modes.md) | Aspect ratio and zoom modes | Done | Fit/fill/stretch/zoom/original/16:9/4:3 with in-player control and persistence. |
+| [`ply-008`](tasks/ply-008_error_overlay_and_diagnostics.md) | Error overlay and diagnostics | Done | Spanish overlay, bounded sanitized error log, no URLs. |
+| [`ply-010`](tasks/ply-010_cache_controls_and_storage_usage.md) | Cache controls and storage usage | Done | Usage in MB, clear now, clear on start, live-not-cached note. |
+| [`cfg-010`](tasks/cfg-010_atomic_config_apply_and_cache_invalidation.md) | Atomic config apply and cache invalidation | Done | Source identities invalidate only the affected cache; live state preserved. |
+| [`ui-002`](tasks/ui-002_reusable_browse_shell.md) | Reusable browse shell | Done | Shared shell, category rail, poster row, optional detail slot and focus handling. |
+| [`epg-001`](tasks/epg-001_optional_xmltv_source_from_config.md) | Optional XMLTV source from config | Now | First v1.1 item. |
+| [`epg-002`](tasks/epg-002_now_and_next_in_channel_rows.md) | Now and next in channel rows | Now | Depends on epg-001. |
 | [`liv-007`](tasks/liv-007_multiple_playlists_and_switcher.md) | Multiple playlists and switcher | v1.1 |  |
 | [`liv-008`](tasks/liv-008_category_hide_rename_and_reorder.md) | Category hide, rename and reorder | v2 | Conflicts with the gist as the single remote source. |
 | [`liv-009`](tasks/liv-009_hide_individual_channels.md) | Hide individual channels | v2 | Conflicts with the gist as the single remote source. |
@@ -211,11 +209,14 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 
 ## Notes for the next session
 
-- Product decision: finish V1 before starting v1.1. v1.1 opens with `epg-001`/`epg-002`.
+- **V1 is complete.** The next milestone opens with `epg-001`/`epg-002`, then the rest
+  of v1.1.
 - `liv-008` and `liv-009` moved to v2: per-device category/channel overrides conflict
   with the gist as the single remote source of truth.
 - `liv-012` and `ply-016` moved to v2: not required for the product.
 - The config gist is the canonical config; sources and credentials are central-only.
+- Live modes: `gist`, `xtream` (lazy categories) and `merge` (gist + selected Xtream
+  category, deduped by name, provider label `Xtream`). Gist mode never calls Xtream live.
 - `Ajustes` is visible and has no PIN. Local overrides live in `files/device-settings.json`.
 - Live state (favorites, recents, last channel) is encrypted in `files/live-state.bin`
   because channel keys can contain playlist tokens. It survives playlist refreshes by
@@ -227,10 +228,14 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 - `Ajustes → Fuentes → Comprobar fuentes` checks the M3U and Xtream sources enabled by
   the current mode. Source failures offer `Actualizar configuración` + `Reintentar`;
   force-updating fetches the gist without an ETag and keeps the old config on failure.
-- Config cache works when the gist is unreachable. The playlist still needs network;
-  `cfg-016` fixes that.
+- Config, playlist and Xtream category caches are encrypted and keyed by
+  `CacheIdentity`; changing only the playlist URL/headers or Xtream account invalidates
+  only that cache. Favorites, recents and history are preserved.
+- With the playlist host down, a cold start shows the last channel list as
+  `Lista en caché`; with both gist and playlist down, the config cache still starts.
 - Next-episode auto-play is always on; the on/off setting is still pending.
-- V1 finish line: `cfg-016`, `liv-005` and `liv-006` are the next three items.
+- `Ajustes → Diagnóstico` shows the bounded error log (channel, Media3 code, Spanish
+  message; no URLs).
 - `vod-001`/`vod-002` are marked done for core browse/playback; poster grid and detail
   panels are v1.1 polish.
 - Architecture refactors (`ui-001`, `ply-011`) are not user-visible; keep them in v1.1

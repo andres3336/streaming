@@ -1,6 +1,7 @@
 package com.andres3336.streaming.data.xtream
 
 import com.andres3336.streaming.BuildConfig
+import com.andres3336.streaming.data.Channel
 import com.andres3336.streaming.data.config.XtreamConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -40,6 +41,32 @@ class XtreamClient(
                     ?.takeIf(String::isNotBlank)
                     ?: "Desconocido",
             )
+        }
+
+    suspend fun liveCategories(): XtreamResult<List<XtreamCategory>> =
+        jsonArray("get_live_categories").mapArray { array ->
+            (0 until array.length()).mapNotNull { index ->
+                array.optJSONObject(index)?.let { json ->
+                    XtreamCategory(
+                        id = json.optString("category_id"),
+                        name = json.optString("category_name").ifBlank { "Sin nombre" },
+                    )
+                }
+            }
+        }
+
+    suspend fun liveStreams(categoryId: String): XtreamResult<List<XtreamLiveStream>> =
+        jsonArray("get_live_streams", mapOf("category_id" to categoryId)).mapArray { array ->
+            (0 until array.length()).mapNotNull { index ->
+                val json = array.optJSONObject(index) ?: return@mapNotNull null
+                XtreamLiveStream(
+                    id = json.optString("stream_id"),
+                    name = json.optString("name").ifBlank { "Sin título" },
+                    logo = json.optString("stream_icon").takeIf(String::isNotBlank),
+                    categoryId = json.optString("category_id"),
+                    epgChannelId = json.optString("epg_channel_id").takeIf(String::isNotBlank),
+                )
+            }
         }
 
     suspend fun vodCategories(): XtreamResult<List<XtreamCategory>> =
@@ -117,6 +144,27 @@ class XtreamClient(
 
             XtreamSeriesInfo(seasons = seasons)
         }
+
+    fun liveUrl(stream: XtreamLiveStream): String =
+        mediaUrl("live", stream.id, "m3u8")
+
+    fun liveFallbackUrl(stream: XtreamLiveStream): String =
+        mediaUrl("live", stream.id, "ts")
+
+    fun liveChannel(
+        stream: XtreamLiveStream,
+        categoryName: String,
+        providerLabel: String?,
+    ): Channel = Channel(
+        name = stream.name,
+        url = liveUrl(stream),
+        group = categoryName,
+        logo = stream.logo,
+        tvgId = stream.epgChannelId?.takeIf(String::isNotBlank) ?: "xtream:${stream.id}",
+        isVod = false,
+        fallbackUrl = liveFallbackUrl(stream),
+        provider = providerLabel,
+    )
 
     fun movieUrl(movie: XtreamMovie): String =
         mediaUrl("movie", movie.id, movie.extension)

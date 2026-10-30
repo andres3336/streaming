@@ -70,6 +70,7 @@ import androidx.media3.common.Tracks
 import androidx.media3.common.VideoSize
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.datasource.HttpDataSource
 import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
@@ -83,6 +84,10 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.andres3336.streaming.data.Channel
 import com.andres3336.streaming.data.M3uFetch
+import com.andres3336.streaming.data.cache.CacheIdentity
+import com.andres3336.streaming.data.cache.ChannelCache
+import com.andres3336.streaming.data.cache.XtreamCatalog
+import com.andres3336.streaming.data.cache.XtreamCatalogCache
 import com.andres3336.streaming.data.M3uParser
 import com.andres3336.streaming.data.M3uRepository
 import com.andres3336.streaming.data.config.ConfigFetch
@@ -101,10 +106,13 @@ import com.andres3336.streaming.data.config.SourceHealth
 import com.andres3336.streaming.data.config.SourceHealthChecker
 import com.andres3336.streaming.data.config.SourcesConfig
 import com.andres3336.streaming.data.config.XtreamConfig
+import com.andres3336.streaming.data.diagnostics.ErrorLogEntry
+import com.andres3336.streaming.data.diagnostics.ErrorLogStore
 import com.andres3336.streaming.data.live.ChannelSearch
 import com.andres3336.streaming.data.live.LiveState
 import com.andres3336.streaming.data.live.LiveStateStore
 import com.andres3336.streaming.data.live.liveKey
+import com.andres3336.streaming.data.live.mergeLiveChannels
 import com.andres3336.streaming.data.playback.PlaybackEntry
 import com.andres3336.streaming.data.playback.PlaybackRequest
 import com.andres3336.streaming.data.playback.PlaybackStore
@@ -117,6 +125,7 @@ import com.andres3336.streaming.data.xtream.XtreamMovie
 import com.andres3336.streaming.data.xtream.XtreamResult
 import com.andres3336.streaming.data.xtream.XtreamSeries
 import com.andres3336.streaming.data.xtream.XtreamSeriesInfo
+import com.andres3336.streaming.player.HlsFallback
 import com.andres3336.streaming.player.NetworkPolicy
 import com.andres3336.streaming.player.StreamStatsFormat
 import com.andres3336.streaming.player.TrackChoice
@@ -162,6 +171,8 @@ private fun StreamingApp() {
         SourceHealthChecker(client, m3uRepository)
     }
     val configCache = remember { ConfigCache(context) }
+    val channelCache = remember { ChannelCache(context) }
+    val xtreamCatalogCache = remember { XtreamCatalogCache(context) }
     val settingsStore = remember { DeviceSettingsStore(context) }
     val playbackStore = remember { PlaybackStore(context) }
     val liveStateStore = remember { LiveStateStore(context) }
@@ -197,6 +208,7 @@ private fun StreamingApp() {
             configRepository = configRepository,
             m3uRepository = m3uRepository,
             configCache = configCache,
+            channelCache = channelCache,
             etag = if (forceConfigRefresh) null else etag,
             lastReady = lastReady,
         )
@@ -222,6 +234,7 @@ private fun StreamingApp() {
             configRepository = configRepository,
             m3uRepository = m3uRepository,
             configCache = configCache,
+            channelCache = channelCache,
             etag = if (forceConfigRefresh) null else current.etag,
         )
         forceConfigRefresh = false
@@ -315,7 +328,20 @@ private fun StreamingApp() {
         }
     }
 
+    val recoverSource = {
+        playing = null
+        forceConfigRefresh = true
+        refreshTick += 1
+    }
+
     val effectiveConfig = centralConfig?.let { ConfigMerger.apply(it, deviceSettings) }
+    var startCacheCleared by remember { mutableStateOf(false) }
+    LaunchedEffect(effectiveConfig?.cache?.clearOnStart) {
+        if (!startCacheCleared && effectiveConfig?.cache?.clearOnStart == true) {
+            startCacheCleared = true
+            withContext(Dispatchers.IO) { VideoCache.clear(context) }
+        }
+    }
     val checkSources: suspend () -> SourceHealth = {
         val config = effectiveConfig ?: (state as? AppState.Ready)?.config
         if (config == null) {
@@ -346,9 +372,11 @@ private fun StreamingApp() {
             playbackEntries = playbackEntries,
             onProgress = onProgress,
             onFinished = onFinished,
+            onRecoverSource = recoverSource,
             liveState = liveState,
             onToggleFavorite = onToggleFavorite,
             refreshVersion = refreshVersion,
+            xtreamCatalogCache = xtreamCatalogCache,
             onCheckSources = checkSources,
             refreshing = refreshing,
             onRefreshConfig = {
@@ -370,6 +398,7 @@ private suspend fun loadApp(
     configRepository: ConfigRepository,
     m3uRepository: M3uRepository,
     configCache: ConfigCache,
+    channelCache: ChannelCache,
     etag: String?,
     lastReady: AppState.Ready?,
 ): AppState {
@@ -394,16 +423,17 @@ private suspend fun loadApp(
         is ConfigFetch.MissingUrl -> AppState.Error("Falta la URL de configuración")
 
         is ConfigFetch.NotModified -> lastReady
-            ?: loadCached(configCache, m3uRepository)
+            ?: loadCached(configCache, channelCache, m3uRepository)
             ?: AppState.Error("La configuración no cambió y no hay copia local")
 
-        is ConfigFetch.Failure -> loadCached(configCache, m3uRepository)
+        is ConfigFetch.Failure -> loadCached(configCache, channelCache, m3uRepository)
             ?: lastReady?.let {
                 loadFromConfig(
                     config = it.config,
                     etag = it.etag,
                     sourceLabel = it.sourceLabel,
                     m3uRepository = m3uRepository,
+                    channelCache = channelCache,
                 )
             }
             ?: AppState.Error(fetched.message)
@@ -413,19 +443,23 @@ private suspend fun loadApp(
             loadFromConfig(
                 config = fetched.config,
                 etag = fetched.etag,
-                sourceLabel = if (fetched.config.sources.liveMode == LiveMode.GIST) {
-                    "Gist"
-                } else {
-                    "Remoto"
-                },
+                sourceLabel = liveSourceLabel(fetched.config),
                 m3uRepository = m3uRepository,
+                channelCache = channelCache,
             )
         }
     }
 }
 
+private fun liveSourceLabel(config: AppConfig): String = when (config.sources.liveMode) {
+    LiveMode.GIST -> "Gist"
+    LiveMode.XTREAM -> "Xtream"
+    LiveMode.MERGE -> "Gist + Xtream"
+}
+
 private suspend fun loadCached(
     configCache: ConfigCache,
+    channelCache: ChannelCache,
     m3uRepository: M3uRepository,
 ): AppState? {
     val cached = configCache.load() ?: return null
@@ -436,8 +470,9 @@ private suspend fun loadCached(
     return loadFromConfig(
         config = config,
         etag = null,
-        sourceLabel = if (config.sources.liveMode == LiveMode.GIST) "Gist · caché" else "Remoto · caché",
+        sourceLabel = "${liveSourceLabel(config)} · caché",
         m3uRepository = m3uRepository,
+        channelCache = channelCache,
     )
 }
 
@@ -446,23 +481,56 @@ private suspend fun loadFromConfig(
     etag: String?,
     sourceLabel: String,
     m3uRepository: M3uRepository,
+    channelCache: ChannelCache,
 ): AppState {
+    if (config.sources.liveMode == LiveMode.XTREAM) {
+        return AppState.Ready(
+            channels = emptyList(),
+            config = config,
+            sourceLabel = "Xtream",
+            etag = etag,
+        )
+    }
+
     val m3uUrl = config.sources.m3uUrl
         ?: return AppState.Error("La configuración no incluye una lista M3U")
+    val sourceKey = CacheIdentity.m3u(config)
 
     return when (val playlist = m3uRepository.load(
         url = m3uUrl,
         userAgent = config.player.userAgent,
         headers = config.player.headers,
     )) {
-        is M3uFetch.Success -> AppState.Ready(
-            channels = playlist.channels,
-            config = config,
-            sourceLabel = sourceLabel,
-            etag = etag,
-        )
+        is M3uFetch.Success -> {
+            sourceKey?.let { channelCache.save(it, playlist.channels) }
+            AppState.Ready(
+                channels = playlist.channels,
+                config = config,
+                sourceLabel = sourceLabel,
+                etag = etag,
+            )
+        }
 
-        is M3uFetch.Failure -> AppState.Error(playlist.message)
+        is M3uFetch.Failure -> {
+            val cached = sourceKey?.let { channelCache.load(it) }
+            when {
+                cached != null -> AppState.Ready(
+                    channels = cached,
+                    config = config,
+                    sourceLabel = "Lista en caché",
+                    etag = etag,
+                )
+
+                config.sources.liveMode == LiveMode.MERGE -> AppState.Ready(
+                    channels = emptyList(),
+                    config = config,
+                    sourceLabel = "Gist no disponible · Xtream",
+                    etag = etag,
+                )
+
+                else -> AppState.Error(playlist.message)
+            }
+        }
     }
 }
 
@@ -470,6 +538,7 @@ private suspend fun refreshApp(
     configRepository: ConfigRepository,
     m3uRepository: M3uRepository,
     configCache: ConfigCache,
+    channelCache: ChannelCache,
     etag: String?,
 ): AppState.Ready? = when (val fetched = configRepository.fetch(etag)) {
     is ConfigFetch.Success -> {
@@ -477,8 +546,9 @@ private suspend fun refreshApp(
         when (val loaded = loadFromConfig(
             config = fetched.config,
             etag = fetched.etag,
-            sourceLabel = if (fetched.config.sources.liveMode == LiveMode.GIST) "Gist" else "Remoto",
+            sourceLabel = liveSourceLabel(fetched.config),
             m3uRepository = m3uRepository,
+            channelCache = channelCache,
         )) {
             is AppState.Ready -> loaded
             else -> null
@@ -582,9 +652,11 @@ private fun ReadyScreen(
     playbackEntries: List<PlaybackEntry>,
     onProgress: (Channel, Long, Long) -> Unit,
     onFinished: (Channel) -> Unit,
+    onRecoverSource: () -> Unit,
     liveState: LiveState,
     onToggleFavorite: (Channel) -> Unit,
     refreshVersion: Int,
+    xtreamCatalogCache: XtreamCatalogCache,
     onCheckSources: suspend () -> SourceHealth,
     refreshing: Boolean,
     onRefreshConfig: () -> Unit,
@@ -607,6 +679,8 @@ private fun ReadyScreen(
             onProgress = onProgress,
             onFinished = onFinished,
             onNext = onSelect,
+            onAspectChange = { mode -> onSettingsChange(settings.copy(aspectMode = mode)) },
+            onRecoverSource = onRecoverSource,
             onClose = onClose,
         )
         return
@@ -646,7 +720,11 @@ private fun ReadyScreen(
                 "series" -> "Xtream · Series"
                 "continue" -> "Continuar viendo"
                 "settings" -> "Ajustes · solo este TV"
-                else -> "${ready.sourceLabel} · ${ready.channels.size} canales"
+                else -> if (config.sources.liveMode == LiveMode.GIST) {
+                    "${ready.sourceLabel} · ${ready.channels.size} canales"
+                } else {
+                    ready.sourceLabel
+                }
             },
             color = Color(0xFF94A3B8),
             fontSize = 18.sp,
@@ -703,16 +781,17 @@ private fun ReadyScreen(
                     onClearCache = { VideoCache.clear(context) },
                 )
 
-                else -> ChannelList(
+                else -> LiveBrowseScreen(
                     channels = ready.channels,
-                    favorites = liveState.favorites,
-                    recents = liveState.recents,
-                    lastChannel = liveState.lastChannel,
-                    startLastChannel = config.live.startLastChannel,
+                    config = config,
+                    refreshVersion = refreshVersion,
+                    onUpdateConfig = onRefreshConfig,
+                    liveState = liveState,
                     query = liveQuery,
                     onQueryChange = { liveQuery = it },
                     onToggleFavorite = onToggleFavorite,
                     onSelect = onSelect,
+                    xtreamCatalogCache = xtreamCatalogCache,
                 )
             }
         }
@@ -803,12 +882,501 @@ private fun SectionButton(
     }
 }
 
+@Composable
+private fun BrowseShell(
+    rail: @Composable () -> Unit,
+    content: @Composable () -> Unit,
+    detail: (@Composable () -> Unit)? = null,
+) {
+    Row(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .width(260.dp)
+                .fillMaxHeight(),
+        ) {
+            rail()
+        }
+        Spacer(Modifier.width(16.dp))
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight(),
+        ) {
+            content()
+        }
+        if (detail != null) {
+            Spacer(Modifier.width(16.dp))
+            Box(
+                modifier = Modifier
+                    .width(360.dp)
+                    .fillMaxHeight(),
+            ) {
+                detail()
+            }
+        }
+    }
+}
+
+@Composable
+private fun <T> BrowseRail(
+    items: List<T>,
+    selected: T?,
+    label: (T) -> String,
+    onSelect: (T) -> Unit,
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        items(items) { item ->
+            Button(
+                onClick = { onSelect(item) },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    text = label(item),
+                    fontSize = 16.sp,
+                    fontWeight = if (item == selected) FontWeight.Bold else FontWeight.Normal,
+                    maxLines = 1,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun BrowsePosterRow(
+    name: String,
+    image: String?,
+    onClick: () -> Unit,
+) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            AsyncImage(
+                model = image,
+                contentDescription = null,
+                placeholder = painterResource(R.drawable.ic_channel_placeholder),
+                error = painterResource(R.drawable.ic_channel_placeholder),
+                fallback = painterResource(R.drawable.ic_channel_placeholder),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .width(40.dp)
+                    .height(60.dp),
+            )
+            Spacer(Modifier.width(16.dp))
+            Text(
+                text = name,
+                fontSize = 18.sp,
+                maxLines = 1,
+            )
+        }
+    }
+}
+
+private data class LiveRailEntry(
+    val id: String,
+    val label: String,
+)
+
+private const val GIST_RAIL_KEY = "__gist__"
+
+@Composable
+private fun LiveBrowseScreen(
+    channels: List<Channel>,
+    config: AppConfig,
+    refreshVersion: Int,
+    onUpdateConfig: () -> Unit,
+    liveState: LiveState,
+    query: String,
+    onQueryChange: (String) -> Unit,
+    onToggleFavorite: (Channel) -> Unit,
+    onSelect: (PlaybackRequest) -> Unit,
+    xtreamCatalogCache: XtreamCatalogCache,
+) {
+    when (config.sources.liveMode) {
+        LiveMode.GIST -> GistLiveBrowse(
+            channels = channels,
+            liveState = liveState,
+            query = query,
+            onQueryChange = onQueryChange,
+            onToggleFavorite = onToggleFavorite,
+            onSelect = onSelect,
+        )
+
+        LiveMode.XTREAM,
+        LiveMode.MERGE,
+        -> XtreamLiveBrowse(
+            gistChannels = channels,
+            config = config,
+            refreshVersion = refreshVersion,
+            onUpdateConfig = onUpdateConfig,
+            liveState = liveState,
+            query = query,
+            onQueryChange = onQueryChange,
+            onToggleFavorite = onToggleFavorite,
+            onSelect = onSelect,
+            xtreamCatalogCache = xtreamCatalogCache,
+        )
+    }
+}
+
+@Composable
+private fun GistLiveBrowse(
+    channels: List<Channel>,
+    liveState: LiveState,
+    query: String,
+    onQueryChange: (String) -> Unit,
+    onToggleFavorite: (Channel) -> Unit,
+    onSelect: (PlaybackRequest) -> Unit,
+) {
+    var selected by remember { mutableStateOf("all") }
+    val groups = remember(channels) {
+        channels.mapNotNull { it.group?.takeIf(String::isNotBlank) }.distinct()
+    }
+    val entries = remember(groups) {
+        listOf(
+            LiveRailEntry("all", "Todos"),
+            LiveRailEntry("favorites", "Favoritos"),
+            LiveRailEntry("recents", "Recientes"),
+        ) + groups.map { LiveRailEntry("group:$it", it) }
+    }
+
+    BrowseShell(
+        rail = {
+            BrowseRail(
+                items = entries,
+                selected = entries.firstOrNull { it.id == selected },
+                label = LiveRailEntry::label,
+                onSelect = { selected = it.id },
+            )
+        },
+        content = {
+            when {
+                selected == "favorites" -> ChannelList(
+                    channels = channels,
+                    favorites = liveState.favorites,
+                    recents = liveState.recents,
+                    lastChannel = liveState.lastChannel,
+                    startLastChannel = true,
+                    query = query,
+                    onQueryChange = onQueryChange,
+                    onToggleFavorite = onToggleFavorite,
+                    onSelect = onSelect,
+                    section = LiveListSection.Favorites,
+                    title = "Favoritos",
+                )
+
+                selected == "recents" -> ChannelList(
+                    channels = channels,
+                    favorites = liveState.favorites,
+                    recents = liveState.recents,
+                    lastChannel = liveState.lastChannel,
+                    startLastChannel = true,
+                    query = query,
+                    onQueryChange = onQueryChange,
+                    onToggleFavorite = onToggleFavorite,
+                    onSelect = onSelect,
+                    section = LiveListSection.Recents,
+                    title = "Recientes",
+                )
+
+                selected.startsWith("group:") -> {
+                    val group = selected.removePrefix("group:")
+                    val list = remember(channels, group) {
+                        channels.filter { (it.group ?: "Sin grupo") == group }
+                    }
+                    ChannelList(
+                        channels = list,
+                        favorites = liveState.favorites,
+                        recents = liveState.recents,
+                        lastChannel = liveState.lastChannel,
+                        startLastChannel = true,
+                        query = query,
+                        onQueryChange = onQueryChange,
+                        onToggleFavorite = onToggleFavorite,
+                        onSelect = onSelect,
+                        section = LiveListSection.Flat,
+                        title = group,
+                    )
+                }
+
+                else -> ChannelList(
+                    channels = channels,
+                    favorites = liveState.favorites,
+                    recents = liveState.recents,
+                    lastChannel = liveState.lastChannel,
+                    startLastChannel = true,
+                    query = query,
+                    onQueryChange = onQueryChange,
+                    onToggleFavorite = onToggleFavorite,
+                    onSelect = onSelect,
+                    section = LiveListSection.All,
+                )
+            }
+        },
+    )
+}
+
+@Composable
+private fun XtreamLiveBrowse(
+    gistChannels: List<Channel>,
+    config: AppConfig,
+    refreshVersion: Int,
+    onUpdateConfig: () -> Unit,
+    liveState: LiveState,
+    query: String,
+    onQueryChange: (String) -> Unit,
+    onToggleFavorite: (Channel) -> Unit,
+    onSelect: (PlaybackRequest) -> Unit,
+    xtreamCatalogCache: XtreamCatalogCache,
+) {
+    val xtream = config.sources.xtream
+    val sourceKey = CacheIdentity.xtream(config)
+    if (xtream == null || sourceKey == null) {
+        SourceFailurePane(
+            message = "La configuración no incluye Xtream.",
+            onRetry = {},
+            onUpdateConfig = onUpdateConfig,
+        )
+        return
+    }
+
+    val client = remember(xtream, config.player.userAgent) {
+        XtreamClient(xtream, userAgent = config.player.userAgent)
+    }
+    val merge = config.sources.liveMode == LiveMode.MERGE
+    var catalog by remember(sourceKey) { mutableStateOf(XtreamCatalog()) }
+    var selectedKey by remember(sourceKey) {
+        mutableStateOf(if (merge) GIST_RAIL_KEY else "")
+    }
+    var loadingCategories by remember(sourceKey) { mutableStateOf(true) }
+    var loadingStreams by remember(sourceKey) { mutableStateOf(false) }
+    var error by remember(sourceKey) { mutableStateOf<String?>(null) }
+    var usingCache by remember(sourceKey) { mutableStateOf(false) }
+    var retry by remember(sourceKey) { mutableIntStateOf(0) }
+
+    LaunchedEffect(sourceKey, refreshVersion, retry) {
+        val cached = withContext(Dispatchers.IO) { xtreamCatalogCache.load(sourceKey) }
+        if (cached != null) {
+            catalog = cached
+            usingCache = true
+            if (selectedKey.isBlank() ||
+                (selectedKey != GIST_RAIL_KEY && cached.categories.none { it.id == selectedKey })
+            ) {
+                selectedKey = cached.categories.firstOrNull()?.id ?: GIST_RAIL_KEY
+            }
+        }
+
+        loadingCategories = catalog.categories.isEmpty()
+        error = null
+        when (val result = client.liveCategories()) {
+            is XtreamResult.Success -> {
+                val updated = catalog.copy(categories = result.value)
+                catalog = updated
+                usingCache = false
+                loadingCategories = false
+                if (selectedKey != GIST_RAIL_KEY &&
+                    result.value.none { it.id == selectedKey }
+                ) {
+                    selectedKey = result.value.firstOrNull()?.id ?: GIST_RAIL_KEY
+                }
+                withContext(Dispatchers.IO) { xtreamCatalogCache.save(sourceKey, updated) }
+            }
+
+            is XtreamResult.Failure -> {
+                loadingCategories = false
+                if (catalog.categories.isEmpty()) error = result.message
+            }
+        }
+    }
+
+    LaunchedEffect(selectedKey, refreshVersion, retry, sourceKey) {
+        val categoryId = selectedKey.takeIf { it.isNotBlank() && it != GIST_RAIL_KEY }
+            ?: return@LaunchedEffect
+        val cached = catalog.streams[categoryId]
+        loadingStreams = cached == null
+        if (cached != null) usingCache = true
+
+        when (val result = client.liveStreams(categoryId)) {
+            is XtreamResult.Success -> {
+                val updated = catalog.copy(streams = catalog.streams + (categoryId to result.value))
+                catalog = updated
+                usingCache = false
+                loadingStreams = false
+                withContext(Dispatchers.IO) { xtreamCatalogCache.save(sourceKey, updated) }
+            }
+
+            is XtreamResult.Failure -> {
+                loadingStreams = false
+                if (cached == null) error = result.message
+            }
+        }
+    }
+
+    val railEntries = remember(catalog.categories, merge) {
+        buildList {
+            if (merge) add(LiveRailEntry(GIST_RAIL_KEY, "Gist"))
+            catalog.categories.forEach { add(LiveRailEntry(it.id, it.name)) }
+        }
+    }
+
+    when {
+        loadingCategories && catalog.categories.isEmpty() -> BrowseShell(
+            rail = {},
+            content = {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    if (merge) {
+                        Button(onClick = { selectedKey = GIST_RAIL_KEY }) {
+                            Text("Gist", fontSize = 16.sp)
+                        }
+                        Spacer(Modifier.height(12.dp))
+                    }
+                    CenteredMessage("Cargando canales…")
+                }
+            },
+        )
+
+        error != null && catalog.categories.isEmpty() -> {
+            if (merge && gistChannels.isNotEmpty()) {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Text(
+                        text = "Xtream no está disponible. Mostrando la lista Gist.",
+                        color = Color(0xFFFBBF24),
+                        fontSize = 15.sp,
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Box(modifier = Modifier.weight(1f)) {
+                        ChannelList(
+                            channels = gistChannels,
+                            favorites = liveState.favorites,
+                            recents = liveState.recents,
+                            lastChannel = liveState.lastChannel,
+                            startLastChannel = true,
+                            query = query,
+                            onQueryChange = onQueryChange,
+                            onToggleFavorite = onToggleFavorite,
+                            onSelect = onSelect,
+                            section = LiveListSection.All,
+                        )
+                    }
+                }
+            } else {
+                SourceFailurePane(
+                    message = error!!,
+                    onRetry = { retry++ },
+                    onUpdateConfig = onUpdateConfig,
+                )
+            }
+        }
+
+        else -> BrowseShell(
+            rail = {
+                BrowseRail(
+                    items = railEntries,
+                    selected = railEntries.firstOrNull { it.id == selectedKey },
+                    label = LiveRailEntry::label,
+                    onSelect = { selectedKey = it.id },
+                )
+            },
+            content = {
+                if (selectedKey == GIST_RAIL_KEY) {
+                    ChannelList(
+                        channels = gistChannels,
+                        favorites = liveState.favorites,
+                        recents = liveState.recents,
+                        lastChannel = liveState.lastChannel,
+                        startLastChannel = true,
+                        query = query,
+                        onQueryChange = onQueryChange,
+                        onToggleFavorite = onToggleFavorite,
+                        onSelect = onSelect,
+                        section = LiveListSection.All,
+                    )
+                } else {
+                    val category = catalog.categories.firstOrNull { it.id == selectedKey }
+                    val streams = catalog.streams[selectedKey]
+                    when {
+                        loadingStreams && streams == null -> CenteredMessage("Cargando canales…")
+                        error != null && streams == null -> SourceFailurePane(
+                            message = error!!,
+                            onRetry = { retry++ },
+                            onUpdateConfig = onUpdateConfig,
+                        )
+
+                        else -> {
+                            val xtreamChannels = remember(streams, category?.name, merge) {
+                                streams.orEmpty().map { stream ->
+                                    client.liveChannel(
+                                        stream = stream,
+                                        categoryName = category?.name ?: "Xtream",
+                                        providerLabel = if (merge) "Xtream" else null,
+                                    )
+                                }
+                            }
+                            val content = remember(gistChannels, xtreamChannels, merge) {
+                                if (merge) {
+                                    mergeLiveChannels(gistChannels, xtreamChannels)
+                                } else {
+                                    xtreamChannels
+                                }
+                            }
+
+                            Column(modifier = Modifier.fillMaxSize()) {
+                                if (usingCache) {
+                                    Text(
+                                        text = "Lista en caché",
+                                        color = Color(0xFFFBBF24),
+                                        fontSize = 14.sp,
+                                    )
+                                    Spacer(Modifier.height(6.dp))
+                                }
+                                Box(modifier = Modifier.weight(1f)) {
+                                    ChannelList(
+                                        channels = content,
+                                        favorites = liveState.favorites,
+                                        recents = liveState.recents,
+                                        lastChannel = liveState.lastChannel,
+                                        startLastChannel = true,
+                                        query = query,
+                                        onQueryChange = onQueryChange,
+                                        onToggleFavorite = onToggleFavorite,
+                                        onSelect = onSelect,
+                                        section = LiveListSection.Flat,
+                                        title = category?.name ?: "Canales",
+                                        useBaseNumbers = false,
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+        )
+    }
+}
+
+private enum class LiveListSection { All, Favorites, Recents, Flat }
+
 private sealed interface LiveListRow {
-    data class Header(val title: String) : LiveListRow
+    val key: String
+
+    data class Header(
+        override val key: String,
+        val title: String,
+    ) : LiveListRow
+
     data class Item(
+        override val key: String,
         val channel: Channel,
         val favorite: Boolean,
         val showGroup: Boolean,
+        val number: Int,
     ) : LiveListRow
 }
 
@@ -823,33 +1391,70 @@ private fun ChannelList(
     onQueryChange: (String) -> Unit,
     onToggleFavorite: (Channel) -> Unit,
     onSelect: (PlaybackRequest) -> Unit,
+    section: LiveListSection = LiveListSection.All,
+    title: String? = null,
+    showChannelNumbers: Boolean = true,
+    useBaseNumbers: Boolean = true,
 ) {
-    val visible = remember(channels, query) { ChannelSearch.filter(channels, query) }
-    val favoriteChannels = remember(visible, favorites) {
-        LiveState.resolve(favorites, visible)
+    val filtered = remember(channels, query) { ChannelSearch.filter(channels, query) }
+    val visible = remember(filtered, section, favorites, recents) {
+        when (section) {
+            LiveListSection.Favorites -> LiveState.resolve(favorites, filtered)
+            LiveListSection.Recents -> LiveState.resolve(recents, filtered)
+            else -> filtered
+        }
     }
-    val recentChannels = remember(visible, recents, favorites) {
-        LiveState.resolve(recents, visible).filterNot { it.liveKey() in favorites }
+    val numberByKey = remember(channels) {
+        channels.mapIndexed { index, channel -> channel.liveKey() to index + 1 }.toMap()
     }
-    val groups = remember(visible) { visible.groupBy { it.group ?: "Sin grupo" } }
-    val rows = remember(favoriteChannels, recentChannels, groups, favorites) {
+    val favoriteKeys = remember(favorites) { favorites.toSet() }
+    val rows = remember(visible, section, title, numberByKey, favoriteKeys, useBaseNumbers) {
         buildList {
-            if (favoriteChannels.isNotEmpty()) {
-                add(LiveListRow.Header("Favoritos"))
-                favoriteChannels.forEach {
-                    add(LiveListRow.Item(it, favorite = true, showGroup = true))
+            fun addItems(list: List<Channel>, prefix: String, showGroup: Boolean) {
+                list.forEachIndexed { index, channel ->
+                    add(
+                        LiveListRow.Item(
+                            key = "$prefix-$index-${channel.liveKey()}",
+                            channel = channel,
+                            favorite = channel.liveKey() in favoriteKeys,
+                            showGroup = showGroup,
+                            number = if (useBaseNumbers) {
+                                numberByKey[channel.liveKey()] ?: (index + 1)
+                            } else {
+                                index + 1
+                            },
+                        ),
+                    )
                 }
             }
-            if (recentChannels.isNotEmpty()) {
-                add(LiveListRow.Header("Recientes"))
-                recentChannels.forEach {
-                    add(LiveListRow.Item(it, favorite = false, showGroup = true))
+
+            when (section) {
+                LiveListSection.All -> {
+                    val favoriteChannels = LiveState.resolve(favorites, visible)
+                    if (favoriteChannels.isNotEmpty()) {
+                        add(LiveListRow.Header("h-favorites", "Favoritos"))
+                        addItems(favoriteChannels, "favorites", showGroup = true)
+                    }
+
+                    val recentChannels = LiveState.resolve(recents, visible)
+                        .filterNot { it.liveKey() in favoriteKeys }
+                    if (recentChannels.isNotEmpty()) {
+                        add(LiveListRow.Header("h-recents", "Recientes"))
+                        addItems(recentChannels, "recents", showGroup = true)
+                    }
+
+                    visible.groupBy { it.group ?: "Sin grupo" }.forEach { (group, groupChannels) ->
+                        add(LiveListRow.Header("h-group-$group", group))
+                        addItems(groupChannels, "group-$group", showGroup = false)
+                    }
                 }
-            }
-            groups.forEach { (group, groupChannels) ->
-                add(LiveListRow.Header(group))
-                groupChannels.forEach {
-                    add(LiveListRow.Item(it, favorite = it.liveKey() in favorites, showGroup = false))
+
+                LiveListSection.Favorites,
+                LiveListSection.Recents,
+                LiveListSection.Flat,
+                -> {
+                    title?.let { add(LiveListRow.Header("h-title", it)) }
+                    addItems(visible, section.name.lowercase(), showGroup = false)
                 }
             }
         }
@@ -964,7 +1569,7 @@ private fun ChannelList(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                itemsIndexed(rows) { index, row ->
+                itemsIndexed(rows, key = { _, row -> row.key }) { index, row ->
                     when (row) {
                         is LiveListRow.Header -> Text(
                             text = row.title,
@@ -979,6 +1584,8 @@ private fun ChannelList(
                             favorite = row.favorite,
                             showGroup = row.showGroup,
                             showLogo = showLogos,
+                            number = row.number,
+                            showNumber = showChannelNumbers,
                             focusModifier = if (index == focusIndex) {
                                 Modifier.focusRequester(focusRequester)
                             } else {
@@ -1011,6 +1618,8 @@ private fun LiveChannelRow(
     favorite: Boolean,
     showGroup: Boolean,
     showLogo: Boolean,
+    number: Int,
+    showNumber: Boolean,
     focusModifier: Modifier,
     onSelect: () -> Unit,
     onToggleFavorite: () -> Unit,
@@ -1029,6 +1638,16 @@ private fun LiveChannelRow(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                if (showNumber) {
+                    Text(
+                        text = number.toString(),
+                        color = Color(0xFF64748B),
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.End,
+                        modifier = Modifier.width(44.dp),
+                    )
+                    Spacer(Modifier.width(10.dp))
+                }
                 if (showLogo) {
                     AsyncImage(
                         model = channel.logo,
@@ -1049,9 +1668,13 @@ private fun LiveChannelRow(
                         fontSize = 18.sp,
                         maxLines = 1,
                     )
-                    if (showGroup && !channel.group.isNullOrBlank()) {
+                    val details = listOfNotNull(
+                        channel.group?.takeIf { showGroup && it.isNotBlank() },
+                        channel.provider?.takeIf(String::isNotBlank),
+                    ).joinToString(" · ")
+                    if (details.isNotEmpty()) {
                         Text(
-                            text = channel.group,
+                            text = details,
                             color = Color(0xFF64748B),
                             fontSize = 13.sp,
                             maxLines = 1,
@@ -1135,100 +1758,41 @@ private fun XtreamMoviesScreen(
         )
 
         loadingCategories && categories.isEmpty() -> CenteredMessage("Cargando películas…")
-        else -> Row(modifier = Modifier.fillMaxSize()) {
-            LazyColumn(
-                modifier = Modifier
-                    .width(260.dp)
-                    .fillMaxHeight(),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                items(categories) { category ->
-                    Button(
-                        onClick = { selectedCategory = category },
-                        modifier = Modifier.fillMaxWidth(),
+        else -> BrowseShell(
+            rail = {
+                BrowseRail(
+                    items = categories,
+                    selected = selectedCategory,
+                    label = XtreamCategory::name,
+                    onSelect = { selectedCategory = it },
+                )
+            },
+            content = {
+                if (loadingMovies) {
+                    CenteredMessage("Cargando…")
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        Text(
-                            text = category.name,
-                            fontSize = 16.sp,
-                            fontWeight = if (category == selectedCategory) {
-                                FontWeight.Bold
-                            } else {
-                                FontWeight.Normal
-                            },
-                            maxLines = 1,
-                        )
-                    }
-                }
-            }
-
-            Spacer(Modifier.width(16.dp))
-
-            if (loadingMovies) {
-                Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = "Cargando…",
-                        color = Color(0xFF94A3B8),
-                        fontSize = 18.sp,
-                    )
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    items(movies) { movie ->
-                        MovieRow(movie) {
-                            onPlay(
-                                Channel(
-                                    name = movie.name,
-                                    url = client.movieUrl(movie),
-                                    group = "Películas",
-                                    logo = movie.logo,
-                                    tvgId = movie.id,
-                                    isVod = true,
-                                ),
-                            )
+                        items(movies) { movie ->
+                            BrowsePosterRow(movie.name, movie.logo) {
+                                onPlay(
+                                    Channel(
+                                        name = movie.name,
+                                        url = client.movieUrl(movie),
+                                        group = "Películas",
+                                        logo = movie.logo,
+                                        tvgId = movie.id,
+                                        isVod = true,
+                                    ),
+                                )
+                            }
                         }
                     }
                 }
-            }
-        }
-    }
-}
-
-@Composable
-private fun MovieRow(movie: XtreamMovie, onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            AsyncImage(
-                model = movie.logo,
-                contentDescription = null,
-                placeholder = painterResource(R.drawable.ic_channel_placeholder),
-                error = painterResource(R.drawable.ic_channel_placeholder),
-                fallback = painterResource(R.drawable.ic_channel_placeholder),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .width(40.dp)
-                    .height(60.dp),
-            )
-            Spacer(Modifier.width(16.dp))
-            Text(
-                text = movie.name,
-                fontSize = 18.sp,
-                maxLines = 1,
-            )
-        }
+            },
+        )
     }
 }
 
@@ -1307,89 +1871,30 @@ private fun XtreamSeriesScreen(
         )
 
         loadingCategories && categories.isEmpty() -> CenteredMessage("Cargando series…")
-        else -> Row(modifier = Modifier.fillMaxSize()) {
-            LazyColumn(
-                modifier = Modifier
-                    .width(260.dp)
-                    .fillMaxHeight(),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                items(categories) { category ->
-                    Button(
-                        onClick = { selectedCategory = category },
-                        modifier = Modifier.fillMaxWidth(),
+        else -> BrowseShell(
+            rail = {
+                BrowseRail(
+                    items = categories,
+                    selected = selectedCategory,
+                    label = XtreamCategory::name,
+                    onSelect = { selectedCategory = it },
+                )
+            },
+            content = {
+                if (loadingSeries) {
+                    CenteredMessage("Cargando…")
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        Text(
-                            text = category.name,
-                            fontSize = 16.sp,
-                            fontWeight = if (category == selectedCategory) {
-                                FontWeight.Bold
-                            } else {
-                                FontWeight.Normal
-                            },
-                            maxLines = 1,
-                        )
+                        items(series) { item ->
+                            BrowsePosterRow(item.name, item.cover) { detail = item }
+                        }
                     }
                 }
-            }
-
-            Spacer(Modifier.width(16.dp))
-
-            if (loadingSeries) {
-                Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = "Cargando…",
-                        color = Color(0xFF94A3B8),
-                        fontSize = 18.sp,
-                    )
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    items(series) { item ->
-                        SeriesRow(item) { detail = item }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun SeriesRow(series: XtreamSeries, onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            AsyncImage(
-                model = series.cover,
-                contentDescription = null,
-                placeholder = painterResource(R.drawable.ic_channel_placeholder),
-                error = painterResource(R.drawable.ic_channel_placeholder),
-                fallback = painterResource(R.drawable.ic_channel_placeholder),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .width(40.dp)
-                    .height(60.dp),
-            )
-            Spacer(Modifier.width(16.dp))
-            Text(
-                text = series.name,
-                fontSize = 18.sp,
-                maxLines = 1,
-            )
-        }
+            },
+        )
     }
 }
 
@@ -1687,10 +2192,21 @@ private fun SettingsScreen(
     onSettingsChange: (DeviceSettings) -> Unit,
     onClearCache: () -> Unit,
 ) {
+    val context = LocalContext.current
     var cacheCleared by remember { mutableStateOf(false) }
+    var cacheSizeMb by remember { mutableStateOf<Long?>(null) }
     var checkingSources by remember { mutableStateOf(false) }
     var sourceHealth by remember { mutableStateOf<SourceHealth?>(null) }
+    val errorLogStore = remember(context) { ErrorLogStore(context) }
+    var errorLog by remember { mutableStateOf<List<ErrorLogEntry>>(emptyList()) }
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(cacheCleared, config.cache.sizeMb) {
+        cacheSizeMb = withContext(Dispatchers.IO) { VideoCache.sizeMb(context) }
+    }
+    LaunchedEffect(Unit) {
+        errorLog = withContext(Dispatchers.IO) { errorLogStore.load() }
+    }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -1727,8 +2243,11 @@ private fun SettingsScreen(
                 options = listOf(
                     "Ajustar" to "fit",
                     "Rellenar" to "fill",
+                    "Estirar" to "stretch",
                     "Zoom" to "zoom",
                     "Original" to "original",
+                    "16:9" to "16:9",
+                    "4:3" to "4:3",
                 ),
             ) { value -> onSettingsChange(settings.copy(aspectMode = value)) }
         }
@@ -1742,10 +2261,21 @@ private fun SettingsScreen(
             ) { value -> onSettingsChange(settings.copy(cacheSizeMb = value.toIntOrNull())) }
         }
         item {
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            ChoiceRow(
+                label = "Borrar al iniciar",
+                current = config.cache.clearOnStart.toString(),
+                options = listOf("Sí" to "true", "No" to "false"),
+            ) { value -> onSettingsChange(settings.copy(clearOnStart = value.toBoolean())) }
+        }
+        item {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 Button(onClick = {
                     onClearCache()
                     cacheCleared = true
+                    cacheSizeMb = 0L
                 }) {
                     Text(
                         text = if (cacheCleared) "Caché borrada" else "Borrar caché",
@@ -1753,10 +2283,9 @@ private fun SettingsScreen(
                     )
                 }
                 Text(
-                    text = "Solo se cachean películas y series.",
+                    text = "Uso actual: ${cacheSizeMb ?: "…"} MB · solo películas y series",
                     color = Color(0xFF64748B),
                     fontSize = 14.sp,
-                    modifier = Modifier.padding(top = 12.dp),
                 )
             }
         }
@@ -1832,6 +2361,37 @@ private fun SettingsScreen(
                             fontSize = 13.sp,
                         )
                     }
+                }
+            }
+        }
+
+        item { SettingsHeader("Diagnóstico") }
+        item {
+            Column {
+                Text(
+                    text = if (errorLog.isEmpty()) {
+                        "Sin errores registrados."
+                    } else {
+                        "Últimos errores:"
+                    },
+                    color = Color(0xFF94A3B8),
+                    fontSize = 15.sp,
+                )
+                errorLog.takeLast(5).reversed().forEach { entry ->
+                    Text(
+                        text = "${entry.channel} · ${entry.code} · ${entry.message}",
+                        color = Color(0xFFFCA5A5),
+                        fontSize = 13.sp,
+                        maxLines = 2,
+                        modifier = Modifier.padding(top = 4.dp),
+                    )
+                }
+                Spacer(Modifier.height(8.dp))
+                Button(onClick = {
+                    errorLogStore.clear()
+                    errorLog = emptyList()
+                }) {
+                    Text("Borrar registro", fontSize = 16.sp)
                 }
             }
         }
@@ -1931,6 +2491,8 @@ private fun PlaybackScreen(
     onProgress: (Channel, Long, Long) -> Unit,
     onFinished: (Channel) -> Unit,
     onNext: (PlaybackRequest) -> Unit,
+    onAspectChange: (String) -> Unit,
+    onRecoverSource: () -> Unit,
     onClose: () -> Unit,
 ) {
     val channel = request.channel
@@ -1946,23 +2508,44 @@ private fun PlaybackScreen(
     var retryToken by remember(channel) { mutableIntStateOf(0) }
     var autoRetries by remember(channel) { mutableIntStateOf(0) }
     var errorMessage by remember(channel) { mutableStateOf<String?>(null) }
+    var sourceFailure by remember(channel) { mutableStateOf(false) }
+    var activeUrl by remember(channel) { mutableStateOf(channel.url) }
+    var fallbackTried by remember(channel) { mutableStateOf(false) }
     var showNext by remember(channel) { mutableStateOf(false) }
     var countdown by remember(channel) { mutableIntStateOf(10) }
     var currentTracks by remember(channel) { mutableStateOf(Tracks.EMPTY) }
     var showTracks by remember(channel) { mutableStateOf(false) }
     var showStats by remember(channel) { mutableStateOf(false) }
+    var aspectMode by remember(playerConfig.aspectMode) { mutableStateOf(playerConfig.aspectMode) }
     var decoderName by remember(channel) { mutableStateOf<String?>(null) }
     var bandwidthBps by remember(channel) { mutableStateOf(0L) }
     var streamStats by remember(channel) { mutableStateOf<StreamStats?>(null) }
     val retryFocus = remember { FocusRequester() }
     val nextFocus = remember { FocusRequester() }
     val tracksButtonFocus = remember { FocusRequester() }
+    val aspectButtonFocus = remember { FocusRequester() }
     val firstTrackFocus = remember { FocusRequester() }
     val statsFirstFocus = remember { FocusRequester() }
+    var aspectTouched by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val errorLog = remember(context) { ErrorLogStore(context) }
 
     val lifecycleOwner = LocalLifecycleOwner.current
-    val player = remember(channel, playerConfig, networkConfig, cacheConfig, retryToken) {
-        buildPlayer(context, channel, playerConfig, networkConfig, cacheConfig).also { exoPlayer ->
+    val player = remember(
+        channel,
+        playerConfig.copy(aspectMode = ""),
+        networkConfig,
+        cacheConfig,
+        retryToken,
+        activeUrl,
+    ) {
+        buildPlayer(
+            context = context,
+            channel = channel.copy(url = activeUrl),
+            config = playerConfig,
+            network = networkConfig,
+            cache = cacheConfig,
+        ).also { exoPlayer ->
             exoPlayer.addListener(object : Player.Listener {
                 override fun onPlaybackStateChanged(playbackState: Int) {
                     if (BuildConfig.DEBUG) Log.d("Streaming", "state=$playbackState")
@@ -1978,7 +2561,19 @@ private fun PlaybackScreen(
 
                 override fun onPlayerError(error: PlaybackException) {
                     Log.e("Streaming", "player error ${error.errorCodeName}")
-                    errorMessage = friendlyPlaybackError(error)
+                    val friendly = friendlyPlaybackError(error)
+                    errorMessage = friendly
+                    sourceFailure = isSourceFailure(error)
+                    scope.launch(Dispatchers.IO) {
+                        errorLog.record(
+                            ErrorLogEntry(
+                                timestamp = System.currentTimeMillis(),
+                                channel = channel.name,
+                                code = error.errorCodeName,
+                                message = friendly,
+                            ),
+                        )
+                    }
                 }
 
                 override fun onTracksChanged(tracks: Tracks) {
@@ -2058,20 +2653,38 @@ private fun PlaybackScreen(
         }
     }
 
-    LaunchedEffect(errorMessage, channel.isVod) {
+    LaunchedEffect(errorMessage, channel.isVod, activeUrl) {
         if (errorMessage == null) return@LaunchedEffect
 
-        if (!channel.isVod && autoRetries < playerConfig.retryCount) {
-            val delayMs = (playerConfig.retryDelayMs.toLong().coerceAtLeast(500L) * (autoRetries + 1))
-                .coerceAtMost(5_000L)
-            delay(delayMs)
-            autoRetries += 1
-            errorMessage = null
-            retryToken += 1
-        } else {
-            delay(150)
-            runCatching { retryFocus.requestFocus() }
+        if (!channel.isVod) {
+            val fallback = if (activeUrl == channel.url) {
+                channel.fallbackUrl ?: HlsFallback.tsUrl(activeUrl)
+            } else {
+                null
+            }
+            if (!fallbackTried && fallback != null && fallback != activeUrl) {
+                delay(400)
+                fallbackTried = true
+                autoRetries = 0
+                errorMessage = null
+                activeUrl = fallback
+                retryToken += 1
+                return@LaunchedEffect
+            }
+
+            if (autoRetries < playerConfig.retryCount) {
+                val delayMs = (playerConfig.retryDelayMs.toLong().coerceAtLeast(500L) * (autoRetries + 1))
+                    .coerceAtMost(5_000L)
+                delay(delayMs)
+                autoRetries += 1
+                errorMessage = null
+                retryToken += 1
+                return@LaunchedEffect
+            }
         }
+
+        delay(150)
+        runCatching { retryFocus.requestFocus() }
     }
 
     DisposableEffect(player, channel) {
@@ -2149,6 +2762,13 @@ private fun PlaybackScreen(
         }
     }
 
+    LaunchedEffect(aspectMode, aspectTouched) {
+        if (aspectTouched) {
+            delay(120)
+            runCatching { aspectButtonFocus.requestFocus() }
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -2202,13 +2822,13 @@ private fun PlaybackScreen(
                     .inflate(R.layout.player_view, null) as PlayerView).apply {
                     this.player = player
                     keepScreenOn = true
-                    resizeMode = aspectResizeMode(playerConfig.aspectMode)
+                    applyAspect(this, aspectMode)
                 }
             },
             modifier = Modifier.fillMaxSize(),
             update = { view ->
                 view.player = player
-                view.resizeMode = aspectResizeMode(playerConfig.aspectMode)
+                applyAspect(view, aspectMode)
             },
         )
 
@@ -2247,6 +2867,17 @@ private fun PlaybackScreen(
             }
             Button(
                 onClick = {
+                    aspectTouched = true
+                    val next = nextAspectMode(aspectMode)
+                    aspectMode = next
+                    onAspectChange(next)
+                },
+                modifier = Modifier.focusRequester(aspectButtonFocus),
+            ) {
+                Text("Aspecto: ${aspectLabel(aspectMode)}", fontSize = 16.sp)
+            }
+            Button(
+                onClick = {
                     showStats = false
                     showTracks = true
                 },
@@ -2260,12 +2891,14 @@ private fun PlaybackScreen(
         if (error != null) {
             PlaybackErrorOverlay(
                 message = error,
+                sourceFailure = sourceFailure,
                 retryFocus = retryFocus,
                 onRetry = {
                     autoRetries = 0
                     errorMessage = null
                     retryToken += 1
                 },
+                onUpdateConfig = onRecoverSource,
                 onClose = onClose,
             )
         }
@@ -2674,8 +3307,10 @@ private fun NextEpisodeOverlay(
 @Composable
 private fun PlaybackErrorOverlay(
     message: String,
+    sourceFailure: Boolean,
     retryFocus: FocusRequester,
     onRetry: () -> Unit,
+    onUpdateConfig: () -> Unit,
     onClose: () -> Unit,
 ) {
     Box(
@@ -2699,8 +3334,22 @@ private fun PlaybackErrorOverlay(
                 fontSize = 18.sp,
                 textAlign = TextAlign.Center,
             )
+            if (sourceFailure) {
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    text = "Puede ser un problema de la fuente o de la cuenta.",
+                    color = Color(0xFF94A3B8),
+                    fontSize = 15.sp,
+                    textAlign = TextAlign.Center,
+                )
+            }
             Spacer(Modifier.height(24.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                if (sourceFailure) {
+                    Button(onClick = onUpdateConfig) {
+                        Text("Actualizar configuración", fontSize = 18.sp)
+                    }
+                }
                 Button(
                     onClick = onRetry,
                     modifier = Modifier.focusRequester(retryFocus),
@@ -2713,6 +3362,12 @@ private fun PlaybackErrorOverlay(
             }
         }
     }
+}
+
+private fun isSourceFailure(error: PlaybackException): Boolean {
+    val cause = error.cause
+    return cause is HttpDataSource.InvalidResponseCodeException &&
+        (cause.responseCode == 401 || cause.responseCode == 403 || cause.responseCode >= 500)
 }
 
 private fun friendlyPlaybackError(error: PlaybackException): String = when (error.errorCode) {
@@ -2803,6 +3458,42 @@ private fun aspectResizeMode(value: String): Int = when (value) {
     "fill", "stretch" -> AspectRatioFrameLayout.RESIZE_MODE_FILL
     "zoom" -> AspectRatioFrameLayout.RESIZE_MODE_ZOOM
     else -> AspectRatioFrameLayout.RESIZE_MODE_FIT
+}
+
+private fun nextAspectMode(current: String): String {
+    val modes = SettingsOptions.UI_ASPECT_MODES
+    val index = modes.indexOf(current)
+    return modes[(index + 1).takeIf { it in modes.indices } ?: 0]
+}
+
+private fun aspectLabel(mode: String): String = when (mode) {
+    "fill" -> "Rellenar"
+    "stretch" -> "Estirar"
+    "zoom" -> "Zoom"
+    "original" -> "Original"
+    "16:9" -> "16:9"
+    "4:3" -> "4:3"
+    else -> "Ajustar"
+}
+
+private fun applyAspect(view: PlayerView, mode: String) {
+    val frame = view.videoSurfaceView as? AspectRatioFrameLayout
+    when (mode) {
+        "16:9" -> {
+            frame?.setAspectRatio(16f / 9f)
+            view.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+        }
+
+        "4:3" -> {
+            frame?.setAspectRatio(4f / 3f)
+            view.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+        }
+
+        else -> {
+            frame?.setAspectRatio(0f)
+            view.resizeMode = aspectResizeMode(mode)
+        }
+    }
 }
 
 @Composable

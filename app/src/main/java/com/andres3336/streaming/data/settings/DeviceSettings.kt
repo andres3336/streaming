@@ -10,6 +10,7 @@ data class DeviceSettings(
     val qualityCap: String? = null,
     val aspectMode: String? = null,
     val cacheSizeMb: Int? = null,
+    val clearOnStart: Boolean? = null,
     val wifiOnly: Boolean? = null,
     val maxBitrateKbps: Int? = null,
 ) {
@@ -19,6 +20,7 @@ data class DeviceSettings(
             qualityCap == null &&
             aspectMode == null &&
             cacheSizeMb == null &&
+            clearOnStart == null &&
             wifiOnly == null &&
             maxBitrateKbps == null
 
@@ -27,6 +29,7 @@ data class DeviceSettings(
         qualityCap?.let { put("qualityCap", it) }
         aspectMode?.let { put("aspectMode", it) }
         cacheSizeMb?.let { put("cacheSizeMb", it) }
+        clearOnStart?.let { put("clearOnStart", it) }
         wifiOnly?.let { put("wifiOnly", it) }
         maxBitrateKbps?.let { put("maxBitrateKbps", it) }
     }
@@ -37,6 +40,7 @@ data class DeviceSettings(
             qualityCap = json.stringOrNull("qualityCap"),
             aspectMode = json.stringOrNull("aspectMode"),
             cacheSizeMb = json.intOrNull("cacheSizeMb"),
+            clearOnStart = json.booleanOrNull("clearOnStart"),
             wifiOnly = json.booleanOrNull("wifiOnly"),
             maxBitrateKbps = json.intOrNull("maxBitrateKbps"),
         )

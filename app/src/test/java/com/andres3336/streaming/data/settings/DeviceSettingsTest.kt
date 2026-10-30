@@ -15,6 +15,7 @@ class DeviceSettingsTest {
             qualityCap = "720p",
             aspectMode = "fill",
             cacheSizeMb = 500,
+            clearOnStart = true,
             wifiOnly = true,
             maxBitrateKbps = 8000,
         )
