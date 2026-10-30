@@ -150,3 +150,5 @@ Append-only. Newest entries at the bottom.
   server and restarting, the same data came from the encrypted cache.
 - 95 unit tests passing. Version 0.13.0. v1.1 Now starts with `ply-012`, `ply-013`
   and `ply-017`.
+- Wired `ui.showNowNext` to the guide rows so the config flag actually controls
+  whether now/next is displayed. Version 0.13.1.

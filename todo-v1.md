@@ -1,7 +1,7 @@
 # Streaming — V1 reconciled TODO
 
 **Last reconciled:** 2026-10-29  
-**App:** Streaming 0.13.0 (`versionCode 13`)  
+**App:** Streaming 0.13.1 (`versionCode 14`)  
 **TV:** `192.168.100.16:5555` — MOTOROLA GOOGLE TV, Android 11 / API 30, armeabi-v7a  
 **Specs:** 74 tasks in `tasks/`  
 **Change log:** `HISTORY.md`  
@@ -23,7 +23,7 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 - **Live:** curated gist, Xtream or merge modes; lazy Xtream categories; group rail;
   channel numbers; logos/initials; favorites, recents, last channel; CH+/CH− and
   media-key zapping; channel search; merged deduplication with provider labels;
-  optional XMLTV guide with now/next in rows.
+  optional XMLTV guide with now/next in rows (`ui.showNowNext` gates the rows).
 - **Movies:** Xtream categories, posters, playback (1920x960 verified).
 - **Series:** Xtream categories, seasons/episodes, playback, next-episode queue.
 - **Player:** audio/subtitle pickers, aspect modes (fit/fill/stretch/zoom/original/

@@ -389,35 +389,40 @@ private fun StreamingApp() {
             },
         )
 
-        is AppState.Ready -> CompositionLocalProvider(LocalEpgGuide provides epgGuide) {
-            ReadyScreen(
-                ready = current,
-                config = effectiveConfig ?: current.config,
-                settings = deviceSettings,
-                selected = playing,
-                onSelect = onSelect,
-                onClose = closePlayback,
-                playbackEntries = playbackEntries,
-                onProgress = onProgress,
-                onFinished = onFinished,
-                onRecoverSource = recoverSource,
-                liveState = liveState,
-                onToggleFavorite = onToggleFavorite,
-                refreshVersion = refreshVersion,
-                xtreamCatalogCache = xtreamCatalogCache,
-                onCheckSources = checkSources,
-                refreshing = refreshing,
-                onRefreshConfig = {
-                    if (playing == null) {
-                        forceConfigRefresh = true
-                        refreshTick++
-                    }
-                },
-                onSettingsChange = { updated ->
-                    deviceSettings = updated
-                    scope.launch(Dispatchers.IO) { settingsStore.save(updated) }
-                },
-            )
+        is AppState.Ready -> {
+            val activeConfig = effectiveConfig ?: current.config
+            CompositionLocalProvider(
+                LocalEpgGuide provides epgGuide.takeIf { activeConfig.ui.showNowNext },
+            ) {
+                ReadyScreen(
+                    ready = current,
+                    config = activeConfig,
+                    settings = deviceSettings,
+                    selected = playing,
+                    onSelect = onSelect,
+                    onClose = closePlayback,
+                    playbackEntries = playbackEntries,
+                    onProgress = onProgress,
+                    onFinished = onFinished,
+                    onRecoverSource = recoverSource,
+                    liveState = liveState,
+                    onToggleFavorite = onToggleFavorite,
+                    refreshVersion = refreshVersion,
+                    xtreamCatalogCache = xtreamCatalogCache,
+                    onCheckSources = checkSources,
+                    refreshing = refreshing,
+                    onRefreshConfig = {
+                        if (playing == null) {
+                            forceConfigRefresh = true
+                            refreshTick++
+                        }
+                    },
+                    onSettingsChange = { updated ->
+                        deviceSettings = updated
+                        scope.launch(Dispatchers.IO) { settingsStore.save(updated) }
+                    },
+                )
+            }
         }
     }
 }
