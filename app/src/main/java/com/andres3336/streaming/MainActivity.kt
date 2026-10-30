@@ -803,8 +803,17 @@ private fun ReadyScreen(
     val context = LocalContext.current
     var section by remember { mutableStateOf("live") }
     var liveQuery by remember { mutableStateOf("") }
+    var exitConfirm by remember { mutableStateOf(false) }
+    val activity = context.findActivity()
 
     BackHandler(enabled = selected != null) { onClose() }
+    BackHandler(enabled = selected == null) {
+        if (exitConfirm) {
+            exitConfirm = false
+        } else {
+            exitConfirm = true
+        }
+    }
 
     val request = selected
     if (request != null) {
@@ -1050,6 +1059,71 @@ private fun ReadyScreen(
         }
     }
 
+    if (exitConfirm) {
+        ExitConfirmOverlay(
+            onCancel = { exitConfirm = false },
+            onExit = {
+                exitConfirm = false
+                activity?.finish()
+            },
+        )
+    }
+}
+
+@Composable
+private fun ExitConfirmOverlay(
+    onCancel: () -> Unit,
+    onExit: () -> Unit,
+) {
+    val cancelFocus = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        delay(150)
+        runCatching { cancelFocus.requestFocus() }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xCC000000))
+            .padding(48.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier
+                .width(520.dp)
+                .background(Color(0xFF0F172A), RoundedCornerShape(12.dp))
+                .padding(28.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = "¿Salir de Streaming?",
+                color = Color.White,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(Modifier.height(10.dp))
+            Text(
+                text = "Se cerrará la aplicación.",
+                color = Color(0xFF94A3B8),
+                fontSize = 17.sp,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(Modifier.height(24.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Button(
+                    onClick = onCancel,
+                    modifier = Modifier.focusRequester(cancelFocus),
+                ) {
+                    Text("Cancelar", fontSize = 18.sp)
+                }
+                Button(onClick = onExit) {
+                    Text("Salir", fontSize = 18.sp)
+                }
+            }
+        }
+    }
 }
 
 @Composable

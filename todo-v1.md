@@ -1,7 +1,7 @@
 # Streaming — V1 reconciled TODO
 
 **Last reconciled:** 2026-10-29  
-**App:** Streaming 0.14.0 (`versionCode 15`)  
+**App:** Streaming 0.14.1 (`versionCode 16`)  
 **TV:** `192.168.100.16:5555` — MOTOROLA GOOGLE TV, Android 11 / API 30, armeabi-v7a  
 **Specs:** 76 tasks in `tasks/`  
 **Change log:** `HISTORY.md`  

@@ -186,3 +186,6 @@ Append-only. Newest entries at the bottom.
 - Updated config to v3 (subtitles, player pre-buffer/latency, UI scale/layout,
   `channels` section, Xtream category settings) with schema, sample, validator and
   README updates. 124 unit tests passing. Version 0.14.0.
+- Added a Back confirmation on the main screen: a single Back now shows
+  `¿Salir de Streaming?` with Cancelar focused by default. Playback Back still
+  returns to the list. Version 0.14.1.

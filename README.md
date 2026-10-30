@@ -6,7 +6,7 @@ Target device: Google TV / Android TV, 32-bit ARM, Android 11, limited storage.
 
 ## Current status
 
-Version 0.14.0 completes v1.1. The app has separate **En vivo** (curated gist) and
+Version 0.14.1 completes v1.1. The app has separate **En vivo** (curated gist) and
 **Canales** (Xtream) live tabs, Xtream movies/series with metadata detail, universal
 fuzzy search across all sources, VOD subtitles with OpenSubtitles and local files,
 quality/buffer/speed controls, text/UI scale, navigation layouts, VOD external-player
