@@ -6,11 +6,14 @@ Target device: Google TV / Android TV, 32-bit ARM, Android 11, limited storage.
 
 ## Current status
 
-The Android TV app runs the real 55-channel gist playlist and Xtream movies/series,
-with playback, Ajustes, local hardware overrides, VOD caching, encrypted config and
-resume positions, bounded retry/error overlay, config refresh on resume, VOD resume and
-next-episode auto-play. The forceUpdate prompt, EPG and channel search are next. See
-`todo-v1.md`.
+Version 0.14.0 completes v1.1. The app has separate **En vivo** (curated gist) and
+**Canales** (Xtream) live tabs, Xtream movies/series with metadata detail, universal
+fuzzy search across all sources, VOD subtitles with OpenSubtitles and local files,
+quality/buffer/speed controls, text/UI scale, navigation layouts, VOD external-player
+handoff, and boot/wake auto-start settings. See `todo-v1.md` and `HISTORY.md`.
+
+Android 11 on the test Google TV blocks background activity starts after boot; the
+app keeps the boot receiver and offers an opt-in HOME alias as the fallback.
 
 ## Task tracking
 
@@ -63,12 +66,13 @@ No Android Studio is required.
 
 Included:
 
-- curated M3U live list from a private/secret gist
-- Xtream live, movies and series
+- curated M3U live list from a private/secret gist (`En vivo`)
+- Xtream live (`Canales`), movies and series
 - remote config through a secret-gist JSON file
-- simple locked mode for a non-technical TV
-- ExoPlayer, stream stats, aspect modes, VOD cache
-- Spanish-only interface
+- universal fuzzy search, movie/series metadata detail
+- subtitles: embedded, local SRT and OpenSubtitles
+- ExoPlayer, stream stats, quality/buffer/speed, aspect modes, VOD cache
+- Spanish-only interface, text/UI scale, navigation layouts
 
 Excluded:
 

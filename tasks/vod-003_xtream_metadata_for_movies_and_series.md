@@ -15,9 +15,9 @@ Use provider metadata, not TMDB.
 
 ## Subtasks
 
-- [ ] Show poster, plot, year and rating
-- [ ] Fallback artwork when missing
-- [ ] Keep detail panel reusable
+- [x] Show poster, plot, year and rating
+- [x] Fallback artwork when missing
+- [x] Keep detail panel reusable
 
 ## Notes
 

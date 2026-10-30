@@ -1,14 +1,22 @@
 package com.andres3336.streaming
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import android.view.KeyEvent as AndroidKeyEvent
 import android.view.LayoutInflater
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,11 +58,13 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -64,6 +74,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MimeTypes
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.TrackGroup
@@ -107,6 +118,8 @@ import com.andres3336.streaming.data.config.PlayerConfig
 import com.andres3336.streaming.data.config.SourceHealth
 import com.andres3336.streaming.data.config.SourceHealthChecker
 import com.andres3336.streaming.data.config.SourcesConfig
+import com.andres3336.streaming.data.config.SubtitlesConfig
+import com.andres3336.streaming.data.config.UiConfig
 import com.andres3336.streaming.data.config.XtreamConfig
 import com.andres3336.streaming.data.diagnostics.ErrorLogEntry
 import com.andres3336.streaming.data.diagnostics.ErrorLogStore
@@ -118,21 +131,40 @@ import com.andres3336.streaming.data.live.ChannelSearch
 import com.andres3336.streaming.data.live.LiveState
 import com.andres3336.streaming.data.live.LiveStateStore
 import com.andres3336.streaming.data.live.liveKey
-import com.andres3336.streaming.data.live.mergeLiveChannels
+import com.andres3336.streaming.data.media.toMediaItem
+import com.andres3336.streaming.data.playback.LastPlayback
+import com.andres3336.streaming.data.playback.LastPlaybackStore
 import com.andres3336.streaming.data.playback.PlaybackEntry
 import com.andres3336.streaming.data.playback.PlaybackRequest
 import com.andres3336.streaming.data.playback.PlaybackStore
+import com.andres3336.streaming.data.search.SearchCatalogCache
+import com.andres3336.streaming.data.search.SearchIndex
+import com.andres3336.streaming.data.search.SearchItem
+import com.andres3336.streaming.data.search.SearchKind
+import com.andres3336.streaming.data.subtitles.MediaDescriptor
+import com.andres3336.streaming.data.subtitles.OpenSubtitlesClient
+import com.andres3336.streaming.data.subtitles.SubtitleCandidate
+import com.andres3336.streaming.data.subtitles.SubtitleCache
+import com.andres3336.streaming.data.subtitles.SubtitleOffsetStore
+import com.andres3336.streaming.data.subtitles.SubtitleRepository
+import com.andres3336.streaming.data.subtitles.SubtitleResult
+import com.andres3336.streaming.data.subtitles.SrtCodec
 import com.andres3336.streaming.data.settings.DeviceSettings
 import com.andres3336.streaming.data.settings.DeviceSettingsStore
+import com.andres3336.streaming.data.settings.HomeLauncher
 import com.andres3336.streaming.data.settings.SettingsOptions
 import com.andres3336.streaming.data.xtream.XtreamCategory
+import com.andres3336.streaming.data.xtream.XtreamCategoryFilter
 import com.andres3336.streaming.data.xtream.XtreamClient
 import com.andres3336.streaming.data.xtream.XtreamMovie
 import com.andres3336.streaming.data.xtream.XtreamResult
 import com.andres3336.streaming.data.xtream.XtreamSeries
 import com.andres3336.streaming.data.xtream.XtreamSeriesInfo
+import com.andres3336.streaming.player.ExternalPlayer
 import com.andres3336.streaming.player.HlsFallback
 import com.andres3336.streaming.player.NetworkPolicy
+import com.andres3336.streaming.player.QualityOption
+import com.andres3336.streaming.player.QualitySelection
 import com.andres3336.streaming.player.StreamStatsFormat
 import com.andres3336.streaming.player.TrackChoice
 import com.andres3336.streaming.player.TrackChoices
@@ -143,6 +175,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
+import java.io.File
 import java.util.Locale
 
 class MainActivity : ComponentActivity() {
@@ -153,6 +186,10 @@ class MainActivity : ComponentActivity() {
                 StreamingApp()
             }
         }
+    }
+
+    companion object {
+        const val EXTRA_AUTO_START = "auto_start"
     }
 }
 
@@ -166,7 +203,17 @@ private sealed interface AppState {
         val config: AppConfig,
         val sourceLabel: String,
         val etag: String?,
+        val gistError: String? = null,
     ) : AppState
+}
+
+private fun Context.findActivity(): Activity? {
+    var current: Context? = this
+    while (current != null) {
+        if (current is Activity) return current
+        current = (current as? android.content.ContextWrapper)?.baseContext
+    }
+    return null
 }
 
 @Composable
@@ -185,6 +232,7 @@ private fun StreamingApp() {
     val epgRepository = remember(client) { EpgRepository(client) }
     val settingsStore = remember { DeviceSettingsStore(context) }
     val playbackStore = remember { PlaybackStore(context) }
+    val lastPlaybackStore = remember { LastPlaybackStore(context) }
     val liveStateStore = remember { LiveStateStore(context) }
     val scope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -196,6 +244,8 @@ private fun StreamingApp() {
     var centralConfig by remember { mutableStateOf<AppConfig?>(null) }
     var deviceSettings by remember { mutableStateOf(DeviceSettings()) }
     var playbackEntries by remember { mutableStateOf<List<PlaybackEntry>>(emptyList()) }
+    var lastPlayback by remember { mutableStateOf<LastPlayback?>(null) }
+    var lastPlaybackLoaded by remember { mutableStateOf(false) }
     var liveState by remember { mutableStateOf(LiveState()) }
     var epgGuide by remember { mutableStateOf<EpgGuide?>(null) }
     var playing by remember { mutableStateOf<PlaybackRequest?>(null) }
@@ -209,7 +259,21 @@ private fun StreamingApp() {
     LaunchedEffect(Unit) {
         deviceSettings = withContext(Dispatchers.IO) { settingsStore.load() }
         playbackEntries = withContext(Dispatchers.IO) { playbackStore.load() }
+        lastPlayback = withContext(Dispatchers.IO) { lastPlaybackStore.load() }
+        lastPlaybackLoaded = true
         liveState = withContext(Dispatchers.IO) { liveStateStore.load() }
+    }
+
+    val activity = context.findActivity()
+    val autoStartRequested = remember {
+        activity?.intent?.getBooleanExtra(MainActivity.EXTRA_AUTO_START, false) == true
+    }
+    var autoStartHandled by remember { mutableStateOf(false) }
+
+    LaunchedEffect(deviceSettings.useAsLauncher) {
+        deviceSettings.useAsLauncher?.let { enabled ->
+            withContext(Dispatchers.IO) { HomeLauncher.setEnabled(context, enabled) }
+        }
     }
 
     LaunchedEffect(retry) {
@@ -283,6 +347,10 @@ private fun StreamingApp() {
     }
 
     val onSelect: (PlaybackRequest) -> Unit = { request ->
+        val last = LastPlayback.fromChannel(request.channel)
+        lastPlayback = last
+        scope.launch(Dispatchers.IO) { lastPlaybackStore.save(last) }
+
         if (!request.channel.isVod) {
             val updated = liveState.remember(request.channel.liveKey())
             if (updated != liveState) {
@@ -329,6 +397,8 @@ private fun StreamingApp() {
             playbackEntries = updated
             scope.launch(Dispatchers.IO) { playbackStore.save(updated) }
         }
+        lastPlayback = null
+        scope.launch(Dispatchers.IO) { lastPlaybackStore.clear() }
     }
 
     val closePlayback = {
@@ -343,6 +413,31 @@ private fun StreamingApp() {
         playing = null
         forceConfigRefresh = true
         refreshTick += 1
+    }
+
+    LaunchedEffect(
+        state,
+        deviceSettings.autoResumeOnWake,
+        autoStartRequested,
+        lastPlaybackLoaded,
+        lastPlayback,
+    ) {
+        if (!autoStartRequested || autoStartHandled) return@LaunchedEffect
+        if (state !is AppState.Ready || !lastPlaybackLoaded) return@LaunchedEffect
+
+        autoStartHandled = true
+        activity?.intent?.removeExtra(MainActivity.EXTRA_AUTO_START)
+
+        if (deviceSettings.autoResumeOnWake == false) return@LaunchedEffect
+        val last = lastPlayback ?: return@LaunchedEffect
+        if (playing != null) return@LaunchedEffect
+
+        val position = if (last.isLive) {
+            0L
+        } else {
+            playbackEntries.firstOrNull { it.url == last.url }?.positionMs ?: 0L
+        }
+        playing = PlaybackRequest(last.toChannel(), startPositionMs = position)
     }
 
     val effectiveConfig = centralConfig?.let { ConfigMerger.apply(it, deviceSettings) }
@@ -391,8 +486,13 @@ private fun StreamingApp() {
 
         is AppState.Ready -> {
             val activeConfig = effectiveConfig ?: current.config
+            val density = LocalDensity.current
             CompositionLocalProvider(
                 LocalEpgGuide provides epgGuide.takeIf { activeConfig.ui.showNowNext },
+                LocalDensity provides Density(
+                    density = density.density * activeConfig.ui.uiScale,
+                    fontScale = density.fontScale * activeConfig.ui.fontScale,
+                ),
             ) {
                 ReadyScreen(
                     ready = current,
@@ -485,10 +585,10 @@ private suspend fun loadApp(
     }
 }
 
-private fun liveSourceLabel(config: AppConfig): String = when (config.sources.liveMode) {
-    LiveMode.GIST -> "Gist"
-    LiveMode.XTREAM -> "Xtream"
-    LiveMode.MERGE -> "Gist + Xtream"
+private fun liveSourceLabel(config: AppConfig): String = when {
+    config.sources.m3uUrl != null && config.sources.xtream != null -> "Gist + Xtream"
+    config.sources.xtream != null -> "Xtream"
+    else -> "Gist"
 }
 
 private suspend fun loadCached(
@@ -517,19 +617,21 @@ private suspend fun loadFromConfig(
     m3uRepository: M3uRepository,
     channelCache: ChannelCache,
 ): AppState {
-    if (config.sources.liveMode == LiveMode.XTREAM) {
-        return AppState.Ready(
-            channels = emptyList(),
-            config = config,
-            sourceLabel = "Xtream",
-            etag = etag,
-        )
+    val m3uUrl = config.sources.m3uUrl
+    if (m3uUrl == null) {
+        return if (config.sources.xtream == null) {
+            AppState.Error("La configuración no incluye ninguna fuente")
+        } else {
+            AppState.Ready(
+                channels = emptyList(),
+                config = config,
+                sourceLabel = "Canales · Xtream",
+                etag = etag,
+            )
+        }
     }
 
-    val m3uUrl = config.sources.m3uUrl
-        ?: return AppState.Error("La configuración no incluye una lista M3U")
     val sourceKey = CacheIdentity.m3u(config)
-
     return when (val playlist = m3uRepository.load(
         url = m3uUrl,
         userAgent = config.player.userAgent,
@@ -553,13 +655,15 @@ private suspend fun loadFromConfig(
                     config = config,
                     sourceLabel = "Lista en caché",
                     etag = etag,
+                    gistError = playlist.message,
                 )
 
-                config.sources.liveMode == LiveMode.MERGE -> AppState.Ready(
+                config.sources.xtream != null -> AppState.Ready(
                     channels = emptyList(),
                     config = config,
-                    sourceLabel = "Gist no disponible · Xtream",
+                    sourceLabel = "Gist no disponible",
                     etag = etag,
+                    gistError = playlist.message,
                 )
 
                 else -> AppState.Error(playlist.message)
@@ -710,10 +814,15 @@ private fun ReadyScreen(
             networkConfig = config.network,
             cacheConfig = config.cache,
             liveConfig = config.live,
+            uiConfig = config.ui,
+            subtitlesConfig = config.subtitles,
             onProgress = onProgress,
             onFinished = onFinished,
             onNext = onSelect,
             onAspectChange = { mode -> onSettingsChange(settings.copy(aspectMode = mode)) },
+            onQualityChange = { quality ->
+                onSettingsChange(settings.copy(qualityPreference = quality))
+            },
             onRecoverSource = onRecoverSource,
             onClose = onClose,
         )
@@ -726,110 +835,221 @@ private fun ReadyScreen(
     }
 
     val xtream = config.sources.xtream
+    val showLive = config.sources.m3uUrl != null && "live" in config.ui.sections
+    val showChannels = xtream != null && "channels" in config.ui.sections
     val showMovies = xtream != null && "movies" in config.ui.sections
     val showSeries = xtream != null && "series" in config.ui.sections
     val showContinue = playbackEntries.isNotEmpty()
+    val showSearch = showLive || showChannels || showMovies || showSeries
+    val firstSection = when {
+        showLive -> "live"
+        showChannels -> "channels"
+        showContinue -> "continue"
+        showMovies -> "movies"
+        showSeries -> "series"
+        else -> "settings"
+    }
     val activeSection = when {
-        section == "movies" && !showMovies -> "live"
-        section == "series" && !showSeries -> "live"
-        section == "continue" && !showContinue -> "live"
+        section == "live" && !showLive -> firstSection
+        section == "channels" && !showChannels -> firstSection
+        section == "movies" && !showMovies -> firstSection
+        section == "series" && !showSeries -> firstSection
+        section == "continue" && !showContinue -> firstSection
+        section == "search" && !showSearch -> firstSection
         else -> section
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF0B1220))
-            .padding(horizontal = 48.dp, vertical = 24.dp),
-    ) {
-        Text(
-            text = "Streaming",
-            color = Color.White,
-            fontSize = 44.sp,
-            fontWeight = FontWeight.Bold,
-        )
-        Text(
-            text = when (activeSection) {
-                "movies" -> "Xtream · Películas"
-                "series" -> "Xtream · Series"
-                "continue" -> "Continuar viendo"
-                "settings" -> "Ajustes · solo este TV"
-                else -> if (config.sources.liveMode == LiveMode.GIST) {
-                    "${ready.sourceLabel} · ${ready.channels.size} canales"
+    val headerText = when (activeSection) {
+        "live" -> if (ready.channels.isEmpty() && ready.gistError != null) {
+            "Gist · no disponible"
+        } else if (ready.sourceLabel == "Lista en caché") {
+            "Gist · lista en caché · ${ready.channels.size} canales"
+        } else {
+            "Gist · ${ready.channels.size} canales"
+        }
+        "channels" -> "Xtream · Canales"
+        "movies" -> "Xtream · Películas"
+        "series" -> "Xtream · Series"
+        "continue" -> "Continuar viendo"
+        "search" -> "Buscar en todo"
+        "settings" -> "Ajustes · solo este TV"
+        else -> "Streaming"
+    }
+
+    val content: @Composable () -> Unit = {
+        when (activeSection) {
+            "movies" -> {
+                if (xtream != null) {
+                    XtreamMoviesScreen(
+                        xtream = xtream,
+                        playerConfig = config.player,
+                        refreshVersion = refreshVersion,
+                        onUpdateConfig = onRefreshConfig,
+                        onPlay = { onSelect(PlaybackRequest(it)) },
+                    )
+                }
+            }
+
+            "series" -> {
+                if (xtream != null) {
+                    XtreamSeriesScreen(
+                        xtream = xtream,
+                        playerConfig = config.player,
+                        refreshVersion = refreshVersion,
+                        onUpdateConfig = onRefreshConfig,
+                        onPlay = onSelect,
+                    )
+                }
+            }
+
+            "continue" -> ContinueWatchingScreen(
+                entries = playbackEntries,
+                onSelect = onSelect,
+            )
+
+            "settings" -> SettingsScreen(
+                config = config,
+                settings = settings,
+                refreshing = refreshing,
+                onRefreshConfig = onRefreshConfig,
+                onCheckSources = onCheckSources,
+                onSettingsChange = onSettingsChange,
+                onClearCache = { VideoCache.clear(context) },
+            )
+
+            "live" -> {
+                val gistError = ready.gistError
+                if (gistError != null && ready.channels.isEmpty()) {
+                    SourceFailurePane(
+                        message = gistError,
+                        onRetry = onRefreshConfig,
+                        onUpdateConfig = onRefreshConfig,
+                    )
                 } else {
-                    ready.sourceLabel
+                    GistLiveBrowse(
+                        channels = ready.channels,
+                        liveState = liveState,
+                        query = liveQuery,
+                        onQueryChange = { liveQuery = it },
+                        onToggleFavorite = onToggleFavorite,
+                        onSelect = onSelect,
+                    )
                 }
-            },
-            color = Color(0xFF94A3B8),
-            fontSize = 18.sp,
-        )
-        Spacer(Modifier.height(12.dp))
-        SectionBar(
-            section = activeSection,
-            showMovies = showMovies,
-            showSeries = showSeries,
-            showContinue = showContinue,
-            showSettings = true,
-            onSelect = { section = it },
-        )
-        Spacer(Modifier.height(16.dp))
+            }
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            when (activeSection) {
-                "movies" -> {
-                    if (xtream != null) {
-                        XtreamMoviesScreen(
-                            xtream = xtream,
-                            playerConfig = config.player,
-                            refreshVersion = refreshVersion,
-                            onUpdateConfig = onRefreshConfig,
-                            onPlay = { onSelect(PlaybackRequest(it)) },
-                        )
-                    }
+            "channels" -> {
+                if (xtream != null) {
+                    XtreamLiveBrowse(
+                        config = config,
+                        refreshVersion = refreshVersion,
+                        onUpdateConfig = onRefreshConfig,
+                        liveState = liveState,
+                        query = liveQuery,
+                        onQueryChange = { liveQuery = it },
+                        onToggleFavorite = onToggleFavorite,
+                        onSelect = onSelect,
+                        xtreamCatalogCache = xtreamCatalogCache,
+                    )
                 }
+            }
 
-                "series" -> {
-                    if (xtream != null) {
-                        XtreamSeriesScreen(
-                            xtream = xtream,
-                            playerConfig = config.player,
-                            refreshVersion = refreshVersion,
-                            onUpdateConfig = onRefreshConfig,
-                            onPlay = onSelect,
-                        )
-                    }
+            "search" -> UniversalSearchScreen(
+                channels = ready.channels,
+                config = config,
+                refreshVersion = refreshVersion,
+                onUpdateConfig = onRefreshConfig,
+                onPlay = onSelect,
+            )
+
+            else -> GistLiveBrowse(
+                channels = ready.channels,
+                liveState = liveState,
+                query = liveQuery,
+                onQueryChange = { liveQuery = it },
+                onToggleFavorite = onToggleFavorite,
+                onSelect = onSelect,
+            )
+        }
+    }
+
+    if (config.ui.navigation == "rail") {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFF0B1220))
+                .padding(horizontal = 32.dp, vertical = 24.dp),
+        ) {
+            Column(modifier = Modifier.width(210.dp).fillMaxHeight()) {
+                Text(
+                    text = "Streaming",
+                    color = Color.White,
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+                Spacer(Modifier.height(16.dp))
+                SectionBar(
+                    section = activeSection,
+                    showLive = showLive,
+                    showChannels = showChannels,
+                    showMovies = showMovies,
+                    showSeries = showSeries,
+                    showContinue = showContinue,
+                    showSearch = showSearch,
+                    showSettings = true,
+                    vertical = true,
+                    onSelect = { section = it },
+                )
+            }
+            Spacer(Modifier.width(24.dp))
+            Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
+                Text(
+                    text = headerText,
+                    color = Color(0xFF94A3B8),
+                    fontSize = 18.sp,
+                )
+                Spacer(Modifier.height(12.dp))
+                Box(modifier = Modifier.fillMaxSize()) {
+                    content()
                 }
-
-                "continue" -> ContinueWatchingScreen(
-                    entries = playbackEntries,
-                    onSelect = onSelect,
-                )
-
-                "settings" -> SettingsScreen(
-                    config = config,
-                    settings = settings,
-                    refreshing = refreshing,
-                    onRefreshConfig = onRefreshConfig,
-                    onCheckSources = onCheckSources,
-                    onSettingsChange = onSettingsChange,
-                    onClearCache = { VideoCache.clear(context) },
-                )
-
-                else -> LiveBrowseScreen(
-                    channels = ready.channels,
-                    config = config,
-                    refreshVersion = refreshVersion,
-                    onUpdateConfig = onRefreshConfig,
-                    liveState = liveState,
-                    query = liveQuery,
-                    onQueryChange = { liveQuery = it },
-                    onToggleFavorite = onToggleFavorite,
-                    onSelect = onSelect,
-                    xtreamCatalogCache = xtreamCatalogCache,
-                )
+            }
+        }
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFF0B1220))
+                .padding(horizontal = 48.dp, vertical = 24.dp),
+        ) {
+            Text(
+                text = "Streaming",
+                color = Color.White,
+                fontSize = 44.sp,
+                fontWeight = FontWeight.Bold,
+            )
+            Text(
+                text = headerText,
+                color = Color(0xFF94A3B8),
+                fontSize = 18.sp,
+            )
+            Spacer(Modifier.height(12.dp))
+            SectionBar(
+                section = activeSection,
+                showLive = showLive,
+                showChannels = showChannels,
+                showMovies = showMovies,
+                showSeries = showSeries,
+                showContinue = showContinue,
+                showSearch = showSearch,
+                showSettings = true,
+                onSelect = { section = it },
+            )
+            Spacer(Modifier.height(16.dp))
+            Box(modifier = Modifier.fillMaxSize()) {
+                content()
             }
         }
     }
+
 }
 
 @Composable
@@ -877,25 +1097,47 @@ private fun ForceUpdateScreen(onUpdateConfig: () -> Unit) {
 @Composable
 private fun SectionBar(
     section: String,
+    showLive: Boolean,
+    showChannels: Boolean,
     showMovies: Boolean,
     showSeries: Boolean,
     showContinue: Boolean,
+    showSearch: Boolean,
     showSettings: Boolean,
+    vertical: Boolean = false,
     onSelect: (String) -> Unit,
 ) {
-    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        SectionButton("En vivo", selected = section == "live") { onSelect("live") }
-        if (showContinue) {
-            SectionButton("Continuar", selected = section == "continue") { onSelect("continue") }
+    val items = buildList {
+        if (showLive) add("live" to "En vivo")
+        if (showChannels) add("channels" to "Canales")
+        if (showContinue) add("continue" to "Continuar")
+        if (showMovies) add("movies" to "Películas")
+        if (showSeries) add("series" to "Series")
+        if (showSearch) add("search" to "Buscar")
+        if (showSettings) add("settings" to "Ajustes")
+    }
+
+    if (vertical) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            items.forEach { (id, label) ->
+                SectionButton(
+                    label = label,
+                    selected = section == id,
+                    modifier = Modifier.fillMaxWidth(),
+                ) { onSelect(id) }
+            }
         }
-        if (showMovies) {
-            SectionButton("Películas", selected = section == "movies") { onSelect("movies") }
-        }
-        if (showSeries) {
-            SectionButton("Series", selected = section == "series") { onSelect("series") }
-        }
-        if (showSettings) {
-            SectionButton("Ajustes", selected = section == "settings") { onSelect("settings") }
+    } else {
+        Row(
+            modifier = Modifier.horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            items.forEach { (id, label) ->
+                SectionButton(label = label, selected = section == id) { onSelect(id) }
+            }
         }
     }
 }
@@ -904,9 +1146,10 @@ private fun SectionBar(
 private fun SectionButton(
     label: String,
     selected: Boolean,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
-    Button(onClick = onClick) {
+    Button(onClick = onClick, modifier = modifier) {
         Text(
             text = label,
             color = if (selected) Color(0xFF3B82F6) else Color.White,
@@ -1018,48 +1261,6 @@ private data class LiveRailEntry(
     val label: String,
 )
 
-private const val GIST_RAIL_KEY = "__gist__"
-
-@Composable
-private fun LiveBrowseScreen(
-    channels: List<Channel>,
-    config: AppConfig,
-    refreshVersion: Int,
-    onUpdateConfig: () -> Unit,
-    liveState: LiveState,
-    query: String,
-    onQueryChange: (String) -> Unit,
-    onToggleFavorite: (Channel) -> Unit,
-    onSelect: (PlaybackRequest) -> Unit,
-    xtreamCatalogCache: XtreamCatalogCache,
-) {
-    when (config.sources.liveMode) {
-        LiveMode.GIST -> GistLiveBrowse(
-            channels = channels,
-            liveState = liveState,
-            query = query,
-            onQueryChange = onQueryChange,
-            onToggleFavorite = onToggleFavorite,
-            onSelect = onSelect,
-        )
-
-        LiveMode.XTREAM,
-        LiveMode.MERGE,
-        -> XtreamLiveBrowse(
-            gistChannels = channels,
-            config = config,
-            refreshVersion = refreshVersion,
-            onUpdateConfig = onUpdateConfig,
-            liveState = liveState,
-            query = query,
-            onQueryChange = onQueryChange,
-            onToggleFavorite = onToggleFavorite,
-            onSelect = onSelect,
-            xtreamCatalogCache = xtreamCatalogCache,
-        )
-    }
-}
-
 @Composable
 private fun GistLiveBrowse(
     channels: List<Channel>,
@@ -1159,7 +1360,6 @@ private fun GistLiveBrowse(
 
 @Composable
 private fun XtreamLiveBrowse(
-    gistChannels: List<Channel>,
     config: AppConfig,
     refreshVersion: Int,
     onUpdateConfig: () -> Unit,
@@ -1184,26 +1384,26 @@ private fun XtreamLiveBrowse(
     val client = remember(xtream, config.player.userAgent) {
         XtreamClient(xtream, userAgent = config.player.userAgent)
     }
-    val merge = config.sources.liveMode == LiveMode.MERGE
     var catalog by remember(sourceKey) { mutableStateOf(XtreamCatalog()) }
-    var selectedKey by remember(sourceKey) {
-        mutableStateOf(if (merge) GIST_RAIL_KEY else "")
-    }
+    var selectedKey by remember(sourceKey) { mutableStateOf("") }
+    var hiddenCategoryIds by remember(sourceKey) { mutableStateOf<Set<String>>(emptySet()) }
+    var showHidden by remember(sourceKey) { mutableStateOf(false) }
     var loadingCategories by remember(sourceKey) { mutableStateOf(true) }
     var loadingStreams by remember(sourceKey) { mutableStateOf(false) }
     var error by remember(sourceKey) { mutableStateOf<String?>(null) }
     var usingCache by remember(sourceKey) { mutableStateOf(false) }
     var retry by remember(sourceKey) { mutableIntStateOf(0) }
 
+    val minItems = config.sources.xtream?.minCategoryItems ?: 2
+    val hideEmpty = config.sources.xtream?.hideEmptyCategories ?: true
+
     LaunchedEffect(sourceKey, refreshVersion, retry) {
         val cached = withContext(Dispatchers.IO) { xtreamCatalogCache.load(sourceKey) }
         if (cached != null) {
             catalog = cached
             usingCache = true
-            if (selectedKey.isBlank() ||
-                (selectedKey != GIST_RAIL_KEY && cached.categories.none { it.id == selectedKey })
-            ) {
-                selectedKey = cached.categories.firstOrNull()?.id ?: GIST_RAIL_KEY
+            if (selectedKey.isBlank()) {
+                selectedKey = cached.categories.firstOrNull()?.id.orEmpty()
             }
         }
 
@@ -1215,10 +1415,8 @@ private fun XtreamLiveBrowse(
                 catalog = updated
                 usingCache = false
                 loadingCategories = false
-                if (selectedKey != GIST_RAIL_KEY &&
-                    result.value.none { it.id == selectedKey }
-                ) {
-                    selectedKey = result.value.firstOrNull()?.id ?: GIST_RAIL_KEY
+                if (selectedKey.isBlank()) {
+                    selectedKey = result.value.firstOrNull()?.id.orEmpty()
                 }
                 withContext(Dispatchers.IO) { xtreamCatalogCache.save(sourceKey, updated) }
             }
@@ -1231,8 +1429,7 @@ private fun XtreamLiveBrowse(
     }
 
     LaunchedEffect(selectedKey, refreshVersion, retry, sourceKey) {
-        val categoryId = selectedKey.takeIf { it.isNotBlank() && it != GIST_RAIL_KEY }
-            ?: return@LaunchedEffect
+        val categoryId = selectedKey.takeIf { it.isNotBlank() } ?: return@LaunchedEffect
         val cached = catalog.streams[categoryId]
         loadingStreams = cached == null
         if (cached != null) usingCache = true
@@ -1243,6 +1440,10 @@ private fun XtreamLiveBrowse(
                 catalog = updated
                 usingCache = false
                 loadingStreams = false
+                val usable = XtreamCategoryFilter.usableStreams(result.value)
+                if (hideEmpty && minItems > 0 && usable.size < minItems) {
+                    hiddenCategoryIds = hiddenCategoryIds + categoryId
+                }
                 withContext(Dispatchers.IO) { xtreamCatalogCache.save(sourceKey, updated) }
             }
 
@@ -1253,139 +1454,118 @@ private fun XtreamLiveBrowse(
         }
     }
 
-    val railEntries = remember(catalog.categories, merge) {
-        buildList {
-            if (merge) add(LiveRailEntry(GIST_RAIL_KEY, "Gist"))
-            catalog.categories.forEach { add(LiveRailEntry(it.id, it.name)) }
+    val visibleCategories = remember(
+        catalog.categories,
+        hiddenCategoryIds,
+        showHidden,
+    ) {
+        if (showHidden) {
+            catalog.categories
+        } else {
+            catalog.categories.filter {
+                XtreamCategoryFilter.isVisibleCategory(it, hiddenCategoryIds)
+            }
+        }
+    }
+    val railEntries = remember(visibleCategories) {
+        visibleCategories.map { LiveRailEntry(it.id, it.name) }
+    }
+
+    LaunchedEffect(railEntries, selectedKey, showHidden) {
+        if (railEntries.none { it.id == selectedKey }) {
+            selectedKey = railEntries.firstOrNull()?.id.orEmpty()
         }
     }
 
     when {
         loadingCategories && catalog.categories.isEmpty() -> BrowseShell(
             rail = {},
-            content = {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    if (merge) {
-                        Button(onClick = { selectedKey = GIST_RAIL_KEY }) {
-                            Text("Gist", fontSize = 16.sp)
-                        }
-                        Spacer(Modifier.height(12.dp))
-                    }
-                    CenteredMessage("Cargando canales…")
-                }
-            },
+            content = { CenteredMessage("Cargando canales…") },
         )
 
-        error != null && catalog.categories.isEmpty() -> {
-            if (merge && gistChannels.isNotEmpty()) {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    Text(
-                        text = "Xtream no está disponible. Mostrando la lista Gist.",
-                        color = Color(0xFFFBBF24),
-                        fontSize = 15.sp,
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    Box(modifier = Modifier.weight(1f)) {
-                        ChannelList(
-                            channels = gistChannels,
-                            favorites = liveState.favorites,
-                            recents = liveState.recents,
-                            lastChannel = liveState.lastChannel,
-                            startLastChannel = true,
-                            query = query,
-                            onQueryChange = onQueryChange,
-                            onToggleFavorite = onToggleFavorite,
-                            onSelect = onSelect,
-                            section = LiveListSection.All,
-                        )
-                    }
-                }
-            } else {
-                SourceFailurePane(
-                    message = error!!,
-                    onRetry = { retry++ },
-                    onUpdateConfig = onUpdateConfig,
-                )
-            }
-        }
+        error != null && catalog.categories.isEmpty() -> SourceFailurePane(
+            message = error!!,
+            onRetry = { retry++ },
+            onUpdateConfig = onUpdateConfig,
+        )
 
         else -> BrowseShell(
             rail = {
-                BrowseRail(
-                    items = railEntries,
-                    selected = railEntries.firstOrNull { it.id == selectedKey },
-                    label = LiveRailEntry::label,
-                    onSelect = { selectedKey = it.id },
-                )
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Box(modifier = Modifier.weight(1f)) {
+                        BrowseRail(
+                            items = railEntries,
+                            selected = railEntries.firstOrNull { it.id == selectedKey },
+                            label = LiveRailEntry::label,
+                            onSelect = { selectedKey = it.id },
+                        )
+                    }
+                    if (hiddenCategoryIds.isNotEmpty() || showHidden) {
+                        Button(
+                            onClick = { showHidden = !showHidden },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp),
+                        ) {
+                            Text(
+                                text = if (showHidden) {
+                                    "Ocultar categorías vacías"
+                                } else {
+                                    "Mostrar ocultas (${hiddenCategoryIds.size})"
+                                },
+                                fontSize = 14.sp,
+                            )
+                        }
+                    }
+                }
             },
             content = {
-                if (selectedKey == GIST_RAIL_KEY) {
-                    ChannelList(
-                        channels = gistChannels,
-                        favorites = liveState.favorites,
-                        recents = liveState.recents,
-                        lastChannel = liveState.lastChannel,
-                        startLastChannel = true,
-                        query = query,
-                        onQueryChange = onQueryChange,
-                        onToggleFavorite = onToggleFavorite,
-                        onSelect = onSelect,
-                        section = LiveListSection.All,
+                val category = catalog.categories.firstOrNull { it.id == selectedKey }
+                val streams = catalog.streams[selectedKey]
+                when {
+                    selectedKey.isBlank() -> CenteredMessage("No hay categorías")
+                    loadingStreams && streams == null -> CenteredMessage("Cargando canales…")
+                    error != null && streams == null -> SourceFailurePane(
+                        message = error!!,
+                        onRetry = { retry++ },
+                        onUpdateConfig = onUpdateConfig,
                     )
-                } else {
-                    val category = catalog.categories.firstOrNull { it.id == selectedKey }
-                    val streams = catalog.streams[selectedKey]
-                    when {
-                        loadingStreams && streams == null -> CenteredMessage("Cargando canales…")
-                        error != null && streams == null -> SourceFailurePane(
-                            message = error!!,
-                            onRetry = { retry++ },
-                            onUpdateConfig = onUpdateConfig,
-                        )
 
-                        else -> {
-                            val xtreamChannels = remember(streams, category?.name, merge) {
-                                streams.orEmpty().map { stream ->
-                                    client.liveChannel(
-                                        stream = stream,
-                                        categoryName = category?.name ?: "Xtream",
-                                        providerLabel = if (merge) "Xtream" else null,
-                                    )
-                                }
+                    else -> {
+                        val xtreamChannels = remember(streams, category?.name) {
+                            XtreamCategoryFilter.usableStreams(streams.orEmpty()).map { stream ->
+                                client.liveChannel(
+                                    stream = stream,
+                                    categoryName = category?.name ?: "Xtream",
+                                    providerLabel = null,
+                                )
                             }
-                            val content = remember(gistChannels, xtreamChannels, merge) {
-                                if (merge) {
-                                    mergeLiveChannels(gistChannels, xtreamChannels)
-                                } else {
-                                    xtreamChannels
-                                }
-                            }
+                        }
 
-                            Column(modifier = Modifier.fillMaxSize()) {
-                                if (usingCache) {
-                                    Text(
-                                        text = "Lista en caché",
-                                        color = Color(0xFFFBBF24),
-                                        fontSize = 14.sp,
-                                    )
-                                    Spacer(Modifier.height(6.dp))
-                                }
-                                Box(modifier = Modifier.weight(1f)) {
-                                    ChannelList(
-                                        channels = content,
-                                        favorites = liveState.favorites,
-                                        recents = liveState.recents,
-                                        lastChannel = liveState.lastChannel,
-                                        startLastChannel = true,
-                                        query = query,
-                                        onQueryChange = onQueryChange,
-                                        onToggleFavorite = onToggleFavorite,
-                                        onSelect = onSelect,
-                                        section = LiveListSection.Flat,
-                                        title = category?.name ?: "Canales",
-                                        useBaseNumbers = false,
-                                    )
-                                }
+                        Column(modifier = Modifier.fillMaxSize()) {
+                            if (usingCache) {
+                                Text(
+                                    text = "Lista en caché",
+                                    color = Color(0xFFFBBF24),
+                                    fontSize = 14.sp,
+                                )
+                                Spacer(Modifier.height(6.dp))
+                            }
+                            Box(modifier = Modifier.weight(1f)) {
+                                ChannelList(
+                                    channels = xtreamChannels,
+                                    favorites = liveState.favorites,
+                                    recents = liveState.recents,
+                                    lastChannel = liveState.lastChannel,
+                                    startLastChannel = true,
+                                    query = query,
+                                    onQueryChange = onQueryChange,
+                                    onToggleFavorite = onToggleFavorite,
+                                    onSelect = onSelect,
+                                    section = LiveListSection.Flat,
+                                    title = category?.name ?: "Canales",
+                                    useBaseNumbers = false,
+                                )
                             }
                         }
                     }
@@ -1781,6 +1961,7 @@ private fun XtreamMoviesScreen(
     var loadingMovies by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
     var retry by remember { mutableIntStateOf(0) }
+    var detail by remember { mutableStateOf<XtreamMovie?>(null) }
 
     LaunchedEffect(retry, refreshVersion, xtream) {
         loadingCategories = true
@@ -1816,6 +1997,18 @@ private fun XtreamMoviesScreen(
         }
     }
 
+    val selectedMovie = detail
+    if (selectedMovie != null) {
+        MovieDetail(
+            client = client,
+            movie = selectedMovie,
+            refreshVersion = refreshVersion,
+            onBack = { detail = null },
+            onPlay = onPlay,
+        )
+        return
+    }
+
     when {
         error != null -> SourceFailurePane(
             message = error!!,
@@ -1843,22 +2036,143 @@ private fun XtreamMoviesScreen(
                     ) {
                         items(movies) { movie ->
                             BrowsePosterRow(movie.name, movie.logo) {
-                                onPlay(
-                                    Channel(
-                                        name = movie.name,
-                                        url = client.movieUrl(movie),
-                                        group = "Películas",
-                                        logo = movie.logo,
-                                        tvgId = movie.id,
-                                        isVod = true,
-                                    ),
-                                )
+                                detail = movie
                             }
                         }
                     }
                 }
             },
         )
+    }
+}
+
+@Composable
+private fun MovieDetail(
+    client: XtreamClient,
+    movie: XtreamMovie,
+    refreshVersion: Int,
+    onBack: () -> Unit,
+    onPlay: (Channel) -> Unit,
+) {
+    var info by remember(movie.id) { mutableStateOf<XtreamMovie?>(null) }
+    var loading by remember(movie.id) { mutableStateOf(true) }
+    var retry by remember(movie.id) { mutableIntStateOf(0) }
+    val detailFocus = remember { FocusRequester() }
+
+    BackHandler { onBack() }
+
+    LaunchedEffect(movie.id, retry, refreshVersion) {
+        loading = true
+        when (val result = client.vodInfo(movie.id)) {
+            is XtreamResult.Success -> info = result.value
+            is XtreamResult.Failure -> Unit
+        }
+        loading = false
+    }
+
+    LaunchedEffect(loading) {
+        if (!loading) {
+            delay(120)
+            runCatching { detailFocus.requestFocus() }
+        }
+    }
+
+    val current = info ?: movie
+    val playMovie = {
+        onPlay(
+            Channel(
+                name = current.name,
+                url = client.movieUrl(current.copy(extension = movie.extension)),
+                group = "Películas",
+                logo = current.logo ?: movie.logo,
+                tvgId = current.id,
+                isVod = true,
+                year = current.year ?: movie.year,
+                imdbId = current.imdbId ?: movie.imdbId,
+                tmdbId = current.tmdbId ?: movie.tmdbId,
+            ),
+        )
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Button(onClick = onBack) {
+                Text("Volver", fontSize = 16.sp)
+            }
+            Spacer(Modifier.width(16.dp))
+            Text(
+                text = current.name,
+                color = Color.White,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                modifier = Modifier.weight(1f),
+            )
+            Button(
+                onClick = playMovie,
+                modifier = Modifier.focusRequester(detailFocus),
+            ) {
+                Text("Reproducir", fontSize = 18.sp)
+            }
+        }
+        Spacer(Modifier.height(16.dp))
+
+        if (loading) {
+            CenteredMessage("Cargando ficha…")
+        } else {
+            Row(modifier = Modifier.fillMaxSize()) {
+                AsyncImage(
+                    model = current.logo ?: current.backdrop,
+                    contentDescription = null,
+                    placeholder = painterResource(R.drawable.ic_channel_placeholder),
+                    error = painterResource(R.drawable.ic_channel_placeholder),
+                    fallback = painterResource(R.drawable.ic_channel_placeholder),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .width(260.dp)
+                        .height(390.dp),
+                )
+                Spacer(Modifier.width(24.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    val meta = listOfNotNull(
+                        yearOnly(current.year),
+                        current.rating?.let { "★ $it" },
+                        current.duration,
+                    ).joinToString(" · ")
+                    if (meta.isNotBlank()) {
+                        Text(text = meta, color = Color(0xFF93C5FD), fontSize = 18.sp)
+                        Spacer(Modifier.height(8.dp))
+                    }
+                    current.genre?.let {
+                        Text(text = it, color = Color(0xFF94A3B8), fontSize = 16.sp)
+                        Spacer(Modifier.height(8.dp))
+                    }
+                    current.plot?.let {
+                        Text(
+                            text = it,
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            maxLines = 10,
+                        )
+                        Spacer(Modifier.height(12.dp))
+                    }
+                    current.cast?.let {
+                        Text(
+                            text = "Reparto: $it",
+                            color = Color(0xFF94A3B8),
+                            fontSize = 14.sp,
+                            maxLines = 3,
+                        )
+                        Spacer(Modifier.height(12.dp))
+                    }
+                    Button(
+                        onClick = playMovie,
+                    ) {
+                        Text("Reproducir", fontSize = 18.sp)
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -2017,7 +2331,28 @@ private fun SeriesDetail(
                 text = series.plot,
                 color = Color(0xFF94A3B8),
                 fontSize = 15.sp,
-                maxLines = 2,
+                maxLines = 3,
+            )
+        }
+
+        val metaSource = info
+        val meta = listOfNotNull(
+            yearOnly(metaSource?.year ?: series.year),
+            (metaSource?.rating ?: series.rating)?.let { "★ $it" },
+            metaSource?.genre ?: series.genre,
+        ).joinToString(" · ")
+        if (meta.isNotBlank()) {
+            Spacer(Modifier.height(6.dp))
+            Text(text = meta, color = Color(0xFF93C5FD), fontSize = 16.sp)
+        }
+        val plot = metaSource?.plot ?: series.plot
+        if (!plot.isNullOrBlank() && plot != series.plot) {
+            Spacer(Modifier.height(6.dp))
+            Text(
+                text = plot,
+                color = Color(0xFF94A3B8),
+                fontSize = 14.sp,
+                maxLines = 3,
             )
         }
 
@@ -2070,6 +2405,12 @@ private fun SeriesDetail(
                                                 logo = series.cover,
                                                 tvgId = item.id,
                                                 isVod = true,
+                                                year = series.year,
+                                                season = item.season,
+                                                episode = item.episode,
+                                                seriesTitle = series.name,
+                                                imdbId = series.imdbId,
+                                                tmdbId = series.tmdbId,
                                             )
                                         }
                                         val index = allEpisodes.indexOf(episode).coerceAtLeast(0)
@@ -2186,6 +2527,314 @@ private fun ChannelInitial(name: String) {
 }
 
 @Composable
+private fun UniversalSearchScreen(
+    channels: List<Channel>,
+    config: AppConfig,
+    refreshVersion: Int,
+    onUpdateConfig: () -> Unit,
+    onPlay: (PlaybackRequest) -> Unit,
+) {
+    val xtream = config.sources.xtream
+    val client = remember(xtream, config.player.userAgent) {
+        xtream?.let { XtreamClient(it, userAgent = config.player.userAgent) }
+    }
+    var index by remember { mutableStateOf(SearchIndex(emptyList())) }
+    var loading by remember { mutableStateOf(xtream != null) }
+    var error by remember { mutableStateOf<String?>(null) }
+    var query by remember { mutableStateOf("") }
+    var debounced by remember { mutableStateOf("") }
+    var kind by remember { mutableStateOf<SearchKind?>(null) }
+    var retry by remember { mutableIntStateOf(0) }
+    var selectedMovie by remember { mutableStateOf<XtreamMovie?>(null) }
+    var selectedSeries by remember { mutableStateOf<XtreamSeries?>(null) }
+    val focusManager = LocalFocusManager.current
+    val cacheKey = remember(channels, config.sources, refreshVersion) {
+        CacheIdentity.sha256(
+            "search|${config.sources.m3uUrl}|${config.sources.xtream?.baseUrl}|" +
+                "${config.sources.xtream?.username}|$refreshVersion|${channels.size}",
+        )
+    }
+
+    LaunchedEffect(cacheKey, retry) {
+        val cached = SearchCatalogCache.get(cacheKey)
+        if (cached != null) {
+            index = withContext(Dispatchers.Default) { SearchIndex(cached) }
+            loading = false
+            if (SearchCatalogCache.isComplete(cacheKey)) return@LaunchedEffect
+        }
+
+        val items = mutableListOf<SearchItem>()
+        channels.forEach { channel ->
+            items += SearchItem(
+                id = "live:${channel.liveKey()}",
+                title = channel.name,
+                subtitle = channel.group.orEmpty(),
+                kind = SearchKind.LIVE,
+                channel = channel,
+            )
+        }
+
+        if (client != null) {
+            loading = true
+            error = null
+            var complete = true
+            index = withContext(Dispatchers.Default) { SearchIndex(items) }
+
+            val categoryNames = when (val result = client.liveCategories()) {
+                is XtreamResult.Success -> result.value.associate { it.id to it.name }
+                is XtreamResult.Failure -> emptyMap()
+            }
+
+            when (val result = client.allLiveStreams()) {
+                is XtreamResult.Success -> {
+                    result.value
+                        .filter(XtreamCategoryFilter::isUsable)
+                        .forEach { stream ->
+                            val channel = client.liveChannel(
+                                stream = stream,
+                                categoryName = categoryNames[stream.categoryId] ?: "Xtream",
+                                providerLabel = "Xtream",
+                            )
+                            items += SearchItem(
+                                id = "xtream:${stream.id}",
+                                title = channel.name,
+                                subtitle = channel.group.orEmpty(),
+                                kind = SearchKind.CHANNELS,
+                                channel = channel,
+                            )
+                        }
+                    index = withContext(Dispatchers.Default) { SearchIndex(items) }
+                }
+
+                is XtreamResult.Failure -> {
+                    complete = false
+                    if (items.isEmpty()) error = result.message
+                }
+            }
+
+            when (val result = client.allVodStreams()) {
+                is XtreamResult.Success -> result.value.forEach { movie ->
+                    items += SearchItem(
+                        id = "movie:${movie.id}",
+                        title = movie.name,
+                        subtitle = listOfNotNull(movie.genre, movie.year).joinToString(" · "),
+                        kind = SearchKind.MOVIE,
+                        movie = movie,
+                    )
+                }
+
+                is XtreamResult.Failure -> complete = false
+            }
+
+            when (val result = client.allSeries()) {
+                is XtreamResult.Success -> result.value.forEach { series ->
+                    items += SearchItem(
+                        id = "series:${series.id}",
+                        title = series.name,
+                        subtitle = listOfNotNull(series.genre, series.year).joinToString(" · "),
+                        kind = SearchKind.SERIES,
+                        series = series,
+                    )
+                }
+
+                is XtreamResult.Failure -> complete = false
+            }
+
+            index = withContext(Dispatchers.Default) { SearchIndex(items) }
+            SearchCatalogCache.put(cacheKey, items, complete = complete)
+            loading = false
+        } else {
+            index = withContext(Dispatchers.Default) { SearchIndex(items) }
+            loading = false
+        }
+    }
+
+    LaunchedEffect(query) {
+        delay(250)
+        debounced = query
+    }
+
+    val results = remember(index, debounced, kind) {
+        index.search(debounced, kind)
+    }
+
+    val movie = selectedMovie
+    val series = selectedSeries
+    if (movie != null && client != null) {
+        MovieDetail(
+            client = client,
+            movie = movie,
+            refreshVersion = refreshVersion,
+            onBack = { selectedMovie = null },
+            onPlay = { channel -> onPlay(PlaybackRequest(channel)) },
+        )
+        return
+    }
+    if (series != null && client != null) {
+        SeriesDetail(
+            client = client,
+            series = series,
+            refreshVersion = refreshVersion,
+            onUpdateConfig = onUpdateConfig,
+            onBack = { selectedSeries = null },
+            onPlay = onPlay,
+        )
+        return
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            BasicTextField(
+                value = query,
+                onValueChange = { query = it },
+                singleLine = true,
+                textStyle = TextStyle(color = Color.White, fontSize = 18.sp),
+                cursorBrush = SolidColor(Color(0xFF3B82F6)),
+                modifier = Modifier
+                    .width(460.dp)
+                    .background(Color(0xFF1E293B), RoundedCornerShape(8.dp))
+                    .onPreviewKeyEvent { event ->
+                        if (event.type != KeyEventType.KeyDown) {
+                            return@onPreviewKeyEvent false
+                        }
+                        if (event.nativeKeyEvent.keyCode == AndroidKeyEvent.KEYCODE_DPAD_DOWN) {
+                            focusManager.moveFocus(FocusDirection.Down)
+                            true
+                        } else {
+                            false
+                        }
+                    },
+                decorationBox = { innerTextField ->
+                    Box(modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
+                        if (query.isEmpty()) {
+                            Text(
+                                text = "Buscar en vivo, canales, películas y series…",
+                                color = Color(0xFF64748B),
+                                fontSize = 18.sp,
+                            )
+                        }
+                        innerTextField()
+                    }
+                },
+            )
+            if (query.isNotEmpty()) {
+                Spacer(Modifier.width(8.dp))
+                Button(onClick = { query = "" }) {
+                    Text("Limpiar", fontSize = 16.sp)
+                }
+            }
+            Spacer(Modifier.weight(1f))
+            Text(
+                text = when {
+                    loading && index.size() == 0 -> "Cargando catálogo…"
+                    loading -> "${index.size()} · cargando más…"
+                    query.isBlank() -> "${index.size()} elementos"
+                    else -> "${results.size} resultados"
+                },
+                color = Color(0xFF64748B),
+                fontSize = 14.sp,
+            )
+        }
+
+        Spacer(Modifier.height(10.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            SearchFilterButton(
+                label = "Todo",
+                selected = kind == null,
+                onClick = { kind = null },
+            )
+            SearchKind.entries.forEach { value ->
+                SearchFilterButton(
+                    label = value.label,
+                    selected = kind == value,
+                    onClick = { kind = value },
+                )
+            }
+        }
+        Spacer(Modifier.height(12.dp))
+
+        when {
+            loading && index.size() == 0 -> CenteredMessage("Cargando catálogo de Xtream…")
+            error != null && index.size() == 0 -> SourceFailurePane(
+                message = error!!,
+                onRetry = { retry++ },
+                onUpdateConfig = onUpdateConfig,
+            )
+
+            query.isBlank() -> CenteredMessage(
+                "Escribe para buscar en vivo, canales, películas y series.",
+            )
+
+            results.isEmpty() -> CenteredMessage("Sin resultados para \"$query\"")
+
+            else -> LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                items(results, key = { it.item.id }) { result ->
+                    Button(
+                        onClick = {
+                            val item = result.item
+                            when {
+                                item.channel != null -> onPlay(PlaybackRequest(item.channel))
+                                item.movie != null -> selectedMovie = item.movie
+                                item.series != null -> selectedSeries = item.series
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = result.item.title,
+                                    fontSize = 18.sp,
+                                    maxLines = 1,
+                                )
+                                if (result.item.subtitle.isNotBlank()) {
+                                    Text(
+                                        text = result.item.subtitle,
+                                        color = Color(0xFF94A3B8),
+                                        fontSize = 13.sp,
+                                        maxLines = 1,
+                                    )
+                                }
+                            }
+                            Text(
+                                text = result.item.kind.label,
+                                color = Color(0xFF93C5FD),
+                                fontSize = 13.sp,
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SearchFilterButton(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    Button(onClick = onClick) {
+        Text(
+            text = label,
+            color = if (selected) Color(0xFF3B82F6) else Color.White,
+            fontSize = 15.sp,
+            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+        )
+    }
+}
+
+@Composable
 private fun ContinueWatchingScreen(
     entries: List<PlaybackEntry>,
     onSelect: (PlaybackRequest) -> Unit,
@@ -2278,6 +2927,46 @@ private fun SettingsScreen(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+        item { SettingsHeader("Inicio") }
+        item {
+            ChoiceRow(
+                label = "Iniciar al encender",
+                current = (settings.autoStartOnBoot ?: true).toString(),
+                options = listOf("Sí" to "true", "No" to "false"),
+            ) { value ->
+                onSettingsChange(settings.copy(autoStartOnBoot = value.toBoolean()))
+            }
+        }
+        item {
+            ChoiceRow(
+                label = "Reanudar al despertar",
+                current = (settings.autoResumeOnWake ?: true).toString(),
+                options = listOf("Sí" to "true", "No" to "false"),
+            ) { value ->
+                onSettingsChange(settings.copy(autoResumeOnWake = value.toBoolean()))
+            }
+        }
+        item {
+            Column {
+                ChoiceRow(
+                    label = "Usar Streaming como inicio",
+                    current = (settings.useAsLauncher ?: false).toString(),
+                    options = listOf("Sí" to "true", "No" to "false"),
+                ) { value ->
+                    val enabled = value.toBoolean()
+                    HomeLauncher.setEnabled(context, enabled)
+                    onSettingsChange(settings.copy(useAsLauncher = enabled))
+                }
+                Text(
+                    text = "Si el TV bloquea el inicio automático, activa esto y elige " +
+                        "Streaming al pulsar Home. Se puede desactivar cuando quieras.",
+                    color = Color(0xFF64748B),
+                    fontSize = 13.sp,
+                    modifier = Modifier.padding(top = 6.dp),
+                )
+            }
+        }
+
         item { SettingsHeader("Reproducción") }
         item {
             ChoiceRow(
@@ -2292,6 +2981,22 @@ private fun SettingsScreen(
         }
         item {
             ChoiceRow(
+                label = "Prebúfer tras corte",
+                current = config.player.preBufferMs.toString(),
+                options = SettingsOptions.PRE_BUFFER_PRESETS.map {
+                    "${it / 1000} s" to it.toString()
+                },
+            ) { value -> onSettingsChange(settings.copy(preBufferMs = value.toIntOrNull())) }
+        }
+        item {
+            ChoiceRow(
+                label = "Latencia baja (en vivo)",
+                current = config.player.liveLowLatency.toString(),
+                options = listOf("Sí" to "true", "No" to "false"),
+            ) { value -> onSettingsChange(settings.copy(liveLowLatency = value.toBoolean())) }
+        }
+        item {
+            ChoiceRow(
                 label = "Calidad máxima",
                 current = config.player.qualityCap,
                 options = listOf(
@@ -2299,6 +3004,7 @@ private fun SettingsScreen(
                     "1080p" to "1080p",
                     "720p" to "720p",
                     "480p" to "480p",
+                    "360p" to "360p",
                 ),
             ) { value -> onSettingsChange(settings.copy(qualityCap = value)) }
         }
@@ -2316,6 +3022,112 @@ private fun SettingsScreen(
                     "4:3" to "4:3",
                 ),
             ) { value -> onSettingsChange(settings.copy(aspectMode = value)) }
+        }
+
+        item { SettingsHeader("Interfaz") }
+        item {
+            ChoiceRow(
+                label = "Tamaño del texto",
+                current = config.ui.fontScale.toString(),
+                options = SettingsOptions.TEXT_SCALES.map {
+                    scaleLabel(it) to it.toString()
+                },
+            ) { value -> onSettingsChange(settings.copy(textScale = value.toFloatOrNull())) }
+        }
+        item {
+            ChoiceRow(
+                label = "Escala de la interfaz",
+                current = config.ui.uiScale.toString(),
+                options = SettingsOptions.UI_SCALES.map {
+                    scaleLabel(it) to it.toString()
+                },
+            ) { value -> onSettingsChange(settings.copy(uiScale = value.toFloatOrNull())) }
+        }
+        item {
+            ChoiceRow(
+                label = "Navegación",
+                current = config.ui.navigation,
+                options = listOf(
+                    "Arriba" to "top",
+                    "Lateral" to "rail",
+                ),
+            ) { value -> onSettingsChange(settings.copy(navigation = value)) }
+        }
+        item {
+            ChoiceRow(
+                label = "Barra del reproductor",
+                current = config.ui.playerBar,
+                options = listOf(
+                    "Completa" to "full",
+                    "Compacta" to "compact",
+                ),
+            ) { value -> onSettingsChange(settings.copy(playerBar = value)) }
+        }
+        item {
+            Column {
+                Text(
+                    text = "Botones del reproductor",
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+                Spacer(Modifier.height(6.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(
+                        "info" to "Info",
+                        "aspect" to "Aspecto",
+                        "tracks" to "Audio",
+                        "quality" to "Calidad",
+                        "speed" to "Velocidad",
+                        "external" to "Externo",
+                    ).forEach { (id, label) ->
+                        val enabled = id in config.ui.playerButtons
+                        Button(onClick = {
+                            val updated = if (enabled) {
+                                config.ui.playerButtons - id
+                            } else {
+                                config.ui.playerButtons + id
+                            }
+                            onSettingsChange(settings.copy(playerButtons = updated))
+                        }) {
+                            Text(
+                                text = if (enabled) "✓ $label" else label,
+                                color = if (enabled) Color(0xFF3B82F6) else Color.White,
+                                fontSize = 14.sp,
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        item { SettingsHeader("Subtítulos") }
+        item {
+            Column {
+                Text(
+                    text = if (config.subtitles.apiKey.isNotBlank()) {
+                        "OpenSubtitles: configurado (${config.subtitles.languages.joinToString(", ")})"
+                    } else {
+                        "OpenSubtitles: falta apiKey en el gist"
+                    },
+                    color = if (config.subtitles.apiKey.isNotBlank()) {
+                        Color(0xFF4ADE80)
+                    } else {
+                        Color(0xFFFBBF24)
+                    },
+                    fontSize = 15.sp,
+                )
+                Spacer(Modifier.height(8.dp))
+                ChoiceRow(
+                    label = "Descargar automáticamente",
+                    current = (settings.autoDownloadSubtitles ?: config.subtitles.autoDownload).toString(),
+                    options = listOf("Sí" to "true", "No" to "false"),
+                ) { value ->
+                    onSettingsChange(
+                        settings.copy(autoDownloadSubtitles = value.toBoolean()),
+                    )
+                }
+            }
         }
 
         item { SettingsHeader("Caché VOD") }
@@ -2375,6 +3187,24 @@ private fun SettingsScreen(
         }
 
         item { SettingsHeader("Fuentes") }
+        item {
+            ChoiceRow(
+                label = "Ocultar categorías con menos de",
+                current = (config.sources.xtream?.minCategoryItems ?: 2).toString(),
+                options = SettingsOptions.MIN_CATEGORY_ITEMS.map {
+                    if (it == 0) "Desactivado" to "0" else "$it canales" to it.toString()
+                },
+            ) { value -> onSettingsChange(settings.copy(minCategoryItems = value.toIntOrNull())) }
+        }
+        item {
+            ChoiceRow(
+                label = "Ocultar categorías vacías",
+                current = (config.sources.xtream?.hideEmptyCategories ?: true).toString(),
+                options = listOf("Sí" to "true", "No" to "false"),
+            ) { value ->
+                onSettingsChange(settings.copy(hideEmptyCategories = value.toBoolean()))
+            }
+        }
         item {
             Column {
                 Row(
@@ -2554,15 +3384,19 @@ private fun PlaybackScreen(
     networkConfig: NetworkConfig,
     cacheConfig: CacheConfig,
     liveConfig: LiveConfig,
+    uiConfig: UiConfig,
+    subtitlesConfig: SubtitlesConfig,
     onProgress: (Channel, Long, Long) -> Unit,
     onFinished: (Channel) -> Unit,
     onNext: (PlaybackRequest) -> Unit,
     onAspectChange: (String) -> Unit,
+    onQualityChange: (String) -> Unit,
     onRecoverSource: () -> Unit,
     onClose: () -> Unit,
 ) {
     val channel = request.channel
     val context = LocalContext.current
+    val capabilities = remember(channel) { channel.toMediaItem().capabilities }
     val allowed = remember(networkConfig.wifiOnly) {
         NetworkPolicy.isAllowed(context, networkConfig.wifiOnly)
     }
@@ -2582,6 +3416,11 @@ private fun PlaybackScreen(
     var currentTracks by remember(channel) { mutableStateOf(Tracks.EMPTY) }
     var showTracks by remember(channel) { mutableStateOf(false) }
     var showStats by remember(channel) { mutableStateOf(false) }
+    var showQuality by remember(channel) { mutableStateOf(false) }
+    var showSpeed by remember(channel) { mutableStateOf(false) }
+    var showControls by remember(channel) { mutableStateOf(false) }
+    var qualityOptions by remember(channel) { mutableStateOf<List<QualityOption>>(emptyList()) }
+    var speed by remember(channel) { mutableStateOf(1f) }
     var aspectMode by remember(playerConfig.aspectMode) { mutableStateOf(playerConfig.aspectMode) }
     var decoderName by remember(channel) { mutableStateOf<String?>(null) }
     var bandwidthBps by remember(channel) { mutableStateOf(0L) }
@@ -2592,14 +3431,65 @@ private fun PlaybackScreen(
     val aspectButtonFocus = remember { FocusRequester() }
     val firstTrackFocus = remember { FocusRequester() }
     val statsFirstFocus = remember { FocusRequester() }
+    val qualityFirstFocus = remember { FocusRequester() }
+    val speedFirstFocus = remember { FocusRequester() }
+    val controlsFirstFocus = remember { FocusRequester() }
     var aspectTouched by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val errorLog = remember(context) { ErrorLogStore(context) }
+    val subtitleCache = remember(context) { SubtitleCache(context) }
+    val subtitleOffsetStore = remember(context) { SubtitleOffsetStore(context) }
+    val subtitleRepository = remember(subtitlesConfig, playerConfig.userAgent) {
+        SubtitleRepository(
+            config = subtitlesConfig,
+            cache = subtitleCache,
+            client = OpenSubtitlesClient(
+                config = subtitlesConfig,
+                userAgent = "Streaming/${BuildConfig.VERSION_NAME}",
+            ),
+        )
+    }
+    val mediaDescriptor = remember(channel) { MediaDescriptor.fromChannel(channel) }
+    var subtitleFile by remember(channel) { mutableStateOf<File?>(null) }
+    var subtitleLanguage by remember(channel) { mutableStateOf("es") }
+    var subtitleOffsetMs by remember(channel) {
+        mutableStateOf(subtitleOffsetStore.load()[mediaDescriptor.key] ?: 0L)
+    }
+    var subtitleMessage by remember(channel) { mutableStateOf<String?>(null) }
+    var subtitleCandidates by remember(channel) {
+        mutableStateOf<List<SubtitleCandidate>>(emptyList())
+    }
+    var showSubtitleSearch by remember(channel) { mutableStateOf(false) }
+    var subtitleSearching by remember(channel) { mutableStateOf(false) }
+    val subtitlePicker = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument(),
+    ) { uri ->
+        uri?.let {
+            scope.launch(Dispatchers.IO) {
+                val bytes = runCatching {
+                    context.contentResolver.openInputStream(it)?.use { stream -> stream.readBytes() }
+                }.getOrNull()
+                if (bytes != null) {
+                    val content = SrtCodec.decode(bytes)
+                    val file = subtitleRepository.importLocal(
+                        mediaKey = mediaDescriptor.key,
+                        language = "es",
+                        content = content,
+                        offsetMs = subtitleOffsetMs,
+                    )
+                    subtitleLanguage = "es"
+                    subtitleFile = file
+                    subtitleMessage = null
+                } else {
+                    subtitleMessage = "No se pudo leer el archivo."
+                }
+            }
+        }
+    }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val player = remember(
         channel,
-        playerConfig.copy(aspectMode = ""),
         networkConfig,
         cacheConfig,
         retryToken,
@@ -2644,6 +3534,7 @@ private fun PlaybackScreen(
 
                 override fun onTracksChanged(tracks: Tracks) {
                     currentTracks = tracks
+                    qualityOptions = QualitySelection.options(tracks)
                 }
 
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -2685,6 +3576,51 @@ private fun PlaybackScreen(
         if (request.startPositionMs > 0L) {
             player.seekTo(request.startPositionMs)
         }
+        QualitySelection.apply(
+            player = player,
+            preference = playerConfig.qualityPreference,
+            qualityCap = playerConfig.qualityCap,
+            maxBitrateKbps = networkConfig.maxBitrateKbps,
+        )
+        player.setPlaybackSpeed(if (channel.isVod) speed else 1f)
+    }
+
+    LaunchedEffect(
+        channel,
+        subtitlesConfig.enabled,
+        subtitlesConfig.autoDownload,
+        subtitlesConfig.apiKey,
+        subtitleOffsetMs,
+    ) {
+        if (!channel.isVod || !subtitlesConfig.enabled) return@LaunchedEffect
+
+        val cached = subtitleRepository.cachedAny(mediaDescriptor.key, subtitleOffsetMs)
+        if (cached != null) {
+            subtitleLanguage = subtitleRepository.languageOf(cached)
+            subtitleFile = cached
+            return@LaunchedEffect
+        }
+
+        if (!subtitlesConfig.autoDownload || subtitlesConfig.apiKey.isBlank()) {
+            return@LaunchedEffect
+        }
+
+        val downloaded = subtitleRepository.autoFetch(channel, subtitleOffsetMs)
+        if (downloaded != null) {
+            subtitleLanguage = subtitleRepository.languageOf(downloaded)
+            subtitleFile = downloaded
+            subtitleMessage = null
+        }
+    }
+
+    LaunchedEffect(subtitleFile, player, activeUrl) {
+        val file = subtitleFile ?: return@LaunchedEffect
+        val position = player.currentPosition.coerceAtLeast(0L)
+        val wasPlaying = player.isPlaying
+        player.setMediaItem(buildMediaItem(channel.copy(url = activeUrl), playerConfig, file, subtitleLanguage))
+        player.prepare()
+        if (position > 0L) player.seekTo(position)
+        if (wasPlaying) player.play()
     }
 
     LaunchedEffect(player, channel) {
@@ -2796,7 +3732,7 @@ private fun PlaybackScreen(
     LaunchedEffect(player, showStats) {
         if (!showStats) return@LaunchedEffect
         while (true) {
-            streamStats = readStreamStats(player, channel, decoderName, bandwidthBps)
+            streamStats = readStreamStats(player, channel, decoderName, bandwidthBps, playerConfig)
             delay(1_000)
         }
     }
@@ -2813,16 +3749,45 @@ private fun PlaybackScreen(
         }
     }
 
-    BackHandler(enabled = showTracks || showStats) {
-        if (showStats) showStats = false else showTracks = false
+    val openExternal: () -> Unit = {
+        val intent = ExternalPlayer.buildIntent(channel, playerConfig)
+        val hasHandler = intent.resolveActivity(context.packageManager) != null
+        if (hasHandler) {
+            runCatching {
+                context.startActivity(
+                    Intent.createChooser(intent, "Abrir en otro reproductor")
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                )
+            }.onFailure {
+                Toast.makeText(context, "No se pudo abrir otro reproductor.", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(context, "No hay otro reproductor instalado.", Toast.LENGTH_SHORT).show()
+        }
     }
 
-    LaunchedEffect(showTracks, showStats) {
+    BackHandler(
+        enabled = showTracks || showStats || showQuality || showSpeed || showSubtitleSearch || showControls,
+    ) {
+        when {
+            showStats -> showStats = false
+            showSubtitleSearch -> showSubtitleSearch = false
+            showTracks -> showTracks = false
+            showQuality -> showQuality = false
+            showSpeed -> showSpeed = false
+            showControls -> showControls = false
+        }
+    }
+
+    LaunchedEffect(showTracks, showStats, showQuality, showSpeed, showControls) {
         delay(150)
         runCatching {
             when {
                 showTracks -> firstTrackFocus.requestFocus()
                 showStats -> statsFirstFocus.requestFocus()
+                showQuality -> qualityFirstFocus.requestFocus()
+                showSpeed -> speedFirstFocus.requestFocus()
+                showControls -> controlsFirstFocus.requestFocus()
                 else -> tracksButtonFocus.requestFocus()
             }
         }
@@ -2839,14 +3804,29 @@ private fun PlaybackScreen(
         modifier = Modifier
             .fillMaxSize()
             .onPreviewKeyEvent { event ->
-                if (event.type != KeyEventType.KeyDown || showTracks || showStats) {
+                if (event.type != KeyEventType.KeyDown || showTracks || showStats || showQuality || showSpeed || showSubtitleSearch || showControls) {
                     return@onPreviewKeyEvent false
                 }
 
                 when (event.nativeKeyEvent.keyCode) {
-                    AndroidKeyEvent.KEYCODE_CHANNEL_UP,
-                    AndroidKeyEvent.KEYCODE_MEDIA_NEXT,
+                    AndroidKeyEvent.KEYCODE_MEDIA_PLAY_PAUSE,
+                    AndroidKeyEvent.KEYCODE_HEADSETHOOK,
                     -> {
+                        if (player.isPlaying) player.pause() else player.play()
+                        true
+                    }
+
+                    AndroidKeyEvent.KEYCODE_MEDIA_PLAY -> {
+                        player.play()
+                        true
+                    }
+
+                    AndroidKeyEvent.KEYCODE_MEDIA_PAUSE -> {
+                        player.pause()
+                        true
+                    }
+
+                    AndroidKeyEvent.KEYCODE_CHANNEL_UP -> {
                         if (!channel.isVod && liveConfig.zapping) {
                             zap(1)
                             true
@@ -2855,10 +3835,32 @@ private fun PlaybackScreen(
                         }
                     }
 
-                    AndroidKeyEvent.KEYCODE_CHANNEL_DOWN,
-                    AndroidKeyEvent.KEYCODE_MEDIA_PREVIOUS,
-                    -> {
+                    AndroidKeyEvent.KEYCODE_MEDIA_NEXT -> {
+                        if (channel.isVod) {
+                            player.seekTo((player.currentPosition + 30_000L).coerceAtMost(player.duration))
+                            true
+                        } else if (liveConfig.zapping) {
+                            zap(1)
+                            true
+                        } else {
+                            false
+                        }
+                    }
+
+                    AndroidKeyEvent.KEYCODE_CHANNEL_DOWN -> {
                         if (!channel.isVod && liveConfig.zapping) {
+                            zap(-1)
+                            true
+                        } else {
+                            false
+                        }
+                    }
+
+                    AndroidKeyEvent.KEYCODE_MEDIA_PREVIOUS -> {
+                        if (channel.isVod) {
+                            player.seekTo((player.currentPosition - 30_000L).coerceAtLeast(0L))
+                            true
+                        } else if (liveConfig.zapping) {
                             zap(-1)
                             true
                         } else {
@@ -2901,7 +3903,11 @@ private fun PlaybackScreen(
         Column(
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(32.dp)
+                .padding(
+                    start = 32.dp,
+                    top = if (channel.isVod) 96.dp else 32.dp,
+                    end = 32.dp,
+                )
                 .background(Color(0x99000000), RoundedCornerShape(8.dp))
                 .padding(horizontal = 12.dp, vertical = 6.dp),
         ) {
@@ -2919,37 +3925,81 @@ private fun PlaybackScreen(
             }
         }
 
-        Row(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(32.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Button(onClick = {
-                showTracks = false
-                showStats = true
-            }) {
-                Text("Info", fontSize = 16.sp)
-            }
+        if (uiConfig.playerBar == "compact") {
             Button(
-                onClick = {
-                    aspectTouched = true
-                    val next = nextAspectMode(aspectMode)
-                    aspectMode = next
-                    onAspectChange(next)
-                },
-                modifier = Modifier.focusRequester(aspectButtonFocus),
+                onClick = { showControls = true },
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(32.dp),
             ) {
-                Text("Aspecto: ${aspectLabel(aspectMode)}", fontSize = 16.sp)
+                Text("Controles", fontSize = 16.sp)
             }
-            Button(
-                onClick = {
-                    showStats = false
-                    showTracks = true
-                },
-                modifier = Modifier.focusRequester(tracksButtonFocus),
+        } else {
+            Row(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(32.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                Text("Audio · Subtítulos", fontSize = 16.sp)
+                if ("info" in uiConfig.playerButtons) {
+                    Button(onClick = {
+                        showTracks = false
+                        showStats = true
+                    }) {
+                        Text("Info", fontSize = 16.sp)
+                    }
+                }
+                if ("aspect" in uiConfig.playerButtons) {
+                    Button(
+                        onClick = {
+                            aspectTouched = true
+                            val next = nextAspectMode(aspectMode)
+                            aspectMode = next
+                            onAspectChange(next)
+                        },
+                        modifier = Modifier.focusRequester(aspectButtonFocus),
+                    ) {
+                        Text("Aspecto: ${aspectLabel(aspectMode)}", fontSize = 15.sp, maxLines = 1)
+                    }
+                }
+                if ("quality" in uiConfig.playerButtons && capabilities.canChangeQuality) {
+                    Button(onClick = {
+                        showStats = false
+                        showTracks = false
+                        showSpeed = false
+                        showQuality = true
+                    }) {
+                        Text("Calidad", fontSize = 15.sp, maxLines = 1)
+                    }
+                }
+                if ("speed" in uiConfig.playerButtons && capabilities.canChangeSpeed) {
+                    Button(onClick = {
+                        showStats = false
+                        showTracks = false
+                        showQuality = false
+                        showSpeed = true
+                    }) {
+                        Text("Velocidad ${speedLabel(speed)}", fontSize = 15.sp, maxLines = 1)
+                    }
+                }
+                if ("tracks" in uiConfig.playerButtons) {
+                    Button(
+                        onClick = {
+                            showStats = false
+                            showQuality = false
+                            showSpeed = false
+                            showTracks = true
+                        },
+                        modifier = Modifier.focusRequester(tracksButtonFocus),
+                    ) {
+                        Text("Audio/Subs", fontSize = 15.sp, maxLines = 1)
+                    }
+                }
+                if ("external" in uiConfig.playerButtons && capabilities.canOpenExternally) {
+                    Button(onClick = openExternal) {
+                        Text("Externo", fontSize = 15.sp, maxLines = 1)
+                    }
+                }
             }
         }
 
@@ -2988,10 +4038,161 @@ private fun PlaybackScreen(
                 subtitles = subtitleChoices,
                 subtitlesEnabled = subtitlesEnabled,
                 firstFocus = firstTrackFocus,
+                subtitleMessage = subtitleMessage,
+                offsetMs = subtitleOffsetMs,
+                canSearchSubtitles = channel.isVod && subtitlesConfig.enabled,
+                searchingSubtitles = subtitleSearching,
                 onSelectAudio = { choice -> applyAudioTrack(player, choice) },
                 onSelectSubtitles = { choice -> applySubtitleTrack(player, choice) },
                 onDisableSubtitles = { disableSubtitles(player) },
+                onOffsetChange = { delta ->
+                    val updated = subtitleOffsetMs + delta
+                    subtitleOffsetMs = updated
+                    scope.launch(Dispatchers.IO) {
+                        val offsets = subtitleOffsetStore.load().toMutableMap()
+                        offsets[mediaDescriptor.key] = updated
+                        subtitleOffsetStore.save(offsets)
+                    }
+                    if (subtitleFile != null) {
+                        subtitleRepository.applyOffset(
+                            mediaKey = mediaDescriptor.key,
+                            language = subtitleLanguage,
+                            offsetMs = updated,
+                        )?.let { subtitleFile = it }
+                    }
+                },
+                onResetOffset = {
+                    subtitleOffsetMs = 0L
+                    scope.launch(Dispatchers.IO) {
+                        val offsets = subtitleOffsetStore.load().toMutableMap()
+                        offsets.remove(mediaDescriptor.key)
+                        subtitleOffsetStore.save(offsets)
+                    }
+                    if (subtitleFile != null) {
+                        subtitleRepository.applyOffset(
+                            mediaKey = mediaDescriptor.key,
+                            language = subtitleLanguage,
+                            offsetMs = 0L,
+                        )?.let { subtitleFile = it }
+                    }
+                },
+                onSearchSubtitles = {
+                    if (!subtitleSearching) {
+                        subtitleSearching = true
+                        subtitleMessage = null
+                        scope.launch {
+                            when (val result = subtitleRepository.search(channel)) {
+                                is SubtitleResult.Success -> {
+                                    subtitleCandidates = result.value
+                                    showSubtitleSearch = true
+                                }
+
+                                is SubtitleResult.Failure -> {
+                                    subtitleMessage = result.message
+                                }
+                            }
+                            subtitleSearching = false
+                        }
+                    }
+                },
+                onOpenSubtitleFile = {
+                    subtitlePicker.launch(arrayOf("*/*"))
+                },
                 onClose = { showTracks = false },
+            )
+        }
+
+        if (showSubtitleSearch) {
+            SubtitleSearchOverlay(
+                candidates = subtitleCandidates,
+                loading = subtitleSearching,
+                message = subtitleMessage,
+                firstFocus = firstTrackFocus,
+                onSelect = { candidate ->
+                    scope.launch {
+                        subtitleSearching = true
+                        val file = subtitleRepository.download(
+                            channel = channel,
+                            candidate = candidate,
+                            offsetMs = subtitleOffsetMs,
+                        )
+                        if (file != null) {
+                            subtitleLanguage = candidate.language
+                            subtitleFile = file
+                            subtitleMessage = null
+                            showSubtitleSearch = false
+                        } else {
+                            subtitleMessage = "No se pudo descargar el subtítulo."
+                        }
+                        subtitleSearching = false
+                    }
+                },
+                onClose = { showSubtitleSearch = false },
+            )
+        }
+
+        if (showControls) {
+            PlayerControlsOverlay(
+                buttons = uiConfig.playerButtons,
+                isVod = capabilities.canSeek,
+                firstFocus = controlsFirstFocus,
+                onInfo = {
+                    showControls = false
+                    showStats = true
+                },
+                onAspect = {
+                    aspectTouched = true
+                    val next = nextAspectMode(aspectMode)
+                    aspectMode = next
+                    onAspectChange(next)
+                    showControls = false
+                },
+                onTracks = {
+                    showControls = false
+                    showTracks = true
+                },
+                onQuality = {
+                    showControls = false
+                    showQuality = true
+                },
+                onSpeed = {
+                    showControls = false
+                    showSpeed = true
+                },
+                onExternal = openExternal,
+                onClose = { showControls = false },
+            )
+        }
+
+        if (showQuality) {
+            QualityOverlay(
+                options = qualityOptions,
+                current = playerConfig.qualityPreference,
+                firstFocus = qualityFirstFocus,
+                onSelect = { preference ->
+                    QualitySelection.apply(
+                        player = player,
+                        preference = preference,
+                        qualityCap = playerConfig.qualityCap,
+                        maxBitrateKbps = networkConfig.maxBitrateKbps,
+                    )
+                    onQualityChange(preference)
+                    showQuality = false
+                },
+                onClose = { showQuality = false },
+            )
+        }
+
+        if (showSpeed) {
+            SpeedOverlay(
+                current = speed,
+                firstFocus = speedFirstFocus,
+                onSelect = { value ->
+                    speed = value
+                    player.setPlaybackSpeed(value)
+                    showSpeed = false
+                },
+                onClose = { showSpeed = false },
             )
         }
 
@@ -3011,6 +4212,7 @@ private data class StreamStats(
     val frameRate: String,
     val bitrate: String,
     val buffer: String,
+    val bufferConfig: String,
     val droppedFrames: String,
     val decoder: String,
     val bandwidth: String,
@@ -3023,6 +4225,7 @@ private fun readStreamStats(
     channel: Channel,
     decoderName: String?,
     bandwidthBps: Long,
+    playerConfig: PlayerConfig,
 ): StreamStats {
     val video = player.videoFormat
     player.videoDecoderCounters?.ensureUpdated()
@@ -3036,6 +4239,8 @@ private fun readStreamStats(
         frameRate = StreamStatsFormat.frameRate(video?.frameRate ?: 0f),
         bitrate = StreamStatsFormat.bitrate(video?.bitrate?.toLong() ?: 0L),
         buffer = StreamStatsFormat.buffer(player.totalBufferedDuration),
+        bufferConfig = "${playerConfig.bufferMs / 1000} s inicial · " +
+            "${playerConfig.preBufferMs / 1000} s tras corte",
         droppedFrames = StreamStatsFormat.droppedFrames(
             player.videoDecoderCounters?.droppedBufferCount ?: 0,
         ),
@@ -3109,7 +4314,8 @@ private fun StreamStatsOverlay(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(14.dp),
                 ) {
-                    StatRow("Búfer", stats?.buffer ?: "—")
+                    StatRow("Búfer actual", stats?.buffer ?: "—")
+                    StatRow("Búfer configurado", stats?.bufferConfig ?: "—")
                     StatRow("Fotogramas descartados", stats?.droppedFrames ?: "—")
                     StatRow("Decodificador", stats?.decoder ?: "—")
                     StatRow("Ancho de banda estimado", stats?.bandwidth ?: "—")
@@ -3144,9 +4350,17 @@ private fun TrackPickerOverlay(
     subtitles: List<TrackChoice>,
     subtitlesEnabled: Boolean,
     firstFocus: FocusRequester,
+    subtitleMessage: String?,
+    offsetMs: Long,
+    canSearchSubtitles: Boolean,
+    searchingSubtitles: Boolean,
     onSelectAudio: (TrackChoice) -> Unit,
     onSelectSubtitles: (TrackChoice) -> Unit,
     onDisableSubtitles: () -> Unit,
+    onOffsetChange: (Long) -> Unit,
+    onResetOffset: () -> Unit,
+    onSearchSubtitles: () -> Unit,
+    onOpenSubtitleFile: () -> Unit,
     onClose: () -> Unit,
 ) {
     Box(
@@ -3241,6 +4455,42 @@ private fun TrackPickerOverlay(
                         )
                     }
                 }
+
+            }
+
+            if (canSearchSubtitles) {
+                Spacer(Modifier.height(8.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Button(onClick = onSearchSubtitles) {
+                        Text(
+                            text = if (searchingSubtitles) "Buscando…" else "Buscar subtítulos",
+                            fontSize = 15.sp,
+                        )
+                    }
+                    Button(onClick = onOpenSubtitleFile) {
+                        Text("Archivo .srt", fontSize = 15.sp)
+                    }
+                }
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    text = "Sincronización: ${offsetSecondsLabel(offsetMs)}",
+                    color = Color(0xFF94A3B8),
+                    fontSize = 14.sp,
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Button(onClick = { onOffsetChange(-5_000L) }) { Text("−5 s", fontSize = 13.sp) }
+                    Button(onClick = { onOffsetChange(-500L) }) { Text("−0.5 s", fontSize = 13.sp) }
+                    Button(onClick = { onOffsetChange(500L) }) { Text("+0.5 s", fontSize = 13.sp) }
+                    Button(onClick = { onOffsetChange(5_000L) }) { Text("+5 s", fontSize = 13.sp) }
+                    Button(onClick = onResetOffset) { Text("0", fontSize = 13.sp) }
+                }
+                subtitleMessage?.let { message ->
+                    Text(
+                        text = message,
+                        color = Color(0xFFFCA5A5),
+                        fontSize = 13.sp,
+                    )
+                }
             }
 
             Spacer(Modifier.height(12.dp))
@@ -3294,6 +4544,280 @@ private fun TrackOptionButton(
             }
         }
     }
+}
+
+@Composable
+private fun QualityOverlay(
+    options: List<QualityOption>,
+    current: String,
+    firstFocus: FocusRequester,
+    onSelect: (String) -> Unit,
+    onClose: () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xCC000000))
+            .padding(48.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier
+                .width(560.dp)
+                .fillMaxHeight(0.85f)
+                .background(Color(0xFF0F172A), RoundedCornerShape(12.dp))
+                .padding(24.dp),
+        ) {
+            Text(
+                text = "Calidad de vídeo",
+                color = Color.White,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(Modifier.height(12.dp))
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                item {
+                    TrackOptionButton(
+                        label = "Auto",
+                        selected = current == "auto",
+                        focusRequester = firstFocus,
+                        onClick = { onSelect("auto") },
+                    )
+                }
+                if (options.isEmpty()) {
+                    item {
+                        Text(
+                            text = "Este canal tiene una sola calidad.",
+                            color = Color(0xFF64748B),
+                            fontSize = 15.sp,
+                        )
+                    }
+                } else {
+                    if (options.size == 1) {
+                        item {
+                            Text(
+                                text = "Este canal tiene una sola calidad.",
+                                color = Color(0xFF64748B),
+                                fontSize = 15.sp,
+                            )
+                        }
+                    }
+                    itemsIndexed(options, key = { _, option -> option.height }) { _, option ->
+                        val preference = "${option.height}p"
+                        TrackOptionButton(
+                            label = option.label,
+                            selected = current == preference,
+                            focusRequester = null,
+                            onClick = { onSelect(preference) },
+                        )
+                    }
+                }
+            }
+            Spacer(Modifier.height(12.dp))
+            Button(onClick = onClose, modifier = Modifier.fillMaxWidth()) {
+                Text("Cerrar", fontSize = 17.sp)
+            }
+        }
+    }
+}
+
+@Composable
+private fun SpeedOverlay(
+    current: Float,
+    firstFocus: FocusRequester,
+    onSelect: (Float) -> Unit,
+    onClose: () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xCC000000))
+            .padding(48.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier
+                .width(460.dp)
+                .fillMaxHeight(0.9f)
+                .background(Color(0xFF0F172A), RoundedCornerShape(12.dp))
+                .padding(20.dp),
+        ) {
+            Text(
+                text = "Velocidad de reproducción",
+                color = Color.White,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(Modifier.height(10.dp))
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                itemsIndexed(SettingsOptions.SPEEDS) { index, speed ->
+                    TrackOptionButton(
+                        label = speedLabel(speed),
+                        selected = current == speed,
+                        focusRequester = if (index == 0) firstFocus else null,
+                        onClick = { onSelect(speed) },
+                    )
+                }
+            }
+            Spacer(Modifier.height(8.dp))
+            Button(onClick = onClose, modifier = Modifier.fillMaxWidth()) {
+                Text("Cerrar", fontSize = 17.sp)
+            }
+        }
+    }
+}
+
+private fun speedLabel(speed: Float): String {
+    val text = String.format(Locale.US, "%.2f", speed).trimEnd('0').trimEnd('.')
+    return "${text}x"
+}
+
+private fun scaleLabel(scale: Float): String = "${(scale * 100).toInt()} %"
+
+private fun yearOnly(value: String?): String? {
+    val text = value?.trim()?.takeIf(String::isNotEmpty) ?: return null
+    return text.take(4).takeIf { it.length == 4 && it.all(Char::isDigit) } ?: text
+}
+
+@Composable
+private fun PlayerControlsOverlay(
+    buttons: List<String>,
+    isVod: Boolean,
+    firstFocus: FocusRequester,
+    onInfo: () -> Unit,
+    onAspect: () -> Unit,
+    onTracks: () -> Unit,
+    onQuality: () -> Unit,
+    onSpeed: () -> Unit,
+    onExternal: () -> Unit,
+    onClose: () -> Unit,
+) {
+    val actions = buildList {
+        if ("info" in buttons) add("Info" to onInfo)
+        if ("aspect" in buttons) add("Aspecto" to onAspect)
+        if ("tracks" in buttons) add("Audio y subtítulos" to onTracks)
+        if ("quality" in buttons) add("Calidad" to onQuality)
+        if ("speed" in buttons && isVod) add("Velocidad" to onSpeed)
+        if ("external" in buttons && isVod) add("Abrir en otro reproductor" to onExternal)
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xCC000000))
+            .padding(48.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier
+                .width(420.dp)
+                .background(Color(0xFF0F172A), RoundedCornerShape(12.dp))
+                .padding(24.dp),
+        ) {
+            Text(
+                text = "Controles",
+                color = Color.White,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(Modifier.height(12.dp))
+            actions.forEachIndexed { index, (label, action) ->
+                Button(
+                    onClick = action,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .then(
+                            if (index == 0) Modifier.focusRequester(firstFocus) else Modifier,
+                        ),
+                ) {
+                    Text(label, fontSize = 17.sp)
+                }
+                Spacer(Modifier.height(8.dp))
+            }
+            Button(onClick = onClose, modifier = Modifier.fillMaxWidth()) {
+                Text("Cerrar", fontSize = 17.sp)
+            }
+        }
+    }
+}
+
+@Composable
+private fun SubtitleSearchOverlay(
+    candidates: List<SubtitleCandidate>,
+    loading: Boolean,
+    message: String?,
+    firstFocus: FocusRequester,
+    onSelect: (SubtitleCandidate) -> Unit,
+    onClose: () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xCC000000))
+            .padding(48.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier
+                .width(760.dp)
+                .fillMaxHeight(0.9f)
+                .background(Color(0xFF0F172A), RoundedCornerShape(12.dp))
+                .padding(24.dp),
+        ) {
+            Text(
+                text = "Buscar subtítulos · OpenSubtitles",
+                color = Color.White,
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(Modifier.height(12.dp))
+            if (loading) {
+                CenteredMessage("Buscando…")
+            } else if (candidates.isEmpty()) {
+                CenteredMessage(message ?: "No hay resultados.")
+            } else {
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    itemsIndexed(
+                        candidates,
+                        key = { _, candidate -> candidate.fileId },
+                    ) { index, candidate ->
+                        TrackOptionButton(
+                            label = buildString {
+                                append(candidate.language.uppercase(Locale.ROOT))
+                                append(" · ")
+                                append(candidate.title.take(60))
+                                if (candidate.downloads > 0) {
+                                    append(" · ")
+                                    append("${candidate.downloads} descargas")
+                                }
+                            },
+                            selected = false,
+                            focusRequester = if (index == 0) firstFocus else null,
+                            onClick = { onSelect(candidate) },
+                        )
+                    }
+                }
+            }
+            Spacer(Modifier.height(12.dp))
+            Button(onClick = onClose, modifier = Modifier.fillMaxWidth()) {
+                Text("Cerrar", fontSize = 17.sp)
+            }
+        }
+    }
+}
+
+private fun offsetSecondsLabel(offsetMs: Long): String {
+    if (offsetMs == 0L) return "0 s"
+    return String.format(Locale.US, "%+.1f s", offsetMs / 1_000.0)
 }
 
 private fun applyAudioTrack(player: ExoPlayer, choice: TrackChoice) {
@@ -3504,7 +5028,7 @@ private fun buildPlayer(
             maxOf(config.minBufferMs, config.bufferMs),
             maxOf(config.maxBufferMs, config.minBufferMs, config.bufferMs),
             config.bufferMs.coerceAtLeast(500),
-            config.bufferMs.coerceAtLeast(1_000),
+            config.preBufferMs.coerceAtLeast(1_000),
         )
         .build()
 
@@ -3516,9 +5040,38 @@ private fun buildPlayer(
         .setHandleAudioBecomingNoisy(true)
         .build()
         .apply {
-            setMediaItem(MediaItem.fromUri(channel.url))
+            setMediaItem(buildMediaItem(channel, config, null, "es"))
         }
 }
+
+private fun buildMediaItem(
+    channel: Channel,
+    config: PlayerConfig,
+    subtitleFile: File?,
+    subtitleLanguage: String,
+): MediaItem = MediaItem.Builder()
+    .setUri(channel.url)
+    .apply {
+        if (!channel.isVod && config.liveLowLatency) {
+            setLiveConfiguration(
+                MediaItem.LiveConfiguration.Builder()
+                    .setTargetOffsetMs(2_000)
+                    .build(),
+            )
+        }
+        if (subtitleFile != null) {
+            setSubtitleConfigurations(
+                listOf(
+                    MediaItem.SubtitleConfiguration.Builder(Uri.fromFile(subtitleFile))
+                        .setMimeType(MimeTypes.APPLICATION_SUBRIP)
+                        .setLanguage(subtitleLanguage)
+                        .setSelectionFlags(C.SELECTION_FLAG_DEFAULT)
+                        .build(),
+                ),
+            )
+        }
+    }
+    .build()
 
 private fun aspectResizeMode(value: String): Int = when (value) {
     "fill", "stretch" -> AspectRatioFrameLayout.RESIZE_MODE_FILL

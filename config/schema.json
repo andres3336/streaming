@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Streaming config v2",
+  "title": "Streaming config v3",
   "type": "object",
   "required": ["version", "sources"],
   "additionalProperties": false,
@@ -11,8 +11,8 @@
     },
     "sources": {
       "type": "object",
-      "required": ["liveMode"],
       "additionalProperties": false,
+      "description": "En vivo uses m3uUrl; Canales uses xtream. liveMode is legacy.",
       "properties": {
         "liveMode": {
           "enum": ["gist", "xtream", "merge"]
@@ -37,35 +37,21 @@
             "password": {
               "type": "string",
               "minLength": 1
+            },
+            "minCategoryItems": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 50
+            },
+            "hideEmptyCategories": {
+              "type": "boolean"
             }
           }
         }
       },
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "liveMode": {
-                "enum": ["gist", "merge"]
-              }
-            }
-          },
-          "then": {
-            "required": ["m3uUrl"]
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "liveMode": {
-                "enum": ["xtream", "merge"]
-              }
-            }
-          },
-          "then": {
-            "required": ["xtream"]
-          }
-        }
+      "anyOf": [
+        { "required": ["m3uUrl"] },
+        { "required": ["xtream"] }
       ]
     },
     "network": {
@@ -107,7 +93,12 @@
         },
         "bufferMs": {
           "type": "integer",
-          "minimum": 0,
+          "minimum": 500,
+          "maximum": 30000
+        },
+        "preBufferMs": {
+          "type": "integer",
+          "minimum": 500,
           "maximum": 30000
         },
         "minBufferMs": {
@@ -135,6 +126,12 @@
         },
         "qualityCap": {
           "enum": ["auto", "1080p", "720p", "480p", "360p"]
+        },
+        "qualityPreference": {
+          "enum": ["auto", "1080p", "720p", "480p", "360p"]
+        },
+        "liveLowLatency": {
+          "type": "boolean"
         },
         "aspectMode": {
           "enum": ["fit", "fill", "stretch", "zoom", "original"]
@@ -195,6 +192,22 @@
       "type": ["string", "null"],
       "pattern": "^https?://"
     },
+    "subtitles": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "apiKey": { "type": "string" },
+        "username": { "type": "string" },
+        "password": { "type": "string" },
+        "languages": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "enum": ["es", "en"] }
+        },
+        "autoDownload": { "type": "boolean" }
+      }
+    },
     "diagnostics": {
       "type": "object",
       "additionalProperties": false,
@@ -215,7 +228,7 @@
           "type": "array",
           "minItems": 1,
           "items": {
-            "enum": ["live", "movies", "series"]
+            "enum": ["live", "channels", "movies", "series"]
           }
         },
         "theme": {
@@ -228,7 +241,24 @@
         "fontScale": {
           "type": "number",
           "minimum": 0.8,
-          "maximum": 2.0
+          "maximum": 1.5
+        },
+        "uiScale": {
+          "type": "number",
+          "minimum": 0.8,
+          "maximum": 1.5
+        },
+        "navigation": {
+          "enum": ["top", "rail"]
+        },
+        "playerBar": {
+          "enum": ["full", "compact"]
+        },
+        "playerButtons": {
+          "type": "array",
+          "items": {
+            "enum": ["info", "aspect", "tracks", "quality", "speed", "external"]
+          }
         },
         "showChannelNumbers": {
           "type": "boolean"

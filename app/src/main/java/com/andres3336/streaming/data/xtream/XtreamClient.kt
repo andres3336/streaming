@@ -56,17 +56,21 @@ class XtreamClient(
         }
 
     suspend fun liveStreams(categoryId: String): XtreamResult<List<XtreamLiveStream>> =
-        jsonArray("get_live_streams", mapOf("category_id" to categoryId)).mapArray { array ->
-            (0 until array.length()).mapNotNull { index ->
-                val json = array.optJSONObject(index) ?: return@mapNotNull null
-                XtreamLiveStream(
-                    id = json.optString("stream_id"),
-                    name = json.optString("name").ifBlank { "Sin título" },
-                    logo = json.optString("stream_icon").takeIf(String::isNotBlank),
-                    categoryId = json.optString("category_id"),
-                    epgChannelId = json.optString("epg_channel_id").takeIf(String::isNotBlank),
-                )
-            }
+        jsonArray("get_live_streams", mapOf("category_id" to categoryId)).mapArray(::parseLiveStreams)
+
+    suspend fun allLiveStreams(): XtreamResult<List<XtreamLiveStream>> =
+        jsonArray("get_live_streams").mapArray(::parseLiveStreams)
+
+    private fun parseLiveStreams(array: JSONArray): List<XtreamLiveStream> =
+        (0 until array.length()).mapNotNull { index ->
+            val json = array.optJSONObject(index) ?: return@mapNotNull null
+            XtreamLiveStream(
+                id = json.optString("stream_id"),
+                name = json.optString("name").ifBlank { "Sin título" },
+                logo = json.optString("stream_icon").takeIf(String::isNotBlank),
+                categoryId = json.optString("category_id"),
+                epgChannelId = json.optString("epg_channel_id").takeIf(String::isNotBlank),
+            )
         }
 
     suspend fun vodCategories(): XtreamResult<List<XtreamCategory>> =
@@ -82,17 +86,31 @@ class XtreamClient(
         }
 
     suspend fun vodStreams(categoryId: String): XtreamResult<List<XtreamMovie>> =
-        jsonArray("get_vod_streams", mapOf("category_id" to categoryId)).mapArray { array ->
-            (0 until array.length()).mapNotNull { index ->
-                val json = array.optJSONObject(index) ?: return@mapNotNull null
-                XtreamMovie(
-                    id = json.optString("stream_id"),
-                    name = json.optString("name").ifBlank { "Sin título" },
-                    logo = json.optString("stream_icon").takeIf(String::isNotBlank),
-                    categoryId = json.optString("category_id"),
-                    extension = json.optString("container_extension").ifBlank { "mp4" },
-                )
-            }
+        jsonArray("get_vod_streams", mapOf("category_id" to categoryId)).mapArray(::parseMovies)
+
+    suspend fun allVodStreams(): XtreamResult<List<XtreamMovie>> =
+        jsonArray("get_vod_streams").mapArray(::parseMovies)
+
+    private fun parseMovies(array: JSONArray): List<XtreamMovie> =
+        (0 until array.length()).mapNotNull { index ->
+            val json = array.optJSONObject(index) ?: return@mapNotNull null
+            XtreamMovie(
+                id = json.optString("stream_id"),
+                name = json.optString("name").ifBlank { "Sin título" },
+                logo = json.optString("stream_icon").takeIf(String::isNotBlank),
+                categoryId = json.optString("category_id"),
+                extension = json.optString("container_extension").ifBlank { "mp4" },
+                plot = json.firstString("plot"),
+                year = json.firstString("year", "releaseDate", "releasedate"),
+                rating = json.firstString("rating", "rating_5based"),
+                duration = json.firstString("duration"),
+                genre = json.firstString("genre"),
+                cast = json.firstString("cast"),
+                director = json.firstString("director"),
+                backdrop = json.firstString("backdrop_path"),
+                imdbId = json.firstString("imdb_id"),
+                tmdbId = json.firstString("tmdb_id"),
+            )
         }
 
     suspend fun seriesCategories(): XtreamResult<List<XtreamCategory>> =
@@ -108,21 +126,60 @@ class XtreamClient(
         }
 
     suspend fun series(categoryId: String): XtreamResult<List<XtreamSeries>> =
-        jsonArray("get_series", mapOf("category_id" to categoryId)).mapArray { array ->
-            (0 until array.length()).mapNotNull { index ->
-                val json = array.optJSONObject(index) ?: return@mapNotNull null
-                XtreamSeries(
-                    id = json.optString("series_id"),
-                    name = json.optString("name").ifBlank { "Sin título" },
-                    cover = json.optString("cover").takeIf(String::isNotBlank),
-                    categoryId = json.optString("category_id"),
-                    plot = json.optString("plot").takeIf(String::isNotBlank),
-                )
-            }
+        jsonArray("get_series", mapOf("category_id" to categoryId)).mapArray(::parseSeries)
+
+    suspend fun allSeries(): XtreamResult<List<XtreamSeries>> =
+        jsonArray("get_series").mapArray(::parseSeries)
+
+    private fun parseSeries(array: JSONArray): List<XtreamSeries> =
+        (0 until array.length()).mapNotNull { index ->
+            val json = array.optJSONObject(index) ?: return@mapNotNull null
+            XtreamSeries(
+                id = json.optString("series_id"),
+                name = json.optString("name").ifBlank { "Sin título" },
+                cover = json.optString("cover").takeIf(String::isNotBlank),
+                categoryId = json.optString("category_id"),
+                plot = json.firstString("plot"),
+                year = json.firstString("year", "releaseDate", "releasedate"),
+                rating = json.firstString("rating", "rating_5based"),
+                genre = json.firstString("genre"),
+                cast = json.firstString("cast"),
+                director = json.firstString("director"),
+                backdrop = json.firstString("backdrop_path"),
+                imdbId = json.firstString("imdb_id"),
+                tmdbId = json.firstString("tmdb_id"),
+            )
+        }
+
+    suspend fun vodInfo(movieId: String): XtreamResult<XtreamMovie> =
+        jsonObject("get_vod_info", mapOf("vod_id" to movieId)).mapObject { json ->
+            val info = json.optJSONObject("info") ?: JSONObject()
+            val data = json.optJSONObject("movie_data") ?: JSONObject()
+            XtreamMovie(
+                id = data.optString("stream_id").ifBlank { movieId },
+                name = info.firstString("name", "o_name")
+                    ?: data.optString("name").takeIf(String::isNotBlank)
+                    ?: "Sin título",
+                logo = info.firstString("movie_image", "cover_big", "cover")
+                    ?: data.optString("stream_icon").takeIf(String::isNotBlank),
+                categoryId = data.optString("category_id"),
+                extension = data.optString("container_extension").ifBlank { "mp4" },
+                plot = info.firstString("plot", "description"),
+                year = info.firstString("year", "releasedate", "releaseDate"),
+                rating = info.firstString("rating", "rating_5based"),
+                duration = info.firstString("duration", "duration_secs"),
+                genre = info.firstString("genre"),
+                cast = info.firstString("cast", "actors"),
+                director = info.firstString("director"),
+                backdrop = info.firstString("backdrop_path", "movie_image"),
+                imdbId = info.firstString("imdb_id"),
+                tmdbId = info.firstString("tmdb_id"),
+            )
         }
 
     suspend fun seriesInfo(seriesId: String): XtreamResult<XtreamSeriesInfo> =
         jsonObject("get_series_info", mapOf("series_id" to seriesId)).mapObject { json ->
+            val info = json.optJSONObject("info") ?: JSONObject()
             val episodesJson = json.optJSONObject("episodes") ?: JSONObject()
             val seasons = episodesJson.keys().asSequence().mapNotNull { key ->
                 val array = episodesJson.optJSONArray(key) ?: return@mapNotNull null
@@ -142,7 +199,18 @@ class XtreamClient(
                 XtreamSeason(number = number, episodes = episodes)
             }.sortedBy(XtreamSeason::number).toList()
 
-            XtreamSeriesInfo(seasons = seasons)
+            XtreamSeriesInfo(
+                seasons = seasons,
+                plot = info.firstString("plot", "description"),
+                year = info.firstString("year", "releasedate", "releaseDate"),
+                rating = info.firstString("rating", "rating_5based"),
+                genre = info.firstString("genre"),
+                cast = info.firstString("cast", "actors"),
+                director = info.firstString("director"),
+                backdrop = info.firstString("backdrop_path", "cover_big"),
+                imdbId = info.firstString("imdb_id"),
+                tmdbId = info.firstString("tmdb_id"),
+            )
         }
 
     fun liveUrl(stream: XtreamLiveStream): String =
@@ -269,4 +337,13 @@ class XtreamClient(
             is XtreamResult.Success -> XtreamResult.Success(transform(value))
             is XtreamResult.Failure -> this
         }
+}
+
+private fun JSONObject.firstString(vararg names: String): String? {
+    for (name in names) {
+        if (!has(name) || isNull(name)) continue
+        val value = optString(name).trim()
+        if (value.isNotEmpty() && value != "null") return value
+    }
+    return null
 }

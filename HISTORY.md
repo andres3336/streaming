@@ -152,3 +152,37 @@ Append-only. Newest entries at the bottom.
   and `ply-017`.
 - Wired `ui.showNowNext` to the guide rows so the config flag actually controls
   whether now/next is displayed. Version 0.13.1.
+- Started v1.1. Split live into **En vivo** (curated gist only) and **Canales**
+  (Xtream only); `liveMode` is now legacy and `merge` is retired. Old configs gain
+  the `channels` tab automatically, and gist/Xtream failures no longer block each
+  other. Source health checks every configured source.
+- Hardened the M3U parser for single-quoted attributes and `#EXTGRP` before
+  `#EXTINF`. Added Xtream divider/empty category filtering, a lazy `< 2` items rule,
+  and `Mostrar ocultas`. Verified the Canales tab on the TV (52 channels in Cultura,
+  one hidden category).
+- Added the pragmatic `MediaKind`/`MediaItem`/`MediaCapabilities` model and gated the
+  single player by capabilities. VOD gains quality selection, speed and an external
+  player button; live keeps zapping, HUD and recovery.
+- Added quality cap + manual HLS variant preference, start/after-rebuffer pre-buffer,
+  optional low-latency live, VOD speed (0.5–2x), play/pause media keys and ±30 s
+  seek for VOD. Effective buffer values appear in stream info.
+- Added Xtream movie/series metadata (`get_vod_info`, series info) with plot, year,
+  rating, duration, genre, cast, backdrop and a reusable movie detail panel.
+- Added universal fuzzy search: En vivo, Canales, Películas and Series; accents and
+  ñ/n are folded; typo tolerance, ranking, debounced input, on-demand full catalogue
+  (47,646 entries on the test account), session cache and progressive live results.
+  Verified `nino` → Ninotchka / Niño Santo / Niño Ardilla on the TV.
+- Added subtitles: local SAF `.srt`, OpenSubtitles search/download (Spanish first,
+  English fallback), encrypted per-media offsets (±0.5 s, ±5 s, reset), UTF-8/
+  Windows-1252 detection. Without an API key the app degrades gracefully.
+- Added the VOD-only external-player handoff (`ACTION_VIEW` + headers). Verified the
+  no-handler path on the TV.
+- Added text/UI scale via `LocalDensity`, top/rail navigation, full/compact player
+  bar and visible player button selection. Settings persist locally.
+- Added boot/wake auto-start (on by default) with an encrypted last-playback record
+  and last-position restore. `BOOT_COMPLETED` and the alarm fallback are both blocked
+  by Android 11 on this Google TV; the opt-in HOME alias is the documented fallback.
+  `Reanudar al despertar` restored a movie at 03:44.
+- Updated config to v3 (subtitles, player pre-buffer/latency, UI scale/layout,
+  `channels` section, Xtream category settings) with schema, sample, validator and
+  README updates. 124 unit tests passing. Version 0.14.0.

@@ -15,10 +15,10 @@ Accessibility without building a full theme engine.
 
 ## Subtasks
 
-- [ ] Add font size stepper
-- [ ] Add UI scale stepper
-- [ ] Persist settings
-- [ ] Test at 720p and 1080p
+- [x] Add font size stepper
+- [x] Add UI scale stepper
+- [x] Persist settings
+- [x] Test at 720p and 1080p
 
 ## Notes
 

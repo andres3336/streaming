@@ -15,10 +15,10 @@ A few layout choices, not a settings maze.
 
 ## Subtasks
 
-- [ ] Docked or floating nav rail
-- [ ] Compact or full player bar
-- [ ] Choose visible player buttons
-- [ ] Persist layout
+- [x] Docked or floating nav rail
+- [x] Compact or full player bar
+- [x] Choose visible player buttons
+- [x] Persist layout
 
 ## Notes
 

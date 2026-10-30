@@ -35,7 +35,7 @@ class SourceHealthTest {
         )
 
         assertTrue(health.isHealthy)
-        assertEquals("En vivo: OK · Xtream: OK", health.summary())
+        assertEquals("En vivo: OK · Canales: OK", health.summary())
     }
 
     @Test
@@ -50,7 +50,7 @@ class SourceHealthTest {
         )
 
         assertFalse(health.isHealthy)
-        assertEquals("En vivo: fallo · Xtream: fallo", health.summary())
+        assertEquals("En vivo: fallo · Canales: fallo", health.summary())
         assertEquals("La cuenta Xtream no está activa (Expired).", health.xtreamMessage)
     }
 
@@ -91,7 +91,8 @@ class SourceHealthTest {
     }
 
     @Test
-    fun skipsM3uInXtreamOnlyMode() = runBlocking {
+    fun checksEveryConfiguredSourceRegardlessOfLegacyMode() = runBlocking {
+        server.enqueue(MockResponse().setBody("#EXTM3U\n#EXTINF:-1,Canal\nhttps://example.com/live.m3u8"))
         server.enqueue(MockResponse().setBody("""{"user_info":{"auth":0,"status":"Expired"}}"""))
 
         val checker = SourceHealthChecker(
@@ -113,9 +114,10 @@ class SourceHealthTest {
 
         val health = checker.check(config)
 
-        assertFalse(health.liveChecked)
+        assertTrue(health.liveChecked)
+        assertTrue(health.liveHealthy)
         assertTrue(health.xtreamChecked)
         assertFalse(health.xtreamHealthy)
-        assertEquals(1, server.requestCount)
+        assertEquals(2, server.requestCount)
     }
 }

@@ -1,12 +1,13 @@
 {
-  "version": 2,
+  "version": 3,
   "sources": {
-    "liveMode": "gist",
     "m3uUrl": "https://gist.githubusercontent.com/USUARIO/GIST_ID/raw/playlist.m3u",
     "xtream": {
       "baseUrl": "http://example.com:8080",
       "username": "USUARIO",
-      "password": "CONTRASENA"
+      "password": "CONTRASENA",
+      "minCategoryItems": 2,
+      "hideEmptyCategories": true
     }
   },
   "network": {
@@ -16,18 +17,21 @@
     "readTimeoutMs": 20000
   },
   "player": {
-    "userAgent": "Streaming/0.5",
+    "userAgent": "Streaming/0.14",
     "headers": {
       "Referer": "https://example.com/"
     },
     "bufferMs": 3000,
+    "preBufferMs": 5000,
     "minBufferMs": 15000,
     "maxBufferMs": 50000,
     "retryCount": 3,
     "retryDelayMs": 1000,
     "reconnect": true,
     "qualityCap": "auto",
+    "qualityPreference": "auto",
     "aspectMode": "fit",
+    "liveLowLatency": false,
     "audioOnly": false,
     "sleepTimerMinutes": 0
   },
@@ -48,11 +52,23 @@
     "showStats": false,
     "logLevel": "warn"
   },
+  "subtitles": {
+    "enabled": true,
+    "apiKey": "",
+    "username": "",
+    "password": "",
+    "languages": ["es", "en"],
+    "autoDownload": true
+  },
   "ui": {
-    "sections": ["live", "movies", "series"],
+    "sections": ["live", "channels", "movies", "series"],
     "theme": "dark",
     "accentColor": "#3B82F6",
     "fontScale": 1.0,
+    "uiScale": 1.0,
+    "navigation": "top",
+    "playerBar": "full",
+    "playerButtons": ["info", "aspect", "tracks", "quality", "speed", "external"],
     "showChannelNumbers": true,
     "showLogos": true,
     "showNowNext": false

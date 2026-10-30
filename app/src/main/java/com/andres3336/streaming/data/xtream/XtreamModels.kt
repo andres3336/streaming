@@ -24,6 +24,16 @@ data class XtreamMovie(
     val logo: String?,
     val categoryId: String,
     val extension: String,
+    val plot: String? = null,
+    val year: String? = null,
+    val rating: String? = null,
+    val duration: String? = null,
+    val genre: String? = null,
+    val cast: String? = null,
+    val director: String? = null,
+    val backdrop: String? = null,
+    val imdbId: String? = null,
+    val tmdbId: String? = null,
 )
 
 data class XtreamSeries(
@@ -32,6 +42,14 @@ data class XtreamSeries(
     val cover: String?,
     val categoryId: String,
     val plot: String?,
+    val year: String? = null,
+    val rating: String? = null,
+    val genre: String? = null,
+    val cast: String? = null,
+    val director: String? = null,
+    val backdrop: String? = null,
+    val imdbId: String? = null,
+    val tmdbId: String? = null,
 )
 
 data class XtreamEpisode(
@@ -49,4 +67,13 @@ data class XtreamSeason(
 
 data class XtreamSeriesInfo(
     val seasons: List<XtreamSeason>,
+    val plot: String? = null,
+    val year: String? = null,
+    val rating: String? = null,
+    val genre: String? = null,
+    val cast: String? = null,
+    val director: String? = null,
+    val backdrop: String? = null,
+    val imdbId: String? = null,
+    val tmdbId: String? = null,
 )

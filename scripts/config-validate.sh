@@ -52,15 +52,28 @@ if not isinstance(sources, dict):
     sys.exit(1)
 
 mode = sources.get("liveMode")
-if mode not in {"gist", "xtream", "merge"}:
+if mode is not None and mode not in {"gist", "xtream", "merge"}:
     print("Config inválida: liveMode debe ser gist, xtream o merge", file=sys.stderr)
     sys.exit(1)
-if mode in {"gist", "merge"} and not sources.get("m3uUrl"):
-    print("Config inválida: este modo requiere sources.m3uUrl", file=sys.stderr)
-    sys.exit(1)
-if mode in {"xtream", "merge"} and not isinstance(sources.get("xtream"), dict):
-    print("Config inválida: este modo requiere sources.xtream", file=sys.stderr)
-    sys.exit(1)
+
+version = config.get("version", 1)
+if version < 3:
+    if mode is None:
+        print("Config inválida: liveMode es obligatorio en v1/v2", file=sys.stderr)
+        sys.exit(1)
+    if mode in {"gist", "merge"} and not sources.get("m3uUrl"):
+        print("Config inválida: este modo requiere sources.m3uUrl", file=sys.stderr)
+        sys.exit(1)
+    if mode in {"xtream", "merge"} and not isinstance(sources.get("xtream"), dict):
+        print("Config inválida: este modo requiere sources.xtream", file=sys.stderr)
+        sys.exit(1)
+else:
+    if not sources.get("m3uUrl") and not isinstance(sources.get("xtream"), dict):
+        print("Config inválida: v3 requiere sources.m3uUrl o sources.xtream", file=sys.stderr)
+        sys.exit(1)
+    if sources.get("m3uUrl") and not str(sources["m3uUrl"]).startswith(("http://", "https://")):
+        print("Config inválida: sources.m3uUrl debe ser http o https", file=sys.stderr)
+        sys.exit(1)
 
 print("Config válida.")
 PY

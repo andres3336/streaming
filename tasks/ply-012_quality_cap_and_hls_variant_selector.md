@@ -15,10 +15,10 @@ Control bitrate on adaptive HLS; fixed TS streams have one quality.
 
 ## Subtasks
 
-- [ ] Show available video tracks
-- [ ] Add max resolution and bitrate cap
-- [ ] Persist quality preference
-- [ ] Explain fixed-quality streams
+- [x] Show available video tracks
+- [x] Add max resolution and bitrate cap
+- [x] Persist quality preference
+- [x] Explain fixed-quality streams
 
 ## Notes
 

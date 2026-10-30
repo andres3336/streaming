@@ -1,9 +1,9 @@
 # Streaming — V1 reconciled TODO
 
 **Last reconciled:** 2026-10-29  
-**App:** Streaming 0.13.1 (`versionCode 14`)  
+**App:** Streaming 0.14.0 (`versionCode 15`)  
 **TV:** `192.168.100.16:5555` — MOTOROLA GOOGLE TV, Android 11 / API 30, armeabi-v7a  
-**Specs:** 74 tasks in `tasks/`  
+**Specs:** 76 tasks in `tasks/`  
 **Change log:** `HISTORY.md`  
 
 This is the single source of truth for V1. `tasks/` holds the detailed specs; this file
@@ -20,48 +20,61 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 
 ## Current state
 
-- **Live:** curated gist, Xtream or merge modes; lazy Xtream categories; group rail;
-  channel numbers; logos/initials; favorites, recents, last channel; CH+/CH− and
-  media-key zapping; channel search; merged deduplication with provider labels;
-  optional XMLTV guide with now/next in rows (`ui.showNowNext` gates the rows).
-- **Movies:** Xtream categories, posters, playback (1920x960 verified).
-- **Series:** Xtream categories, seasons/episodes, playback, next-episode queue.
-- **Player:** audio/subtitle pickers, aspect modes (fit/fill/stretch/zoom/original/
-  16:9/4:3), HLS→TS fallback, source-failure recovery, stream info.
+- **Live:** separate **En vivo** (curated gist) and **Canales** (Xtream) tabs;
+  lazy categories with divider/empty filtering; group rail; channel numbers;
+  logos/initials; favorites, recents, last channel; CH+/CH− and media-key zapping;
+  channel search; optional XMLTV guide with now/next in rows (`ui.showNowNext`).
+- **Movies:** Xtream categories, posters, metadata detail (plot/year/rating/genre/
+  cast), playback (1920x960 verified).
+- **Series:** Xtream categories, metadata, seasons/episodes, playback,
+  next-episode queue.
+- **Search:** universal fuzzy search across En vivo, Canales, Películas and Series;
+  accents/ñ folded; typo tolerance; 47k+ Xtream entries on demand.
+- **Player:** audio/subtitle pickers, local SRT + OpenSubtitles auto-download with
+  timing offsets, aspect modes, HLS→TS fallback, quality cap/manual variant,
+  buffer/pre-buffer/low-latency, VOD speed, media keys, stream info, external player
+  for VOD only.
 - **Config:** permanent gist, no-cache fetch, encrypted last-known-good config and
   offline playlist cache, source identities for selective invalidation, refresh on
   resume, manual update, source health check, update-config retry dialog,
-  forceUpdate prompt, validate/publish script.
-- **Ajustes:** buffer, quality cap, aspect, VOD cache size/clear/clear-on-start,
-  storage usage, WiFi/Ethernet-only, max bitrate, source health, error log.
-  Local overrides merge on top of the gist.
+  forceUpdate prompt, validate/publish script, v3 sources/subtitles/UI schema.
+- **Ajustes:** buffer/pre-buffer/quality/latency, aspect, VOD cache, storage usage,
+  WiFi/Ethernet-only, max bitrate, source health, category filtering, text/UI scale,
+  top/rail navigation, full/compact player bar, visible player buttons, subtitle
+  auto-download, boot/wake auto-start, error log.
 - **Playback:** ExoPlayer HLS/TS/MP4, headers, retry/backoff, live auto-reconnect,
   Spanish error overlay, VOD cache, resume/Continue, next-episode countdown.
-- **Diagnostics:** in-player stream info, bounded sanitized error log, host-only
-  source masking.
-- **Security:** config cache, playback positions, live state, playlist cache and
-  Xtream catalog cache use Keystore AES-GCM; errors do not log/display URLs.
-- **Tests:** 95 unit tests passing.
+- **Diagnostics:** in-player stream info (including effective buffer settings),
+  bounded sanitized error log, host-only source masking.
+- **Security:** config cache, playback positions, last playback, live state, playlist
+  cache, subtitle offsets and Xtream catalog cache use Keystore AES-GCM; errors do
+  not log/display URLs or keys.
+- **Tests:** 124 unit tests passing.
 
 ## Now (max 3)
 
-- [ ] `ply-012` · Quality cap and HLS variant selector · [spec](tasks/ply-012_quality_cap_and_hls_variant_selector.md)
-- [ ] `ply-013` · Buffer and latency settings · [spec](tasks/ply-013_buffer_and_latency_settings.md)
-- [ ] `ply-017` · Playback speed and media keys · [spec](tasks/ply-017_playback_speed_and_media_keys.md)
+- [ ] None — v1.1 is complete.
 
-## Next (V1.1)
+## Next (V1.2)
 
-- [ ] `liv-007` · Multiple playlists and switcher · [spec](tasks/liv-007_multiple_playlists_and_switcher.md)
-- [ ] `ply-011` · Universal player scaffold with capabilities · [spec](tasks/ply-011_universal_player_scaffold_with_capabilities.md) — Architecture/refactor; not user-visible.
-- [ ] `ply-014` · Local subtitle file · [spec](tasks/ply-014_local_subtitle_file.md)
-- [ ] `ply-015` · External player handoff · [spec](tasks/ply-015_external_player_handoff.md)
-- [ ] `ui-001` · Universal MediaItem and capabilities model · [spec](tasks/ui-001_universal_mediaitem_and_capabilities_model.md) — Architecture/refactor; not user-visible.
-- [ ] `ui-005` · Font size and UI scale · [spec](tasks/ui-005_font_size_and_ui_scale.md)
-- [ ] `ui-006` · Navigation rail and player bar layouts · [spec](tasks/ui-006_navigation_rail_and_player_bar_layouts.md)
-- [ ] `vod-003` · Xtream metadata for movies and series · [spec](tasks/vod-003_xtream_metadata_for_movies_and_series.md)
-- [ ] `vod-006` · Universal search across live and VOD · [spec](tasks/vod-006_universal_search_across_live_and_vod.md) — Spec is tagged v2; keep here unless the roadmap changes.
+- [ ] No committed v1.2 items yet. Candidates: themes/font family (`ui-008`,
+  `ui-009`), full EPG grid (`epg-003`), recording/catch-up (out of scope).
 
 ## Done
+
+- [x] 2026-10-29 · `apk-004` · Auto-start on boot and wake · [spec](tasks/apk-004_auto_start_on_boot_and_wake.md) — Receiver + alarm attempted; Android 11 blocks background starts on this TV; launcher alias opt-in added.
+- [x] 2026-10-29 · `liv-013` · En vivo/Canales split and Xtream category hygiene · [spec](tasks/liv-013_en_vivo_canales_split_and_category_hygiene.md) — Separate tabs, independent failures, parser hardening, divider/empty filtering with “Mostrar ocultas”.
+- [x] 2026-10-29 · `ui-001` · Universal MediaItem and capabilities model · [spec](tasks/ui-001_universal_mediaitem_and_capabilities_model.md) — `MediaKind`, `MediaItem`, `MediaCapabilities`; `Channel` remains the source DTO.
+- [x] 2026-10-29 · `ply-011` · Universal player scaffold with capabilities · [spec](tasks/ply-011_universal_player_scaffold_with_capabilities.md) — One player gated by capabilities; quality/speed/external only when supported.
+- [x] 2026-10-29 · `ply-012` · Quality cap and HLS variant selector · [spec](tasks/ply-012_quality_cap_and_hls_variant_selector.md) — Auto plus manual HLS variant preference, persisted; single-quality explanation.
+- [x] 2026-10-29 · `ply-013` · Buffer and latency settings · [spec](tasks/ply-013_buffer_and_latency_settings.md) — Start pre-buffer, after-rebuffer pre-buffer, optional live low latency, values in Info.
+- [x] 2026-10-29 · `ply-017` · Playback speed and media keys · [spec](tasks/ply-017_playback_speed_and_media_keys.md) — VOD 0.5–2x, play/pause, ±30 s next/previous; live keeps zapping.
+- [x] 2026-10-29 · `ply-014` · Local subtitle file and OpenSubtitles · [spec](tasks/ply-014_local_subtitle_file.md) — SAF SRT, OpenSubtitles auto-search es→en, encrypted offsets, encoding detection.
+- [x] 2026-10-29 · `ply-015` · External player handoff · [spec](tasks/ply-015_external_player_handoff.md) — ACTION_VIEW + headers for movies/series only; live stays internal.
+- [x] 2026-10-29 · `ui-005` · Font size and UI scale · [spec](tasks/ui-005_font_size_and_ui_scale.md) — Text and UI scale applied through `LocalDensity`, persisted locally.
+- [x] 2026-10-29 · `ui-006` · Navigation rail and player bar layouts · [spec](tasks/ui-006_navigation_rail_and_player_bar_layouts.md) — Top/rail navigation, full/compact player bar, visible button selection.
+- [x] 2026-10-29 · `vod-003` · Xtream metadata for movies and series · [spec](tasks/vod-003_xtream_metadata_for_movies_and_series.md) — Plot/year/rating/duration/genre/cast/backdrop; reusable detail panels.
+- [x] 2026-10-29 · `vod-006` · Universal fuzzy search across live and VOD · [spec](tasks/vod-006_universal_search_across_live_and_vod.md) — En vivo/Canales/Películas/Series, accents/ñ, typos, on-demand 47k+ catalog.
 
 - [x] 2026-10-29 · `apk-001` · Toolchain and Android scaffold · [spec](tasks/apk-001_toolchain_and_android_scaffold.md) — JDK 21, Gradle 8.14.6 wrapper, SDK 36, first debug APK.
 - [x] 2026-10-29 · `apk-002` · TV manifest, banner and launcher assets · [spec](tasks/apk-002_tv_manifest_banner_and_launcher_assets.md) — Leanback manifest, 320x180 banner, launcher icon, landscape.
@@ -109,6 +122,8 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 
 ## Deferred — v2
 
+- `liv-007` · Multiple playlists and switcher · [spec](tasks/liv-007_multiple_playlists_and_switcher.md) — Not needed; En vivo is the curated gist and Canales is Xtream.
+
 - `cfg-005` · Grandma mode lock with PIN · [spec](tasks/cfg-005_grandma_mode_lock_with_pin.md) — Abuela/grandma mode deferred to v2; PIN policy TBD.
 - `cfg-011` · Config history and rollback · [spec](tasks/cfg-011_config_history_and_rollback.md)
 - `cfg-012` · Hidden sync and config diagnostics · [spec](tasks/cfg-012_hidden_sync_and_config_diagnostics.md)
@@ -136,6 +151,7 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 | [`apk-001`](tasks/apk-001_toolchain_and_android_scaffold.md) | Toolchain and Android scaffold | Done | JDK 21, Gradle 8.14.6 wrapper, SDK 36, first debug APK. |
 | [`apk-002`](tasks/apk-002_tv_manifest_banner_and_launcher_assets.md) | TV manifest, banner and launcher assets | Done | Leanback manifest, 320x180 banner, launcher icon, landscape. |
 | [`apk-003`](tasks/apk-003_deploy_and_logcat_scripts.md) | Deploy and logcat scripts | Done | env.sh, deploy.sh, logcat.sh, screenshot.sh. |
+| [`apk-004`](tasks/apk-004_auto_start_on_boot_and_wake.md) | Auto-start on boot and wake | Done | Receiver + alarm; Android 11 blocks background starts; launcher alias opt-in. |
 | [`cfg-001`](tasks/cfg-001_config_schema_and_validator.md) | Config schema and validator | Done | v2 schema, validator, local overrides, 11 parser tests. |
 | [`cfg-002`](tasks/cfg-002_fetch_config_from_secret_gist.md) | Fetch config from secret gist | Done | Permanent gist URL, ETag, no-cache, 5 repository tests. |
 | [`cfg-003`](tasks/cfg-003_encrypted_last_known_good_config_cache.md) | Encrypted last-known-good config cache | Done | Keystore AES-GCM cache, atomic write, offline config fallback verified. |
@@ -176,22 +192,23 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 | [`ui-002`](tasks/ui-002_reusable_browse_shell.md) | Reusable browse shell | Done | Shared shell, category rail, poster row, optional detail slot and focus handling. |
 | [`epg-001`](tasks/epg-001_optional_xmltv_source_from_config.md) | Optional XMLTV source from config | Done | Optional XMLTV/gzip, SAX parser, encrypted rolling two-day cache. |
 | [`epg-002`](tasks/epg-002_now_and_next_in_channel_rows.md) | Now and next in channel rows | Done | tvg-id then display-name matching, now/time-left/next, hidden when absent. |
-| [`liv-007`](tasks/liv-007_multiple_playlists_and_switcher.md) | Multiple playlists and switcher | v1.1 |  |
+| [`liv-007`](tasks/liv-007_multiple_playlists_and_switcher.md) | Multiple playlists and switcher | v2 | Not needed: En vivo is gist-only and Canales is Xtream-only. |
 | [`liv-008`](tasks/liv-008_category_hide_rename_and_reorder.md) | Category hide, rename and reorder | v2 | Conflicts with the gist as the single remote source. |
 | [`liv-009`](tasks/liv-009_hide_individual_channels.md) | Hide individual channels | v2 | Conflicts with the gist as the single remote source. |
 | [`liv-012`](tasks/liv-012_live_preview_pane.md) | Live preview pane with session handoff | v2 | Not required for the product. |
-| [`ply-011`](tasks/ply-011_universal_player_scaffold_with_capabilities.md) | Universal player scaffold with capabilities | v1.1 | Architecture/refactor; not user-visible. |
-| [`ply-012`](tasks/ply-012_quality_cap_and_hls_variant_selector.md) | Quality cap and HLS variant selector | Now | Resolution/bitrate cap exists; manual variant selection pending. |
-| [`ply-013`](tasks/ply-013_buffer_and_latency_settings.md) | Buffer and latency settings | Now | Buffer preset exists; pre-buffer/latency pending. |
-| [`ply-014`](tasks/ply-014_local_subtitle_file.md) | Local subtitle file | v1.1 |  |
-| [`ply-015`](tasks/ply-015_external_player_handoff.md) | External player handoff | v1.1 |  |
+| [`liv-013`](tasks/liv-013_en_vivo_canales_split_and_category_hygiene.md) | En vivo/Canales split and category hygiene | Done | Independent tabs, parser hardening, divider/empty filtering. |
+| [`ply-011`](tasks/ply-011_universal_player_scaffold_with_capabilities.md) | Universal player scaffold with capabilities | Done | One player gated by `MediaCapabilities`. |
+| [`ply-012`](tasks/ply-012_quality_cap_and_hls_variant_selector.md) | Quality cap and HLS variant selector | Done | Auto + manual HLS variant, persisted. |
+| [`ply-013`](tasks/ply-013_buffer_and_latency_settings.md) | Buffer and latency settings | Done | Pre-buffer, after-rebuffer, low-latency live, Info values. |
+| [`ply-014`](tasks/ply-014_local_subtitle_file.md) | Local subtitle file and OpenSubtitles | Done | SAF SRT, OpenSubtitles es→en, offsets. |
+| [`ply-015`](tasks/ply-015_external_player_handoff.md) | External player handoff | Done | VOD only, ACTION_VIEW + headers. |
 | [`ply-016`](tasks/ply-016_sleep_timer.md) | Sleep timer | v2 | Not required for the product. |
-| [`ply-017`](tasks/ply-017_playback_speed_and_media_keys.md) | Playback speed and media keys | Now | Media keys zap live; VOD speed selector pending. |
-| [`ui-001`](tasks/ui-001_universal_mediaitem_and_capabilities_model.md) | Universal MediaItem and capabilities model | v1.1 | Architecture/refactor; not user-visible. |
-| [`ui-005`](tasks/ui-005_font_size_and_ui_scale.md) | Font size and UI scale | v1.1 |  |
-| [`ui-006`](tasks/ui-006_navigation_rail_and_player_bar_layouts.md) | Navigation rail and player bar layouts | v1.1 |  |
-| [`vod-003`](tasks/vod-003_xtream_metadata_for_movies_and_series.md) | Xtream metadata for movies and series | v1.1 |  |
-| [`vod-006`](tasks/vod-006_universal_search_across_live_and_vod.md) | Universal search across live and VOD | v1.1 |  |
+| [`ply-017`](tasks/ply-017_playback_speed_and_media_keys.md) | Playback speed and media keys | Done | VOD 0.5–2x, play/pause, ±30 s seek. |
+| [`ui-001`](tasks/ui-001_universal_mediaitem_and_capabilities_model.md) | Universal MediaItem and capabilities model | Done | `MediaKind`, `MediaItem`, `MediaCapabilities`. |
+| [`ui-005`](tasks/ui-005_font_size_and_ui_scale.md) | Font size and UI scale | Done | Text/UI scale via `LocalDensity`. |
+| [`ui-006`](tasks/ui-006_navigation_rail_and_player_bar_layouts.md) | Navigation rail and player bar layouts | Done | Top/rail + full/compact + button selection. |
+| [`vod-003`](tasks/vod-003_xtream_metadata_for_movies_and_series.md) | Xtream metadata for movies and series | Done | Plot/year/rating/genre/cast/backdrop + detail panels. |
+| [`vod-006`](tasks/vod-006_universal_search_across_live_and_vod.md) | Universal fuzzy search across live and VOD | Done | En vivo/Canales/Películas/Series, accents/ñ, typos. |
 | [`cfg-005`](tasks/cfg-005_grandma_mode_lock_with_pin.md) | Grandma mode lock with PIN | v2 | Abuela/grandma mode deferred to v2; PIN policy TBD. |
 | [`cfg-011`](tasks/cfg-011_config_history_and_rollback.md) | Config history and rollback | v2 |  |
 | [`cfg-012`](tasks/cfg-012_hidden_sync_and_config_diagnostics.md) | Hidden sync and config diagnostics | v2 |  |
@@ -210,14 +227,19 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 
 ## Notes for the next session
 
-- **V1 is complete.** v1.1 started with EPG; the next Now items are `ply-012`,
-  `ply-013` and `ply-017`.
-- `liv-008` and `liv-009` moved to v2: per-device category/channel overrides conflict
+- **V1 and V1.1 are complete.** `Now` is empty; v1.2 has no committed items yet.
+- `liv-007` is deferred: En vivo is the curated gist and Canales is Xtream; no
+  multiple-playlist switcher is needed.
+- `liv-008` and `liv-009` remain v2: per-device category/channel overrides conflict
   with the gist as the single remote source of truth.
-- `liv-012` and `ply-016` moved to v2: not required for the product.
+- `liv-012` and `ply-016` remain v2: not required for the product.
 - The config gist is the canonical config; sources and credentials are central-only.
-- Live modes: `gist`, `xtream` (lazy categories) and `merge` (gist + selected Xtream
-  category, deduped by name, provider label `Xtream`). Gist mode never calls Xtream live.
+- **En vivo** = `sources.m3uUrl` only. **Canales** = `sources.xtream` live only. They
+  load and fail independently. `sources.liveMode` is legacy; `merge` no longer merges.
+  Old configs automatically gain the `channels` tab in v3.
+- Xtream divider categories/streams are filtered; categories with fewer than
+  `minCategoryItems` usable streams are hidden after load. `Mostrar ocultas` restores
+  them; `Ajustes → Fuentes` controls both filters.
 - EPG is optional (`epg.url`). XMLTV may be plain or gzip; the guide is cached encrypted
   for a rolling window (6 h back, 48 h forward) and refreshed per `epg.refreshHours`.
   Rows match `tvg-id` first, then XMLTV display name, and hide when there is no data.
@@ -227,11 +249,11 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
   keying channels on `tvg-id`, falling back to the URL.
 - Zapping follows the current search-filtered list, wraps at both ends, and is enabled
   by `live.zapping`. `live.startLastChannel` focuses the last channel on entry.
-- The player track picker opens from `Audio · Subtítulos` or `MENU`; `INFO` opens stream
-  diagnostics.
-- `Ajustes → Fuentes → Comprobar fuentes` checks the M3U and Xtream sources enabled by
-  the current mode. Source failures offer `Actualizar configuración` + `Reintentar`;
-  force-updating fetches the gist without an ETag and keeps the old config on failure.
+- The player track picker opens from `Audio/Subs` or `MENU`; `INFO` opens stream
+  diagnostics. VOD adds quality, speed and external-player controls.
+- `Ajustes → Fuentes → Comprobar fuentes` checks every configured source. Source
+  failures offer `Actualizar configuración` + `Reintentar`; force-updating fetches the
+  gist without an ETag and keeps the old config on failure.
 - Config, playlist and Xtream category caches are encrypted and keyed by
   `CacheIdentity`; changing only the playlist URL/headers or Xtream account invalidates
   only that cache. Favorites, recents and history are preserved.
@@ -240,10 +262,22 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 - Next-episode auto-play is always on; the on/off setting is still pending.
 - `Ajustes → Diagnóstico` shows the bounded error log (channel, Media3 code, Spanish
   message; no URLs).
-- `vod-001`/`vod-002` are marked done for core browse/playback; poster grid and detail
-  panels are v1.1 polish.
-- Architecture refactors (`ui-001`, `ply-011`) are not user-visible; keep them in v1.1
-  unless a feature needs them.
+- Universal search loads the full Xtream catalogue on demand (47k+ entries on the
+  test account), caches it for the session, and normalizes accents/ñ with bounded
+  typo tolerance. Live results appear before movies/series finish loading.
+- Subtitles: embedded tracks, local SAF `.srt`, and OpenSubtitles when
+  `subtitles.apiKey` is set. Spanish first, English fallback; offsets are stored
+  encrypted in `files/subtitle-offsets.bin`.
+- External player is VOD-only; live TV stays in ExoPlayer for zapping/recovery.
+- Boot/wake: the receiver and alarm are attempted, but Android 11 on this Google TV
+  blocks background activity starts. `Usar Streaming como inicio` enables a HOME
+  alias; the system may still prefer its own launcher. `Reanudar al despertar`
+  restores the encrypted last playback when the app is started.
+- `Ajustes → Inicio` has boot, wake and launcher toggles (first two default on).
+- `Ajustes → Interfaz` has text/UI scale, top/rail navigation, full/compact player bar
+  and visible player buttons.
+- `vod-001`/`vod-002` are marked done for core browse/playback; movie detail is now
+  implemented in v1.1. Poster grid remains a polish item.
 
 ## Copy this into a new session
 

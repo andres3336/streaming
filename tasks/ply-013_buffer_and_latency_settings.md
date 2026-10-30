@@ -15,10 +15,10 @@ Tune live buffering for unstable providers.
 
 ## Subtasks
 
-- [ ] Expose buffer preset
-- [ ] Expose pre-buffer option
-- [ ] Show effect in stream info
-- [ ] Keep safe defaults
+- [x] Expose buffer preset
+- [x] Expose pre-buffer option
+- [x] Show effect in stream info
+- [x] Keep safe defaults
 
 ## Notes
 

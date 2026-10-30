@@ -15,10 +15,10 @@ One data model for live channels, movies and series so the UI stays DRY.
 
 ## Subtasks
 
-- [ ] Define MediaKind LIVE, MOVIE, SERIES
-- [ ] Define MediaItem with source, artwork, duration and episode data
-- [ ] Define MediaCapabilities
-- [ ] Define shared detail and playback models
+- [x] Define MediaKind LIVE, MOVIE, SERIES
+- [x] Define MediaItem with source, artwork, duration and episode data
+- [x] Define MediaCapabilities
+- [x] Define shared detail and playback models
 
 ## Notes
 

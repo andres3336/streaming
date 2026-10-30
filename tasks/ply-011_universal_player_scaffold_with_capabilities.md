@@ -15,11 +15,11 @@ One player skeleton with conditional controls for live, movie and series.
 
 ## Subtasks
 
-- [ ] Add MediaCapabilities: canSeek, hasEpisodes, hasEpg, isLive
-- [ ] Add live slot: CH plus/minus and now/next
-- [ ] Add movie slot: seekbar and resume
-- [ ] Add series slot: episode selector and next episode
-- [ ] Avoid separate player screens
+- [x] Add MediaCapabilities: canSeek, hasEpisodes, hasEpg, isLive
+- [x] Add live slot: CH plus/minus and now/next
+- [x] Add movie slot: seekbar and resume
+- [x] Add series slot: episode selector and next episode
+- [x] Avoid separate player screens
 
 ## Notes
 

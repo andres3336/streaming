@@ -20,9 +20,10 @@ implementation plan.
 
 ## Sources
 
-- Curated live channels from a private/secret gist M3U
-- Xtream for live, movies and series
-- Live source mode is configurable: `gist`, `xtream`, or `merge`
+- Curated live channels from a private/secret gist M3U feed **En vivo**
+- Xtream feeds **Canales** (live), Películas and Series
+- The two live sources are separate tabs; they load and fail independently
+- `sources.liveMode` is legacy and no longer merges the sources
 - Grandma profile uses `gist` only, so Xtream's 10k live list is never loaded
 - No Stalker, Jellyfin, Stremio, or DRM
 
@@ -63,7 +64,19 @@ config URL as a password. A truly private source requires a backend, which is ou
 - Audio/subtitle pickers
 - Aspect/zoom: Fit, Fill, Stretch, Original, Force 16:9, Force 4:3
 - Stream info: codec, resolution, FPS, bitrate, buffer, dropped frames, decoder, bandwidth
-- External player handoff in V1.1
+- External player handoff for movies/series only; live TV stays in the internal player
+- Quality: automatic cap plus manual HLS variant preference
+- Buffer: configurable start pre-buffer and after-rebuffer pre-buffer; optional low-latency live
+- VOD speed selector; live playback is always 1x
+- Subtitles: embedded tracks, local `.srt` via SAF, and OpenSubtitles search/download
+  with manual timing offset. Exact file-hash sync is not available for streams.
+
+## Startup
+
+- `Iniciar al encender` and `Reanudar al despertar` are on by default
+- Android 11 blocks background activity starts after boot on the target TV; the app
+  keeps the receiver and also offers an opt-in `Usar Streaming como inicio` alias
+- Restoring the last channel/VOD position uses an encrypted last-playback record
 
 ## Video cache
 

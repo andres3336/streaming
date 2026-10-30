@@ -19,7 +19,7 @@ data class SourceHealth(
 
     fun summary(): String = buildList {
         if (liveChecked) add(if (liveHealthy) "En vivo: OK" else "En vivo: fallo")
-        if (xtreamChecked) add(if (xtreamHealthy) "Xtream: OK" else "Xtream: fallo")
+        if (xtreamChecked) add(if (xtreamHealthy) "Canales: OK" else "Canales: fallo")
         if (isEmpty()) add("No hay fuentes que comprobar")
     }.joinToString(" · ")
 }
@@ -42,7 +42,7 @@ class SourceHealthChecker(
         var xtreamMessage: String? = null
 
         val m3uUrl = config.sources.m3uUrl
-        val checkLive = config.sources.liveMode != LiveMode.XTREAM && m3uUrl != null
+        val checkLive = m3uUrl != null
         if (checkLive) {
             liveChecked = true
             when (

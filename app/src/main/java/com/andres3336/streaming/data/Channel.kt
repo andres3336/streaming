@@ -11,4 +11,10 @@ data class Channel(
     val isVod: Boolean = false,
     val fallbackUrl: String? = null,
     val provider: String? = null,
+    val year: String? = null,
+    val season: Int? = null,
+    val episode: Int? = null,
+    val seriesTitle: String? = null,
+    val imdbId: String? = null,
+    val tmdbId: String? = null,
 )

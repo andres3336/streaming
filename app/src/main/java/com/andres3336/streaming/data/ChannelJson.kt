@@ -14,6 +14,12 @@ fun Channel.toJson(): JSONObject = JSONObject().apply {
     put("isVod", isVod)
     fallbackUrl?.let { put("fallbackUrl", it) }
     provider?.let { put("provider", it) }
+    year?.let { put("year", it) }
+    season?.let { put("season", it) }
+    episode?.let { put("episode", it) }
+    seriesTitle?.let { put("seriesTitle", it) }
+    imdbId?.let { put("imdbId", it) }
+    tmdbId?.let { put("tmdbId", it) }
 }
 
 fun channelFromJson(json: JSONObject): Channel? {
@@ -31,6 +37,12 @@ fun channelFromJson(json: JSONObject): Channel? {
         isVod = json.optBoolean("isVod", false),
         fallbackUrl = json.optString("fallbackUrl").takeIf(String::isNotBlank),
         provider = json.optString("provider").takeIf(String::isNotBlank),
+        year = json.optString("year").takeIf(String::isNotBlank),
+        season = json.optInt("season", 0).takeIf { it > 0 },
+        episode = json.optInt("episode", 0).takeIf { it > 0 },
+        seriesTitle = json.optString("seriesTitle").takeIf(String::isNotBlank),
+        imdbId = json.optString("imdbId").takeIf(String::isNotBlank),
+        tmdbId = json.optString("tmdbId").takeIf(String::isNotBlank),
     )
 }
 

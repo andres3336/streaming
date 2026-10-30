@@ -3,16 +3,20 @@ package com.andres3336.streaming.data
 /**
  * Parser for the curated M3U playlist.
  *
- * Supports EXTINF attributes, EXTGRP, EXTVLCOPT HTTP headers, a UTF-8 BOM,
- * CRLF input, and skips malformed entries that have no URL.
+ * Supports EXTINF attributes (double, single or unquoted values), EXTGRP before
+ * or after EXTINF, EXTVLCOPT HTTP headers, a UTF-8 BOM, CRLF input, and skips
+ * malformed entries that have no URL.
  */
 object M3uParser {
 
-    private val attribute = Regex("""([A-Za-z0-9_-]+)="([^"]*)"""")
+    private val attribute = Regex(
+        """([A-Za-z0-9_-]+)=(?:"([^"]*)"|'([^']*)'|([^,\s]+))""",
+    )
 
     fun parse(text: String): List<Channel> {
         val channels = mutableListOf<Channel>()
         var pending: PendingEntry? = null
+        var nextGroup: String? = null
 
         for (raw in text.removePrefix("\uFEFF").lineSequence()) {
             val line = raw.trim()
@@ -20,11 +24,20 @@ object M3uParser {
 
             when {
                 line.startsWith("#EXTINF:", ignoreCase = true) -> {
-                    pending = parseExtInf(line.substringAfter(':'))
+                    pending = parseExtInf(line.substringAfter(':')).also { entry ->
+                        entry.group = entry.group ?: nextGroup
+                    }
+                    nextGroup = null
                 }
 
                 line.startsWith("#EXTGRP:", ignoreCase = true) -> {
-                    pending?.group = line.substringAfter(':').trim().ifEmpty { null }
+                    val group = line.substringAfter(':').trim().ifEmpty { null }
+                    val current = pending
+                    if (current != null) {
+                        current.group = group
+                    } else {
+                        nextGroup = group
+                    }
                 }
 
                 line.startsWith("#EXTVLCOPT:", ignoreCase = true) -> {
@@ -49,23 +62,30 @@ object M3uParser {
         val displayName = if (comma >= 0) body.substring(comma + 1).trim() else ""
 
         val values = attribute.findAll(attributes)
-            .associate { it.groupValues[1].lowercase() to it.groupValues[2] }
+            .associate { match ->
+                val value = match.groupValues.drop(2).firstOrNull { it.isNotEmpty() }.orEmpty()
+                match.groupValues[1].lowercase() to value
+            }
 
         return PendingEntry(
             name = displayName.ifEmpty { values["tvg-name"].orEmpty() },
-            group = values["group-title"],
-            logo = values["tvg-logo"],
-            tvgId = values["tvg-id"],
+            group = values["group-title"]?.trim()?.ifEmpty { null },
+            logo = values["tvg-logo"]?.trim()?.ifEmpty { null },
+            tvgId = values["tvg-id"]?.trim()?.ifEmpty { null },
         )
     }
 
     /** Finds the comma that separates attributes from the display name. */
     private fun firstUnquotedComma(text: String): Int {
-        var quoted = false
+        var quote: Char? = null
         for (index in text.indices) {
             when (text[index]) {
-                '"' -> quoted = !quoted
-                ',' -> if (!quoted) return index
+                '"', '\'' -> {
+                    if (quote == null) quote = text[index]
+                    else if (quote == text[index]) quote = null
+                }
+
+                ',' -> if (quote == null) return index
             }
         }
         return -1

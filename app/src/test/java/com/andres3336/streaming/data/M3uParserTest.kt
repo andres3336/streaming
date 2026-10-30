@@ -129,4 +129,45 @@ class M3uParserTest {
         assertNull(channel.userAgent)
         assertNull(channel.referer)
     }
+
+    @Test
+    fun parsesSingleQuotedAttributes() {
+        val text = """
+            #EXTM3U
+            #EXTINF:-1 tvg-id='canal1' group-title='Canales' tvg-logo='https://example.com/logo.png',Canal 1
+            https://example.com/1.m3u8
+        """.trimIndent()
+
+        val channel = M3uParser.parse(text).single()
+
+        assertEquals("canal1", channel.tvgId)
+        assertEquals("Canales", channel.group)
+        assertEquals("https://example.com/logo.png", channel.logo)
+    }
+
+    @Test
+    fun acceptsExtgrpBeforeExtinf() {
+        val text = """
+            #EXTM3U
+            #EXTGRP:Canales
+            #EXTINF:-1,Canal 1
+            https://example.com/1.m3u8
+        """.trimIndent()
+
+        assertEquals("Canales", M3uParser.parse(text).single().group)
+    }
+
+    @Test
+    fun acceptsUnquotedAttributes() {
+        val text = """
+            #EXTM3U
+            #EXTINF:-1 tvg-id=canal1 group-title=Canales,Canal 1
+            https://example.com/1.m3u8
+        """.trimIndent()
+
+        val channel = M3uParser.parse(text).single()
+
+        assertEquals("canal1", channel.tvgId)
+        assertEquals("Canales", channel.group)
+    }
 }

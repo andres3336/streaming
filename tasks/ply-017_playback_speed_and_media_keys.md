@@ -15,9 +15,9 @@ Support VOD speed and TV transport keys.
 
 ## Subtasks
 
-- [ ] Add speed selector for VOD
-- [ ] Handle media play/pause/next/previous
-- [ ] Ignore speed for live
+- [x] Add speed selector for VOD
+- [x] Handle media play/pause/next/previous
+- [x] Ignore speed for live
 
 ## Notes
 

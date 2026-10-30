@@ -15,10 +15,10 @@ Fallback for codecs ExoPlayer cannot decode on the 32-bit TV.
 
 ## Subtasks
 
-- [ ] Add Abrir en otro reproductor
-- [ ] Build ACTION_VIEW intent
-- [ ] Pass headers when possible
-- [ ] Handle no-player-installed case
+- [x] Add Abrir en otro reproductor
+- [x] Build ACTION_VIEW intent
+- [x] Pass headers when possible
+- [x] Handle no-player-installed case
 
 ## Notes
 
