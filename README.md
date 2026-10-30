@@ -1,60 +1,33 @@
 # Streaming
 
-Android TV app for watching M3U playlists and Xtream sources.
+Android TV app for M3U playlists and Xtream sources.
 
-Target device: Google TV / Android TV, 32-bit ARM, Android 11, limited storage.
+Target: Google TV / Android TV 11, 32-bit ARM, limited storage.
 
 ## Current status
 
-Version 0.16.1 is the flat visual pass. The app now uses a monochrome dark palette
-with a single slate-blue accent (`#485584`), solid fills and 1 px borders: no
-transparency, gradients or motion. The shell is a horizontal top navigation bar
-with icon and label items, a source chip, clock and keycap hints, plus a new **Inicio** landing screen with a hero
-and rows. Live TV browses with a right-hand preview pane and the EPG below it; movies
-and series show a hero for the focused poster and the synopsis under it. Live sources
-are merged into one **TV** destination with `En vivo` / `Canales` chips, and the app
-now owns its text scale so the TV's system font scale cannot break layouts.
+Version 0.16.1. Flat monochrome dark UI with one slate-blue accent (`#485584`),
+solid fills and 1 px borders. The shell is a horizontal top navigation bar with
+icon and label items, a clock and keycap hints. **Inicio** is the landing screen;
+**TV** combines `En vivo` and `Canales`; Películas and Series use a category rail,
+hero-on-focus and a four-column poster grid. Ajustes is a card list. The player
+uses one icon-only top bar that hides after a second of playback and returns on
+any key.
 
-Inicio, Películas and Series no longer show the bottom keycap strip; TV drops its
-section title and inline search, and its channel rows put the EPG beside the name with
-a plain favorite star. The movie detail uses the preview itself as the play target.
-The player uses one icon-only top bar that hides after a second of playback and returns
-on any key; it stays visible while paused or when an overlay is open. The embedded
-ExoPlayer controller is disabled, so the custom bar is the only chrome; the media keys
-still play/pause and seek.
-
-Everything from 0.15.0 is still there: Xtream movies/series with metadata detail,
-universal fuzzy search across all sources, VOD subtitles with OpenSubtitles and local
-files, quality/buffer/speed controls, text/UI scale, VOD external-player handoff and
-boot/wake auto-start settings. See `HISTORY.md`.
-
-Android 11 on the test Google TV blocks background activity starts after boot; the
-app keeps the boot receiver and offers an opt-in HOME alias as the fallback.
-
-## Task tracking
+## Project map
 
 ```text
-HISTORY.md      append-only log of decisions and status changes
-DECISIONS.md    product and architecture decisions
-tasks/          frozen archive of old specs, never read as context
-archive/        frozen material (old Kandown board), never used at build time
+CONTEXT.md     technical map for agents: files, screens, player, rules
+HISTORY.md     append-only log of decisions and changes
+AGENTS.md      agent working rules
+app/           Android app
+config/        config schema, sample and validator docs
+scripts/       build, deploy, logcat, screenshot and check scripts
+ingest/        local reference dumps, gitignored and never used by the build
 ```
 
-Rules:
-
-- `HISTORY.md` is the only running record; append to it, never rewrite it.
-- `tasks/` is kept for history only. Do not read it as context or use it for status.
-- Git history plus `HISTORY.md` is the version log.
-
-Tags:
-
-- `v1` — required for the first deployable build
-- `v1.1` — fast follow
-- `v2` — later
-- area tags: `apk`, `config`, `ui`, `video`, `streaming`, `channels`, `movies`, `series`, `epg`, `cache`, `storage`, `security`, `test`
-
-Only `v1` tasks in `Todo` are in scope until the first build is installed on the TV.
-New ideas go to `Backlog` with priority `P4`.
+`ingest/` contains Gitingest dumps of other open-source projects used only as UX
+reference. It is intentionally not tracked.
 
 ## Environment
 
@@ -66,15 +39,16 @@ New ideas go to `Backlog` with priority `P4`.
 
 No Android Studio is required.
 
-## Build and deploy
+## Commands
 
 ```bash
+./scripts/check.sh               # unit tests + debug APK
 ./scripts/deploy.sh              # build, install and launch on the TV
 ./scripts/logcat.sh              # follow the app log
 ./scripts/screenshot.sh out.png  # capture the TV screen
 ```
 
-`scripts/env.sh` sets `JAVA_HOME`, the SDK path, and the default device. Override
+`scripts/env.sh` sets `JAVA_HOME`, the SDK path and the default device. Override
 `ADB_DEVICE` to target another TV.
 
 ## Scope
@@ -96,8 +70,6 @@ Excluded:
 - downloads and multiview
 - mpv/FFmpeg, DRM, Stalker/Jellyfin
 - TMDB, Trakt, Stremio, Cast, Watch Next
-
-See `DECISIONS.md` for details.
 
 ## Configuration
 

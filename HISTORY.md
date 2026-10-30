@@ -263,3 +263,12 @@ Append-only. Newest entries at the bottom.
   media keys still play/pause and seek. Kept CH+/CH− zapping without the on-screen
   text. Refreshed `design/layouts/` and its README. 129 unit tests passing; debug APK
   builds and was verified on the TV.
+- Split `MainActivity.kt` into `core.kt`, `layout.kt` and the section files
+  `home.kt`, `channels.kt`, `movies.kt`, `series.kt`, `search.kt`, `settings.kt`,
+  `player.kt` and `player_overlays.kt`; `MainActivity.kt` is now only the activity
+  entry point.
+- Removed the frozen `archive/` (including Kandown), `tasks/` and the draw.io
+  `design/` folder; deleted `DECISIONS.md` after moving its decisions into
+  `CONTEXT.md`. Kept `ingest/` as local, gitignored reference material.
+- Added `CONTEXT.md` as the agent technical map and `scripts/check.sh` for tests plus
+  debug APK. Rewrote `README.md` and `AGENTS.md` around the new small project map.
