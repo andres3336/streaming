@@ -189,3 +189,27 @@ Append-only. Newest entries at the bottom.
 - Added a Back confirmation on the main screen: a single Back now shows
   `¿Salir de Streaming?` with Cancelar focused by default. Playback Back still
   returns to the list. Version 0.14.1.
+
+## 2026-10-30
+
+- Replaced the old top/rail shell with a rounded navigation pill, compact top bar,
+  quick section chips and a 26/74 split category panel for Películas/Series
+  (`ui-011`). The old wide text rail and full-width poster rows are gone.
+- Added a four-column 16:9 poster grid with focus scale, 2 dp gold favorite stroke,
+  favorite star (upper left), rating and language badges (upper right), and
+  one-line ellipsized titles/subtitles. Cards auto-focus and Left/Right route
+  explicitly between the category panel and the grid.
+- Unified favorites: live channels keep their existing keys and movies/series use
+  `movie:<id>`/`series:<id>` in the same encrypted state. Long-press OK toggles a
+  card; movie/series detail panels gained a favorite chip. The Favoritos category
+  loads the full VOD catalogue on demand and filters locally.
+- Added `tvg-language` to the M3U parser and optional Xtream `lang`/`language`/
+  `audio_language` fields. Badges normalize to ESP/ENG/DUAL and stay hidden when the
+  provider sends no metadata. Ratings remain the provider's own `★ 7.6` score.
+- Pill-styled search filters, settings choices, result rows and the player top bar.
+  Removed the obsolete Ajustes navigation choice; `ui.navigation` is still parsed
+  for config compatibility but the pill shell is unconditional.
+- Verified on the TV at 1280x720: rail + split panels, 4-column grid, focus routing,
+  long-press favorite, gold stroke persistence after force-stop, detail toggle,
+  Favoritos, Continue grid, search filters, settings and player chips.
+  129 unit tests passing. Version 0.15.0.

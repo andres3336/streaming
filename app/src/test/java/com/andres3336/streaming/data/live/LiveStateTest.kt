@@ -48,6 +48,23 @@ class LiveStateTest {
     }
 
     @Test
+    fun keepsNamespacedVodFavoritesAndIgnoresThemWhenResolvingChannels() {
+        val state = LiveState()
+            .toggleFavorite("movie:42")
+            .toggleFavorite("series:7")
+            .toggleFavorite("canal-1")
+
+        val restored = LiveState.fromJson(state.toJson())
+
+        assertEquals(listOf("canal-1", "series:7", "movie:42"), restored.favorites)
+        assertEquals(
+            listOf("Canal"),
+            LiveState.resolve(restored.favorites, listOf(channel("Canal", tvgId = "canal-1")))
+                .map(Channel::name),
+        )
+    }
+
+    @Test
     fun roundTripsJson() {
         val state = LiveState(
             favorites = listOf("id-1", "id-2"),

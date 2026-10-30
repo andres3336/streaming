@@ -9,6 +9,7 @@ fun Channel.toJson(): JSONObject = JSONObject().apply {
     group?.let { put("group", it) }
     logo?.let { put("logo", it) }
     tvgId?.let { put("tvgId", it) }
+    language?.let { put("language", it) }
     userAgent?.let { put("userAgent", it) }
     referer?.let { put("referer", it) }
     put("isVod", isVod)
@@ -32,6 +33,7 @@ fun channelFromJson(json: JSONObject): Channel? {
         group = json.optString("group").takeIf(String::isNotBlank),
         logo = json.optString("logo").takeIf(String::isNotBlank),
         tvgId = json.optString("tvgId").takeIf(String::isNotBlank),
+        language = json.optString("language").takeIf(String::isNotBlank),
         userAgent = json.optString("userAgent").takeIf(String::isNotBlank),
         referer = json.optString("referer").takeIf(String::isNotBlank),
         isVod = json.optBoolean("isVod", false),

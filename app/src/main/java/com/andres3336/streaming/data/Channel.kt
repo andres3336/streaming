@@ -6,6 +6,7 @@ data class Channel(
     val group: String? = null,
     val logo: String? = null,
     val tvgId: String? = null,
+    val language: String? = null,
     val userAgent: String? = null,
     val referer: String? = null,
     val isVod: Boolean = false,

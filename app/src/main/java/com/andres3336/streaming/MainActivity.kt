@@ -15,8 +15,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -93,7 +92,9 @@ import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import androidx.tv.material3.Button
+import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.MaterialTheme
+import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.andres3336.streaming.data.Channel
 import com.andres3336.streaming.data.M3uFetch
@@ -131,6 +132,8 @@ import com.andres3336.streaming.data.live.ChannelSearch
 import com.andres3336.streaming.data.live.LiveState
 import com.andres3336.streaming.data.live.LiveStateStore
 import com.andres3336.streaming.data.live.liveKey
+import com.andres3336.streaming.data.media.FavoriteKeys
+import com.andres3336.streaming.data.media.LanguageTag
 import com.andres3336.streaming.data.media.toMediaItem
 import com.andres3336.streaming.data.playback.LastPlayback
 import com.andres3336.streaming.data.playback.LastPlaybackStore
@@ -160,6 +163,14 @@ import com.andres3336.streaming.data.xtream.XtreamMovie
 import com.andres3336.streaming.data.xtream.XtreamResult
 import com.andres3336.streaming.data.xtream.XtreamSeries
 import com.andres3336.streaming.data.xtream.XtreamSeriesInfo
+import com.andres3336.streaming.ui.AppShell
+import com.andres3336.streaming.ui.CategoryEntry
+import com.andres3336.streaming.ui.CategoryPanel
+import com.andres3336.streaming.ui.Dimens
+import com.andres3336.streaming.ui.NavDestination
+import com.andres3336.streaming.ui.PosterGrid
+import com.andres3336.streaming.ui.QuickChip
+import com.andres3336.streaming.ui.StreamColors
 import com.andres3336.streaming.player.ExternalPlayer
 import com.andres3336.streaming.player.HlsFallback
 import com.andres3336.streaming.player.NetworkPolicy
@@ -371,12 +382,16 @@ private fun StreamingApp() {
         }
     }
 
-    val onToggleFavorite: (Channel) -> Unit = { channel ->
-        val updated = liveState.toggleFavorite(channel.liveKey())
+    val onToggleFavoriteKey: (String) -> Unit = { key ->
+        val updated = liveState.toggleFavorite(key)
         if (updated != liveState) {
             liveState = updated
             scope.launch(Dispatchers.IO) { liveStateStore.save(updated) }
         }
+    }
+
+    val onToggleFavorite: (Channel) -> Unit = { channel ->
+        onToggleFavoriteKey(channel.liveKey())
     }
 
     val onProgress: (Channel, Long, Long) -> Unit = { channel, position, duration ->
@@ -507,6 +522,7 @@ private fun StreamingApp() {
                     onRecoverSource = recoverSource,
                     liveState = liveState,
                     onToggleFavorite = onToggleFavorite,
+                    onToggleFavoriteKey = onToggleFavoriteKey,
                     refreshVersion = refreshVersion,
                     xtreamCatalogCache = xtreamCatalogCache,
                     onCheckSources = checkSources,
@@ -793,6 +809,7 @@ private fun ReadyScreen(
     onRecoverSource: () -> Unit,
     liveState: LiveState,
     onToggleFavorite: (Channel) -> Unit,
+    onToggleFavoriteKey: (String) -> Unit,
     refreshVersion: Int,
     xtreamCatalogCache: XtreamCatalogCache,
     onCheckSources: suspend () -> SourceHealth,
@@ -868,20 +885,14 @@ private fun ReadyScreen(
         else -> section
     }
 
-    val headerText = when (activeSection) {
-        "live" -> if (ready.channels.isEmpty() && ready.gistError != null) {
-            "Gist · no disponible"
-        } else if (ready.sourceLabel == "Lista en caché") {
-            "Gist · lista en caché · ${ready.channels.size} canales"
-        } else {
-            "Gist · ${ready.channels.size} canales"
-        }
-        "channels" -> "Xtream · Canales"
-        "movies" -> "Xtream · Películas"
-        "series" -> "Xtream · Series"
+    val sectionTitle = when (activeSection) {
+        "live" -> "En vivo"
+        "channels" -> "Canales"
+        "movies" -> "Películas"
+        "series" -> "Series"
         "continue" -> "Continuar viendo"
-        "search" -> "Buscar en todo"
-        "settings" -> "Ajustes · solo este TV"
+        "search" -> "Buscar"
+        "settings" -> "Ajustes"
         else -> "Streaming"
     }
 
@@ -894,6 +905,8 @@ private fun ReadyScreen(
                         playerConfig = config.player,
                         refreshVersion = refreshVersion,
                         onUpdateConfig = onRefreshConfig,
+                        favorites = liveState.favorites,
+                        onToggleFavoriteKey = onToggleFavoriteKey,
                         onPlay = { onSelect(PlaybackRequest(it)) },
                     )
                 }
@@ -906,6 +919,8 @@ private fun ReadyScreen(
                         playerConfig = config.player,
                         refreshVersion = refreshVersion,
                         onUpdateConfig = onRefreshConfig,
+                        favorites = liveState.favorites,
+                        onToggleFavoriteKey = onToggleFavoriteKey,
                         onPlay = onSelect,
                     )
                 }
@@ -967,6 +982,8 @@ private fun ReadyScreen(
                 config = config,
                 refreshVersion = refreshVersion,
                 onUpdateConfig = onRefreshConfig,
+                favorites = liveState.favorites,
+                onToggleFavoriteKey = onToggleFavoriteKey,
                 onPlay = onSelect,
             )
 
@@ -981,83 +998,56 @@ private fun ReadyScreen(
         }
     }
 
-    if (config.ui.navigation == "rail") {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFF0B1220))
-                .padding(horizontal = 32.dp, vertical = 24.dp),
-        ) {
-            Column(modifier = Modifier.width(210.dp).fillMaxHeight()) {
-                Text(
-                    text = "Streaming",
-                    color = Color.White,
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold,
-                )
-                Spacer(Modifier.height(16.dp))
-                SectionBar(
-                    section = activeSection,
-                    showLive = showLive,
-                    showChannels = showChannels,
-                    showMovies = showMovies,
-                    showSeries = showSeries,
-                    showContinue = showContinue,
-                    showSearch = showSearch,
-                    showSettings = true,
-                    vertical = true,
-                    onSelect = { section = it },
-                )
-            }
-            Spacer(Modifier.width(24.dp))
-            Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
-                Text(
-                    text = headerText,
-                    color = Color(0xFF94A3B8),
-                    fontSize = 18.sp,
-                )
-                Spacer(Modifier.height(12.dp))
-                Box(modifier = Modifier.fillMaxSize()) {
-                    content()
+    val destinations = buildList {
+        if (showLive) add(NavDestination("live", "En vivo"))
+        if (showChannels) add(NavDestination("channels", "Canales"))
+        if (showMovies) add(NavDestination("movies", "Películas"))
+        if (showSeries) add(NavDestination("series", "Series"))
+        if (showContinue) add(NavDestination("continue", "Continuar"))
+        if (showSearch) add(NavDestination("search", "Buscar"))
+        add(NavDestination("settings", "Ajustes"))
+    }
+
+    AppShell(
+        section = activeSection,
+        destinations = destinations,
+        title = sectionTitle,
+        onSelect = { section = it },
+        leading = {
+            when (activeSection) {
+                "movies", "series", "continue" -> {
+                    if (showMovies) {
+                        QuickChip(
+                            label = "Películas",
+                            selected = activeSection == "movies",
+                        ) { section = "movies" }
+                    }
+                    if (showSeries) {
+                        QuickChip(
+                            label = "Series",
+                            selected = activeSection == "series",
+                        ) { section = "series" }
+                    }
+                }
+
+                "live", "channels" -> {
+                    if (showLive) {
+                        QuickChip(
+                            label = "En vivo",
+                            selected = activeSection == "live",
+                        ) { section = "live" }
+                    }
+                    if (showChannels) {
+                        QuickChip(
+                            label = "Canales",
+                            selected = activeSection == "channels",
+                        ) { section = "channels" }
+                    }
                 }
             }
-        }
-    } else {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFF0B1220))
-                .padding(horizontal = 48.dp, vertical = 24.dp),
-        ) {
-            Text(
-                text = "Streaming",
-                color = Color.White,
-                fontSize = 44.sp,
-                fontWeight = FontWeight.Bold,
-            )
-            Text(
-                text = headerText,
-                color = Color(0xFF94A3B8),
-                fontSize = 18.sp,
-            )
-            Spacer(Modifier.height(12.dp))
-            SectionBar(
-                section = activeSection,
-                showLive = showLive,
-                showChannels = showChannels,
-                showMovies = showMovies,
-                showSeries = showSeries,
-                showContinue = showContinue,
-                showSearch = showSearch,
-                showSettings = true,
-                onSelect = { section = it },
-            )
-            Spacer(Modifier.height(16.dp))
-            Box(modifier = Modifier.fillMaxSize()) {
-                content()
-            }
-        }
-    }
+        },
+        content = { content() },
+    )
 
     if (exitConfirm) {
         ExitConfirmOverlay(
@@ -1169,80 +1159,14 @@ private fun ForceUpdateScreen(onUpdateConfig: () -> Unit) {
 }
 
 @Composable
-private fun SectionBar(
-    section: String,
-    showLive: Boolean,
-    showChannels: Boolean,
-    showMovies: Boolean,
-    showSeries: Boolean,
-    showContinue: Boolean,
-    showSearch: Boolean,
-    showSettings: Boolean,
-    vertical: Boolean = false,
-    onSelect: (String) -> Unit,
-) {
-    val items = buildList {
-        if (showLive) add("live" to "En vivo")
-        if (showChannels) add("channels" to "Canales")
-        if (showContinue) add("continue" to "Continuar")
-        if (showMovies) add("movies" to "Películas")
-        if (showSeries) add("series" to "Series")
-        if (showSearch) add("search" to "Buscar")
-        if (showSettings) add("settings" to "Ajustes")
-    }
-
-    if (vertical) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            items.forEach { (id, label) ->
-                SectionButton(
-                    label = label,
-                    selected = section == id,
-                    modifier = Modifier.fillMaxWidth(),
-                ) { onSelect(id) }
-            }
-        }
-    } else {
-        Row(
-            modifier = Modifier.horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            items.forEach { (id, label) ->
-                SectionButton(label = label, selected = section == id) { onSelect(id) }
-            }
-        }
-    }
-}
-
-@Composable
-private fun SectionButton(
-    label: String,
-    selected: Boolean,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-) {
-    Button(onClick = onClick, modifier = modifier) {
-        Text(
-            text = label,
-            color = if (selected) Color(0xFF3B82F6) else Color.White,
-            fontSize = 18.sp,
-            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-        )
-    }
-}
-
-@Composable
 private fun BrowseShell(
     rail: @Composable () -> Unit,
     content: @Composable () -> Unit,
-    detail: (@Composable () -> Unit)? = null,
 ) {
     Row(modifier = Modifier.fillMaxSize()) {
         Box(
             modifier = Modifier
-                .width(260.dp)
+                .weight(Dimens.CategoryWidthFraction)
                 .fillMaxHeight(),
         ) {
             rail()
@@ -1250,20 +1174,10 @@ private fun BrowseShell(
         Spacer(Modifier.width(16.dp))
         Box(
             modifier = Modifier
-                .weight(1f)
+                .weight(Dimens.ContentWidthFraction)
                 .fillMaxHeight(),
         ) {
             content()
-        }
-        if (detail != null) {
-            Spacer(Modifier.width(16.dp))
-            Box(
-                modifier = Modifier
-                    .width(360.dp)
-                    .fillMaxHeight(),
-            ) {
-                detail()
-            }
         }
     }
 }
@@ -1274,60 +1188,19 @@ private fun <T> BrowseRail(
     selected: T?,
     label: (T) -> String,
     onSelect: (T) -> Unit,
+    title: String = "Categorías",
+    footer: (@Composable () -> Unit)? = null,
 ) {
-    LazyColumn(
+    CategoryPanel(
+        entries = items.map { CategoryEntry(id = it.toString(), label = label(it)) },
+        selectedId = selected?.toString(),
+        onSelect = { id ->
+            items.firstOrNull { it.toString() == id }?.let(onSelect)
+        },
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        items(items) { item ->
-            Button(
-                onClick = { onSelect(item) },
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(
-                    text = label(item),
-                    fontSize = 16.sp,
-                    fontWeight = if (item == selected) FontWeight.Bold else FontWeight.Normal,
-                    maxLines = 1,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun BrowsePosterRow(
-    name: String,
-    image: String?,
-    onClick: () -> Unit,
-) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            AsyncImage(
-                model = image,
-                contentDescription = null,
-                placeholder = painterResource(R.drawable.ic_channel_placeholder),
-                error = painterResource(R.drawable.ic_channel_placeholder),
-                fallback = painterResource(R.drawable.ic_channel_placeholder),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .width(40.dp)
-                    .height(60.dp),
-            )
-            Spacer(Modifier.width(16.dp))
-            Text(
-                text = name,
-                fontSize = 18.sp,
-                maxLines = 1,
-            )
-        }
-    }
+        title = title,
+        footer = footer,
+    )
 }
 
 private data class LiveRailEntry(
@@ -1565,33 +1438,31 @@ private fun XtreamLiveBrowse(
 
         else -> BrowseShell(
             rail = {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    Box(modifier = Modifier.weight(1f)) {
-                        BrowseRail(
-                            items = railEntries,
-                            selected = railEntries.firstOrNull { it.id == selectedKey },
-                            label = LiveRailEntry::label,
-                            onSelect = { selectedKey = it.id },
-                        )
-                    }
-                    if (hiddenCategoryIds.isNotEmpty() || showHidden) {
-                        Button(
-                            onClick = { showHidden = !showHidden },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 8.dp),
-                        ) {
-                            Text(
-                                text = if (showHidden) {
-                                    "Ocultar categorías vacías"
-                                } else {
-                                    "Mostrar ocultas (${hiddenCategoryIds.size})"
-                                },
-                                fontSize = 14.sp,
-                            )
+                BrowseRail(
+                    items = railEntries,
+                    selected = railEntries.firstOrNull { it.id == selectedKey },
+                    label = LiveRailEntry::label,
+                    onSelect = { selectedKey = it.id },
+                    footer = if (hiddenCategoryIds.isNotEmpty() || showHidden) {
+                        {
+                            Button(
+                                onClick = { showHidden = !showHidden },
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Text(
+                                    text = if (showHidden) {
+                                        "Ocultar vacías"
+                                    } else {
+                                        "Mostrar ocultas (${hiddenCategoryIds.size})"
+                                    },
+                                    fontSize = 13.sp,
+                                )
+                            }
                         }
-                    }
-                }
+                    } else {
+                        null
+                    },
+                )
             },
             content = {
                 val category = catalog.categories.firstOrNull { it.id == selectedKey }
@@ -1648,6 +1519,8 @@ private fun XtreamLiveBrowse(
         )
     }
 }
+
+private const val FAVORITES_CATEGORY = "__favorites__"
 
 private enum class LiveListSection { All, Favorites, Recents, Flat }
 
@@ -1799,7 +1672,7 @@ private fun ChannelList(
                 textStyle = TextStyle(color = Color.White, fontSize = 18.sp),
                 cursorBrush = SolidColor(Color(0xFF3B82F6)),
                 modifier = Modifier
-                    .width(420.dp)
+                    .weight(1f)
                     .background(Color(0xFF1E293B), RoundedCornerShape(8.dp))
                     .onPreviewKeyEvent { event ->
                         if (event.type != KeyEventType.KeyDown) {
@@ -1839,7 +1712,6 @@ private fun ChannelList(
                     Text("Limpiar", fontSize = 16.sp)
                 }
             }
-            Spacer(Modifier.weight(1f))
             Text(
                 text = if (query.isBlank()) {
                     "${visible.size} canales"
@@ -1929,14 +1801,27 @@ private fun LiveChannelRow(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Button(
+        Surface(
             onClick = onSelect,
             modifier = Modifier
                 .weight(1f)
                 .then(focusModifier),
+            shape = ClickableSurfaceDefaults.shape(shape = RoundedCornerShape(10.dp)),
+            colors = ClickableSurfaceDefaults.colors(
+                containerColor = Color.Transparent,
+                contentColor = StreamColors.TextPrimary,
+                focusedContainerColor = StreamColors.CardHover,
+                focusedContentColor = StreamColors.TextPrimary,
+            ),
+            scale = ClickableSurfaceDefaults.scale(
+                focusedScale = 1.01f,
+                pressedScale = 0.99f,
+            ),
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (showNumber) {
@@ -2004,15 +1889,33 @@ private fun LiveChannelRow(
             }
         }
         Spacer(Modifier.width(8.dp))
-        Button(
+        Surface(
             onClick = onToggleFavorite,
-            modifier = Modifier.width(56.dp),
+            modifier = Modifier.width(52.dp),
+            shape = ClickableSurfaceDefaults.shape(shape = RoundedCornerShape(10.dp)),
+            colors = ClickableSurfaceDefaults.colors(
+                containerColor = Color.Transparent,
+                contentColor = StreamColors.TextSecondary,
+                focusedContainerColor = StreamColors.CardHover,
+                focusedContentColor = StreamColors.Favorite,
+            ),
+            scale = ClickableSurfaceDefaults.scale(
+                focusedScale = 1.05f,
+                pressedScale = 0.95f,
+            ),
         ) {
-            Text(
-                text = if (favorite) "★" else "☆",
-                color = if (favorite) Color(0xFFFBBF24) else Color(0xFF94A3B8),
-                fontSize = 22.sp,
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 10.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = if (favorite) "★" else "☆",
+                    color = if (favorite) StreamColors.Favorite else StreamColors.TextSecondary,
+                    fontSize = 22.sp,
+                )
+            }
         }
     }
 }
@@ -2023,19 +1926,30 @@ private fun XtreamMoviesScreen(
     playerConfig: PlayerConfig,
     refreshVersion: Int,
     onUpdateConfig: () -> Unit,
+    favorites: List<String>,
+    onToggleFavoriteKey: (String) -> Unit,
     onPlay: (Channel) -> Unit,
 ) {
     val client = remember(xtream, playerConfig.userAgent) {
         XtreamClient(xtream, userAgent = playerConfig.userAgent)
     }
     var categories by remember { mutableStateOf<List<XtreamCategory>>(emptyList()) }
-    var selectedCategory by remember { mutableStateOf<XtreamCategory?>(null) }
+    var selectedId by remember { mutableStateOf<String?>(null) }
     var movies by remember { mutableStateOf<List<XtreamMovie>>(emptyList()) }
+    var favoriteCatalog by remember(xtream, refreshVersion) {
+        mutableStateOf<List<XtreamMovie>?>(null)
+    }
     var loadingCategories by remember { mutableStateOf(true) }
     var loadingMovies by remember { mutableStateOf(false) }
+    var loadingFavorites by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
+    var favoritesError by remember { mutableStateOf<String?>(null) }
     var retry by remember { mutableIntStateOf(0) }
     var detail by remember { mutableStateOf<XtreamMovie?>(null) }
+    val categoryFocus = remember { FocusRequester() }
+    val gridFocus = remember { FocusRequester() }
+    val favoriteKeys = remember(favorites) { favorites.toSet() }
+    val favoritesMode = selectedId == FAVORITES_CATEGORY
 
     LaunchedEffect(retry, refreshVersion, xtream) {
         loadingCategories = true
@@ -2043,7 +1957,12 @@ private fun XtreamMoviesScreen(
         when (val result = client.vodCategories()) {
             is XtreamResult.Success -> {
                 categories = result.value
-                selectedCategory = result.value.firstOrNull()
+                if (selectedId.isNullOrBlank() ||
+                    (selectedId != FAVORITES_CATEGORY &&
+                        result.value.none { it.id == selectedId })
+                ) {
+                    selectedId = result.value.firstOrNull()?.id
+                }
                 loadingCategories = false
             }
 
@@ -2054,11 +1973,23 @@ private fun XtreamMoviesScreen(
         }
     }
 
-    LaunchedEffect(selectedCategory, retry, refreshVersion, xtream) {
-        val category = selectedCategory ?: return@LaunchedEffect
+    LaunchedEffect(selectedId, retry, refreshVersion, xtream) {
+        val id = selectedId ?: return@LaunchedEffect
+        if (id == FAVORITES_CATEGORY) {
+            if (favoriteCatalog != null) return@LaunchedEffect
+            loadingFavorites = true
+            favoritesError = null
+            when (val result = client.allVodStreams()) {
+                is XtreamResult.Success -> favoriteCatalog = result.value
+                is XtreamResult.Failure -> favoritesError = result.message
+            }
+            loadingFavorites = false
+            return@LaunchedEffect
+        }
+
         loadingMovies = true
         error = null
-        when (val result = client.vodStreams(category.id)) {
+        when (val result = client.vodStreams(id)) {
             is XtreamResult.Success -> {
                 movies = result.value
                 loadingMovies = false
@@ -2077,47 +2008,104 @@ private fun XtreamMoviesScreen(
             client = client,
             movie = selectedMovie,
             refreshVersion = refreshVersion,
+            favorite = FavoriteKeys.movie(selectedMovie.id) in favoriteKeys,
+            onToggleFavorite = {
+                onToggleFavoriteKey(FavoriteKeys.movie(selectedMovie.id))
+            },
             onBack = { detail = null },
             onPlay = onPlay,
         )
         return
     }
 
-    when {
-        error != null -> SourceFailurePane(
+    if (error != null && categories.isEmpty()) {
+        SourceFailurePane(
             message = error!!,
             onRetry = { retry++ },
             onUpdateConfig = onUpdateConfig,
         )
-
-        loadingCategories && categories.isEmpty() -> CenteredMessage("Cargando películas…")
-        else -> BrowseShell(
-            rail = {
-                BrowseRail(
-                    items = categories,
-                    selected = selectedCategory,
-                    label = XtreamCategory::name,
-                    onSelect = { selectedCategory = it },
-                )
-            },
-            content = {
-                if (loadingMovies) {
-                    CenteredMessage("Cargando…")
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        items(movies) { movie ->
-                            BrowsePosterRow(movie.name, movie.logo) {
-                                detail = movie
-                            }
-                        }
-                    }
-                }
-            },
-        )
+        return
     }
+
+    if (loadingCategories && categories.isEmpty()) {
+        CenteredMessage("Cargando películas…")
+        return
+    }
+
+    val visibleMovies = remember(favoritesMode, favoriteCatalog, favoriteKeys, movies) {
+        if (favoritesMode) {
+            favoriteCatalog.orEmpty().filter { FavoriteKeys.movie(it.id) in favoriteKeys }
+        } else {
+            movies
+        }
+    }
+
+    BrowseShell(
+        rail = {
+            CategoryPanel(
+                entries = buildList {
+                    add(CategoryEntry(FAVORITES_CATEGORY, "Favoritos", favorite = true))
+                    categories.forEach { add(CategoryEntry(it.id, it.name)) }
+                },
+                selectedId = selectedId,
+                onSelect = { selectedId = it },
+                modifier = Modifier.fillMaxSize(),
+                selectedFocusRequester = categoryFocus,
+                rightFocusRequester = gridFocus,
+                footer = {
+                    Text(
+                        text = "Mantén OK: ★ favorito",
+                        color = StreamColors.TextMuted,
+                        fontSize = 10.sp,
+                        maxLines = 2,
+                    )
+                },
+            )
+        },
+        content = {
+            when {
+                favoritesMode && loadingFavorites -> CenteredMessage("Cargando favoritos…")
+                favoritesMode && favoritesError != null -> SourceFailurePane(
+                    message = favoritesError!!,
+                    onRetry = { retry++ },
+                    onUpdateConfig = onUpdateConfig,
+                )
+
+                !favoritesMode && loadingMovies -> CenteredMessage("Cargando…")
+                !favoritesMode && error != null -> SourceFailurePane(
+                    message = error!!,
+                    onRetry = { retry++ },
+                    onUpdateConfig = onUpdateConfig,
+                )
+
+                else -> PosterGrid(
+                    items = visibleMovies,
+                    key = { it.id },
+                    title = { it.name },
+                    subtitle = {
+                        listOfNotNull(yearOnly(it.year), it.genre)
+                            .joinToString(" · ")
+                            .ifBlank { null }
+                    },
+                    image = { it.logo },
+                    rating = { it.rating },
+                    language = { LanguageTag.normalize(it.language) },
+                    favorite = { FavoriteKeys.movie(it.id) in favoriteKeys },
+                    onClick = { detail = it },
+                    onToggleFavorite = {
+                        onToggleFavoriteKey(FavoriteKeys.movie(it.id))
+                    },
+                    gridFocusRequester = gridFocus,
+                    leftFocusRequester = categoryFocus,
+                    emptyMessage = if (favoritesMode) {
+                        "Aún no hay películas favoritas"
+                    } else {
+                        "No hay películas en esta categoría"
+                    },
+                )
+            }
+        },
+    )
 }
 
 @Composable
@@ -2125,6 +2113,8 @@ private fun MovieDetail(
     client: XtreamClient,
     movie: XtreamMovie,
     refreshVersion: Int,
+    favorite: Boolean,
+    onToggleFavorite: () -> Unit,
     onBack: () -> Unit,
     onPlay: (Channel) -> Unit,
 ) {
@@ -2160,6 +2150,7 @@ private fun MovieDetail(
                 group = "Películas",
                 logo = current.logo ?: movie.logo,
                 tvgId = current.id,
+                language = LanguageTag.normalize(current.language ?: movie.language),
                 isVod = true,
                 year = current.year ?: movie.year,
                 imdbId = current.imdbId ?: movie.imdbId,
@@ -2170,9 +2161,7 @@ private fun MovieDetail(
 
     Column(modifier = Modifier.fillMaxSize()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Button(onClick = onBack) {
-                Text("Volver", fontSize = 16.sp)
-            }
+            QuickChip(label = "Volver", fontSize = 15.sp, onClick = onBack)
             Spacer(Modifier.width(16.dp))
             Text(
                 text = current.name,
@@ -2182,12 +2171,18 @@ private fun MovieDetail(
                 maxLines = 1,
                 modifier = Modifier.weight(1f),
             )
-            Button(
-                onClick = playMovie,
+            QuickChip(
+                label = if (favorite) "★ Favorito" else "☆ Favorito",
+                fontSize = 15.sp,
+                onClick = onToggleFavorite,
+            )
+            Spacer(Modifier.width(8.dp))
+            QuickChip(
+                label = "Reproducir",
+                fontSize = 15.sp,
                 modifier = Modifier.focusRequester(detailFocus),
-            ) {
-                Text("Reproducir", fontSize = 18.sp)
-            }
+                onClick = playMovie,
+            )
         }
         Spacer(Modifier.height(16.dp))
 
@@ -2204,7 +2199,12 @@ private fun MovieDetail(
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .width(260.dp)
-                        .height(390.dp),
+                        .height(390.dp)
+                        .border(
+                            width = if (favorite) Dimens.FavoriteBorder else 0.dp,
+                            color = if (favorite) StreamColors.Favorite else Color.Transparent,
+                            shape = RoundedCornerShape(8.dp),
+                        ),
                 )
                 Spacer(Modifier.width(24.dp))
                 Column(modifier = Modifier.weight(1f)) {
@@ -2239,11 +2239,11 @@ private fun MovieDetail(
                         )
                         Spacer(Modifier.height(12.dp))
                     }
-                    Button(
+                    QuickChip(
+                        label = "Reproducir",
+                        fontSize = 15.sp,
                         onClick = playMovie,
-                    ) {
-                        Text("Reproducir", fontSize = 18.sp)
-                    }
+                    )
                 }
             }
         }
@@ -2256,19 +2256,30 @@ private fun XtreamSeriesScreen(
     playerConfig: PlayerConfig,
     refreshVersion: Int,
     onUpdateConfig: () -> Unit,
+    favorites: List<String>,
+    onToggleFavoriteKey: (String) -> Unit,
     onPlay: (PlaybackRequest) -> Unit,
 ) {
     val client = remember(xtream, playerConfig.userAgent) {
         XtreamClient(xtream, userAgent = playerConfig.userAgent)
     }
     var categories by remember { mutableStateOf<List<XtreamCategory>>(emptyList()) }
-    var selectedCategory by remember { mutableStateOf<XtreamCategory?>(null) }
+    var selectedId by remember { mutableStateOf<String?>(null) }
     var series by remember { mutableStateOf<List<XtreamSeries>>(emptyList()) }
+    var favoriteCatalog by remember(xtream, refreshVersion) {
+        mutableStateOf<List<XtreamSeries>?>(null)
+    }
     var loadingCategories by remember { mutableStateOf(true) }
     var loadingSeries by remember { mutableStateOf(false) }
+    var loadingFavorites by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
+    var favoritesError by remember { mutableStateOf<String?>(null) }
     var retry by remember { mutableIntStateOf(0) }
     var detail by remember { mutableStateOf<XtreamSeries?>(null) }
+    val categoryFocus = remember { FocusRequester() }
+    val gridFocus = remember { FocusRequester() }
+    val favoriteKeys = remember(favorites) { favorites.toSet() }
+    val favoritesMode = selectedId == FAVORITES_CATEGORY
 
     LaunchedEffect(retry, refreshVersion, xtream) {
         loadingCategories = true
@@ -2276,7 +2287,12 @@ private fun XtreamSeriesScreen(
         when (val result = client.seriesCategories()) {
             is XtreamResult.Success -> {
                 categories = result.value
-                selectedCategory = result.value.firstOrNull()
+                if (selectedId.isNullOrBlank() ||
+                    (selectedId != FAVORITES_CATEGORY &&
+                        result.value.none { it.id == selectedId })
+                ) {
+                    selectedId = result.value.firstOrNull()?.id
+                }
                 loadingCategories = false
             }
 
@@ -2287,11 +2303,23 @@ private fun XtreamSeriesScreen(
         }
     }
 
-    LaunchedEffect(selectedCategory, retry, refreshVersion, xtream) {
-        val category = selectedCategory ?: return@LaunchedEffect
+    LaunchedEffect(selectedId, retry, refreshVersion, xtream) {
+        val id = selectedId ?: return@LaunchedEffect
+        if (id == FAVORITES_CATEGORY) {
+            if (favoriteCatalog != null) return@LaunchedEffect
+            loadingFavorites = true
+            favoritesError = null
+            when (val result = client.allSeries()) {
+                is XtreamResult.Success -> favoriteCatalog = result.value
+                is XtreamResult.Failure -> favoritesError = result.message
+            }
+            loadingFavorites = false
+            return@LaunchedEffect
+        }
+
         loadingSeries = true
         error = null
-        when (val result = client.series(category.id)) {
+        when (val result = client.series(id)) {
             is XtreamResult.Success -> {
                 series = result.value
                 loadingSeries = false
@@ -2310,6 +2338,10 @@ private fun XtreamSeriesScreen(
             client = client,
             series = selectedSeries,
             refreshVersion = refreshVersion,
+            favorite = FavoriteKeys.series(selectedSeries.id) in favoriteKeys,
+            onToggleFavorite = {
+                onToggleFavoriteKey(FavoriteKeys.series(selectedSeries.id))
+            },
             onUpdateConfig = onUpdateConfig,
             onBack = { detail = null },
             onPlay = onPlay,
@@ -2317,39 +2349,94 @@ private fun XtreamSeriesScreen(
         return
     }
 
-    when {
-        error != null -> SourceFailurePane(
+    if (error != null && categories.isEmpty()) {
+        SourceFailurePane(
             message = error!!,
             onRetry = { retry++ },
             onUpdateConfig = onUpdateConfig,
         )
-
-        loadingCategories && categories.isEmpty() -> CenteredMessage("Cargando series…")
-        else -> BrowseShell(
-            rail = {
-                BrowseRail(
-                    items = categories,
-                    selected = selectedCategory,
-                    label = XtreamCategory::name,
-                    onSelect = { selectedCategory = it },
-                )
-            },
-            content = {
-                if (loadingSeries) {
-                    CenteredMessage("Cargando…")
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        items(series) { item ->
-                            BrowsePosterRow(item.name, item.cover) { detail = item }
-                        }
-                    }
-                }
-            },
-        )
+        return
     }
+
+    if (loadingCategories && categories.isEmpty()) {
+        CenteredMessage("Cargando series…")
+        return
+    }
+
+    val visibleSeries = remember(favoritesMode, favoriteCatalog, favoriteKeys, series) {
+        if (favoritesMode) {
+            favoriteCatalog.orEmpty().filter { FavoriteKeys.series(it.id) in favoriteKeys }
+        } else {
+            series
+        }
+    }
+
+    BrowseShell(
+        rail = {
+            CategoryPanel(
+                entries = buildList {
+                    add(CategoryEntry(FAVORITES_CATEGORY, "Favoritos", favorite = true))
+                    categories.forEach { add(CategoryEntry(it.id, it.name)) }
+                },
+                selectedId = selectedId,
+                onSelect = { selectedId = it },
+                modifier = Modifier.fillMaxSize(),
+                selectedFocusRequester = categoryFocus,
+                rightFocusRequester = gridFocus,
+                footer = {
+                    Text(
+                        text = "Mantén OK: ★ favorito",
+                        color = StreamColors.TextMuted,
+                        fontSize = 10.sp,
+                        maxLines = 2,
+                    )
+                },
+            )
+        },
+        content = {
+            when {
+                favoritesMode && loadingFavorites -> CenteredMessage("Cargando favoritos…")
+                favoritesMode && favoritesError != null -> SourceFailurePane(
+                    message = favoritesError!!,
+                    onRetry = { retry++ },
+                    onUpdateConfig = onUpdateConfig,
+                )
+
+                !favoritesMode && loadingSeries -> CenteredMessage("Cargando…")
+                !favoritesMode && error != null -> SourceFailurePane(
+                    message = error!!,
+                    onRetry = { retry++ },
+                    onUpdateConfig = onUpdateConfig,
+                )
+
+                else -> PosterGrid(
+                    items = visibleSeries,
+                    key = { it.id },
+                    title = { it.name },
+                    subtitle = {
+                        listOfNotNull(yearOnly(it.year), it.genre)
+                            .joinToString(" · ")
+                            .ifBlank { null }
+                    },
+                    image = { it.cover },
+                    rating = { it.rating },
+                    language = { LanguageTag.normalize(it.language) },
+                    favorite = { FavoriteKeys.series(it.id) in favoriteKeys },
+                    onClick = { detail = it },
+                    onToggleFavorite = {
+                        onToggleFavoriteKey(FavoriteKeys.series(it.id))
+                    },
+                    gridFocusRequester = gridFocus,
+                    leftFocusRequester = categoryFocus,
+                    emptyMessage = if (favoritesMode) {
+                        "Aún no hay series favoritas"
+                    } else {
+                        "No hay series en esta categoría"
+                    },
+                )
+            }
+        },
+    )
 }
 
 @Composable
@@ -2357,6 +2444,8 @@ private fun SeriesDetail(
     client: XtreamClient,
     series: XtreamSeries,
     refreshVersion: Int,
+    favorite: Boolean,
+    onToggleFavorite: () -> Unit,
     onUpdateConfig: () -> Unit,
     onBack: () -> Unit,
     onPlay: (PlaybackRequest) -> Unit,
@@ -2386,9 +2475,7 @@ private fun SeriesDetail(
 
     Column(modifier = Modifier.fillMaxSize()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Button(onClick = onBack) {
-                Text("Volver", fontSize = 16.sp)
-            }
+            QuickChip(label = "Volver", fontSize = 15.sp, onClick = onBack)
             Spacer(Modifier.width(16.dp))
             Text(
                 text = series.name,
@@ -2396,6 +2483,12 @@ private fun SeriesDetail(
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
+                modifier = Modifier.weight(1f),
+            )
+            QuickChip(
+                label = if (favorite) "★ Favorito" else "☆ Favorito",
+                fontSize = 15.sp,
+                onClick = onToggleFavorite,
             )
         }
 
@@ -2606,6 +2699,8 @@ private fun UniversalSearchScreen(
     config: AppConfig,
     refreshVersion: Int,
     onUpdateConfig: () -> Unit,
+    favorites: List<String>,
+    onToggleFavoriteKey: (String) -> Unit,
     onPlay: (PlaybackRequest) -> Unit,
 ) {
     val xtream = config.sources.xtream
@@ -2731,6 +2826,7 @@ private fun UniversalSearchScreen(
     val results = remember(index, debounced, kind) {
         index.search(debounced, kind)
     }
+    val favoriteKeys = remember(favorites) { favorites.toSet() }
 
     val movie = selectedMovie
     val series = selectedSeries
@@ -2739,6 +2835,10 @@ private fun UniversalSearchScreen(
             client = client,
             movie = movie,
             refreshVersion = refreshVersion,
+            favorite = FavoriteKeys.movie(movie.id) in favoriteKeys,
+            onToggleFavorite = {
+                onToggleFavoriteKey(FavoriteKeys.movie(movie.id))
+            },
             onBack = { selectedMovie = null },
             onPlay = { channel -> onPlay(PlaybackRequest(channel)) },
         )
@@ -2749,6 +2849,10 @@ private fun UniversalSearchScreen(
             client = client,
             series = series,
             refreshVersion = refreshVersion,
+            favorite = FavoriteKeys.series(series.id) in favoriteKeys,
+            onToggleFavorite = {
+                onToggleFavoriteKey(FavoriteKeys.series(series.id))
+            },
             onUpdateConfig = onUpdateConfig,
             onBack = { selectedSeries = null },
             onPlay = onPlay,
@@ -2768,7 +2872,7 @@ private fun UniversalSearchScreen(
                 textStyle = TextStyle(color = Color.White, fontSize = 18.sp),
                 cursorBrush = SolidColor(Color(0xFF3B82F6)),
                 modifier = Modifier
-                    .width(460.dp)
+                    .weight(1f)
                     .background(Color(0xFF1E293B), RoundedCornerShape(8.dp))
                     .onPreviewKeyEvent { event ->
                         if (event.type != KeyEventType.KeyDown) {
@@ -2800,7 +2904,6 @@ private fun UniversalSearchScreen(
                     Text("Limpiar", fontSize = 16.sp)
                 }
             }
-            Spacer(Modifier.weight(1f))
             Text(
                 text = when {
                     loading && index.size() == 0 -> "Cargando catálogo…"
@@ -2849,7 +2952,7 @@ private fun UniversalSearchScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 items(results, key = { it.item.id }) { result ->
-                    Button(
+                    Surface(
                         onClick = {
                             val item = result.item
                             when {
@@ -2859,9 +2962,24 @@ private fun UniversalSearchScreen(
                             }
                         },
                         modifier = Modifier.fillMaxWidth(),
+                        shape = ClickableSurfaceDefaults.shape(
+                            shape = RoundedCornerShape(10.dp),
+                        ),
+                        colors = ClickableSurfaceDefaults.colors(
+                            containerColor = Color.Transparent,
+                            contentColor = StreamColors.TextPrimary,
+                            focusedContainerColor = StreamColors.CardHover,
+                            focusedContentColor = StreamColors.TextPrimary,
+                        ),
+                        scale = ClickableSurfaceDefaults.scale(
+                            focusedScale = 1.01f,
+                            pressedScale = 0.99f,
+                        ),
                     ) {
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 10.dp, vertical = 10.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
@@ -2898,14 +3016,7 @@ private fun SearchFilterButton(
     selected: Boolean,
     onClick: () -> Unit,
 ) {
-    Button(onClick = onClick) {
-        Text(
-            text = label,
-            color = if (selected) Color(0xFF3B82F6) else Color.White,
-            fontSize = 15.sp,
-            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-        )
-    }
+    QuickChip(label = label, selected = selected, onClick = onClick)
 }
 
 @Composable
@@ -2913,50 +3024,19 @@ private fun ContinueWatchingScreen(
     entries: List<PlaybackEntry>,
     onSelect: (PlaybackRequest) -> Unit,
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        items(entries, key = { it.url }) { entry ->
-            Button(
-                onClick = {
-                    onSelect(PlaybackRequest(entry.toChannel(), startPositionMs = entry.positionMs))
-                },
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    AsyncImage(
-                        model = entry.logo,
-                        contentDescription = null,
-                        placeholder = painterResource(R.drawable.ic_channel_placeholder),
-                        error = painterResource(R.drawable.ic_channel_placeholder),
-                        fallback = painterResource(R.drawable.ic_channel_placeholder),
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .width(48.dp)
-                            .height(72.dp),
-                    )
-                    Spacer(Modifier.width(16.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = entry.name,
-                            color = Color.White,
-                            fontSize = 18.sp,
-                            maxLines = 1,
-                        )
-                        Text(
-                            text = "${formatDuration(entry.positionMs)} / ${formatDuration(entry.durationMs)}",
-                            color = Color(0xFF94A3B8),
-                            fontSize = 14.sp,
-                        )
-                    }
-                }
-            }
-        }
-    }
+    PosterGrid(
+        items = entries,
+        key = { it.url },
+        title = { it.name },
+        subtitle = {
+            "${formatDuration(it.positionMs)} / ${formatDuration(it.durationMs)}"
+        },
+        image = { it.logo },
+        onClick = {
+            onSelect(PlaybackRequest(it.toChannel(), startPositionMs = it.positionMs))
+        },
+        emptyMessage = "No hay contenido en curso",
+    )
 }
 
 private fun formatDuration(ms: Long): String {
@@ -3116,16 +3196,6 @@ private fun SettingsScreen(
                     scaleLabel(it) to it.toString()
                 },
             ) { value -> onSettingsChange(settings.copy(uiScale = value.toFloatOrNull())) }
-        }
-        item {
-            ChoiceRow(
-                label = "Navegación",
-                current = config.ui.navigation,
-                options = listOf(
-                    "Arriba" to "top",
-                    "Lateral" to "rail",
-                ),
-            ) { value -> onSettingsChange(settings.copy(navigation = value)) }
         }
         item {
             ChoiceRow(
@@ -3438,14 +3508,11 @@ private fun ChoiceRow(
         Spacer(Modifier.height(6.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             options.forEach { (text, value) ->
-                Button(onClick = { onSelect(value) }) {
-                    Text(
-                        text = text,
-                        color = if (value == current) Color(0xFF3B82F6) else Color.White,
-                        fontSize = 15.sp,
-                        fontWeight = if (value == current) FontWeight.Bold else FontWeight.Normal,
-                    )
-                }
+                QuickChip(
+                    label = text,
+                    selected = value == current,
+                    onClick = { onSelect(value) },
+                )
             }
         }
     }
@@ -4000,79 +4067,87 @@ private fun PlaybackScreen(
         }
 
         if (uiConfig.playerBar == "compact") {
-            Button(
-                onClick = { showControls = true },
+            QuickChip(
+                label = "Controles",
+                fontSize = 14.sp,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(32.dp),
-            ) {
-                Text("Controles", fontSize = 16.sp)
-            }
+                onClick = { showControls = true },
+            )
         } else {
             Row(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(32.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 if ("info" in uiConfig.playerButtons) {
-                    Button(onClick = {
-                        showTracks = false
-                        showStats = true
-                    }) {
-                        Text("Info", fontSize = 16.sp)
-                    }
+                    QuickChip(
+                        label = "Info",
+                        fontSize = 14.sp,
+                        onClick = {
+                            showTracks = false
+                            showStats = true
+                        },
+                    )
                 }
                 if ("aspect" in uiConfig.playerButtons) {
-                    Button(
+                    QuickChip(
+                        label = "Aspecto: ${aspectLabel(aspectMode)}",
+                        fontSize = 14.sp,
+                        modifier = Modifier.focusRequester(aspectButtonFocus),
                         onClick = {
                             aspectTouched = true
                             val next = nextAspectMode(aspectMode)
                             aspectMode = next
                             onAspectChange(next)
                         },
-                        modifier = Modifier.focusRequester(aspectButtonFocus),
-                    ) {
-                        Text("Aspecto: ${aspectLabel(aspectMode)}", fontSize = 15.sp, maxLines = 1)
-                    }
+                    )
                 }
                 if ("quality" in uiConfig.playerButtons && capabilities.canChangeQuality) {
-                    Button(onClick = {
-                        showStats = false
-                        showTracks = false
-                        showSpeed = false
-                        showQuality = true
-                    }) {
-                        Text("Calidad", fontSize = 15.sp, maxLines = 1)
-                    }
+                    QuickChip(
+                        label = "Calidad",
+                        fontSize = 14.sp,
+                        onClick = {
+                            showStats = false
+                            showTracks = false
+                            showSpeed = false
+                            showQuality = true
+                        },
+                    )
                 }
                 if ("speed" in uiConfig.playerButtons && capabilities.canChangeSpeed) {
-                    Button(onClick = {
-                        showStats = false
-                        showTracks = false
-                        showQuality = false
-                        showSpeed = true
-                    }) {
-                        Text("Velocidad ${speedLabel(speed)}", fontSize = 15.sp, maxLines = 1)
-                    }
+                    QuickChip(
+                        label = "Velocidad ${speedLabel(speed)}",
+                        fontSize = 14.sp,
+                        onClick = {
+                            showStats = false
+                            showTracks = false
+                            showQuality = false
+                            showSpeed = true
+                        },
+                    )
                 }
                 if ("tracks" in uiConfig.playerButtons) {
-                    Button(
+                    QuickChip(
+                        label = "Audio/Subs",
+                        fontSize = 14.sp,
+                        modifier = Modifier.focusRequester(tracksButtonFocus),
                         onClick = {
                             showStats = false
                             showQuality = false
                             showSpeed = false
                             showTracks = true
                         },
-                        modifier = Modifier.focusRequester(tracksButtonFocus),
-                    ) {
-                        Text("Audio/Subs", fontSize = 15.sp, maxLines = 1)
-                    }
+                    )
                 }
                 if ("external" in uiConfig.playerButtons && capabilities.canOpenExternally) {
-                    Button(onClick = openExternal) {
-                        Text("Externo", fontSize = 15.sp, maxLines = 1)
-                    }
+                    QuickChip(
+                        label = "Externo",
+                        fontSize = 14.sp,
+                        onClick = openExternal,
+                    )
                 }
             }
         }

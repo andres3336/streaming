@@ -14,6 +14,7 @@ class ChannelJsonTest {
             group = "TV",
             logo = "https://example.com/logo.png",
             tvgId = "canal-1",
+            language = "Spanish",
             userAgent = "Agent",
             referer = "https://example.com",
             isVod = true,

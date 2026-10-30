@@ -27,8 +27,17 @@ class M3uParserTest {
     }
 
     @Test
-    fun handlesBomAndCrlf() {
-        val playlist = "\uFEFF#EXTM3U\r\n#EXTINF:-1,Canal\r\nhttps://example.com/a.ts\r\n"
+    fun parsesLanguageAttribute() {
+        val playlist = """
+            #EXTINF:-1 tvg-id="canal1" tvg-language="Spanish",Canal Uno
+            https://example.com/uno.m3u8
+        """.trimIndent()
+
+        assertEquals("Spanish", M3uParser.parse(playlist).single().language)
+    }
+
+    @Test
+    fun handlesBomAndCrlf() {        val playlist = "\uFEFF#EXTM3U\r\n#EXTINF:-1,Canal\r\nhttps://example.com/a.ts\r\n"
 
         val channels = M3uParser.parse(playlist)
 

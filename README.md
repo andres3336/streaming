@@ -6,11 +6,14 @@ Target device: Google TV / Android TV, 32-bit ARM, Android 11, limited storage.
 
 ## Current status
 
-Version 0.14.1 completes v1.1. The app has separate **En vivo** (curated gist) and
-**Canales** (Xtream) live tabs, Xtream movies/series with metadata detail, universal
-fuzzy search across all sources, VOD subtitles with OpenSubtitles and local files,
-quality/buffer/speed controls, text/UI scale, navigation layouts, VOD external-player
-handoff, and boot/wake auto-start settings. See `todo-v1.md` and `HISTORY.md`.
+Version 0.15.0 adds the v1.2 TV shell: a rounded navigation pill, compact top bar,
+split category/poster-grid browsing for movies and series, unified live/VOD
+favorites, and rating/language badges. The app already has separate **En vivo**
+(curated gist) and **Canales** (Xtream) live tabs, Xtream movies/series with
+metadata detail, universal fuzzy search across all sources, VOD subtitles with
+OpenSubtitles and local files, quality/buffer/speed controls, text/UI scale,
+VOD external-player handoff, and boot/wake auto-start settings. See `todo-v1.md`
+and `HISTORY.md`.
 
 Android 11 on the test Google TV blocks background activity starts after boot; the
 app keeps the boot receiver and offers an opt-in HOME alias as the fallback.

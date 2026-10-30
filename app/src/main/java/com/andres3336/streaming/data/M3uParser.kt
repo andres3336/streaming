@@ -72,6 +72,8 @@ object M3uParser {
             group = values["group-title"]?.trim()?.ifEmpty { null },
             logo = values["tvg-logo"]?.trim()?.ifEmpty { null },
             tvgId = values["tvg-id"]?.trim()?.ifEmpty { null },
+            language = values["tvg-language"]?.trim()?.ifEmpty { null }
+                ?: values["tvg-lang"]?.trim()?.ifEmpty { null },
         )
     }
 
@@ -96,6 +98,7 @@ object M3uParser {
         var group: String?,
         var logo: String?,
         var tvgId: String?,
+        var language: String?,
     ) {
         var userAgent: String? = null
         var referer: String? = null
@@ -117,6 +120,7 @@ object M3uParser {
             group = group,
             logo = logo,
             tvgId = tvgId,
+            language = language,
             userAgent = userAgent,
             referer = referer,
         )

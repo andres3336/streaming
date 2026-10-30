@@ -16,6 +16,7 @@ data class XtreamLiveStream(
     val logo: String?,
     val categoryId: String,
     val epgChannelId: String?,
+    val language: String? = null,
 )
 
 data class XtreamMovie(
@@ -29,6 +30,7 @@ data class XtreamMovie(
     val rating: String? = null,
     val duration: String? = null,
     val genre: String? = null,
+    val language: String? = null,
     val cast: String? = null,
     val director: String? = null,
     val backdrop: String? = null,
@@ -45,6 +47,7 @@ data class XtreamSeries(
     val year: String? = null,
     val rating: String? = null,
     val genre: String? = null,
+    val language: String? = null,
     val cast: String? = null,
     val director: String? = null,
     val backdrop: String? = null,
@@ -71,6 +74,7 @@ data class XtreamSeriesInfo(
     val year: String? = null,
     val rating: String? = null,
     val genre: String? = null,
+    val language: String? = null,
     val cast: String? = null,
     val director: String? = null,
     val backdrop: String? = null,

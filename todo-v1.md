@@ -1,9 +1,9 @@
 # Streaming — V1 reconciled TODO
 
-**Last reconciled:** 2026-10-29  
-**App:** Streaming 0.14.1 (`versionCode 16`)  
+**Last reconciled:** 2026-10-30  
+**App:** Streaming 0.15.0 (`versionCode 17`)  
 **TV:** `192.168.100.16:5555` — MOTOROLA GOOGLE TV, Android 11 / API 30, armeabi-v7a  
-**Specs:** 76 tasks in `tasks/`  
+**Specs:** 77 tasks in `tasks/`  
 **Change log:** `HISTORY.md`  
 
 This is the single source of truth for V1. `tasks/` holds the detailed specs; this file
@@ -40,8 +40,11 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
   forceUpdate prompt, validate/publish script, v3 sources/subtitles/UI schema.
 - **Ajustes:** buffer/pre-buffer/quality/latency, aspect, VOD cache, storage usage,
   WiFi/Ethernet-only, max bitrate, source health, category filtering, text/UI scale,
-  top/rail navigation, full/compact player bar, visible player buttons, subtitle
-  auto-download, boot/wake auto-start, error log.
+  full/compact player bar, visible player buttons, subtitle auto-download,
+  boot/wake auto-start, error log.
+- **UI:** rounded navigation pill, compact top bar, 26/74 split category panel,
+  four-column 16:9 poster grid with favorite star + 2 dp stroke, rating/language
+  badges, unified live/VOD favorites, pill-styled filters and player top bar.
 - **Playback:** ExoPlayer HLS/TS/MP4, headers, retry/backoff, live auto-reconnect,
   Spanish error overlay, VOD cache, resume/Continue, next-episode countdown.
 - **Diagnostics:** in-player stream info (including effective buffer settings),
@@ -49,19 +52,20 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 - **Security:** config cache, playback positions, last playback, live state, playlist
   cache, subtitle offsets and Xtream catalog cache use Keystore AES-GCM; errors do
   not log/display URLs or keys.
-- **Tests:** 124 unit tests passing.
+- **Tests:** 129 unit tests passing.
 
 ## Now (max 3)
 
-- [ ] None — v1.1 is complete.
+- [ ] None — v1.1 is complete; v1.2 starts with `ui-011`, now done.
 
 ## Next (V1.2)
 
-- [ ] No committed v1.2 items yet. Candidates: themes/font family (`ui-008`,
+- [ ] No further committed v1.2 items. Candidates: themes/font family (`ui-008`,
   `ui-009`), full EPG grid (`epg-003`), recording/catch-up (out of scope).
 
 ## Done
 
+- [x] 2026-10-30 · `ui-011` · Pill shell and VOD poster grid · [spec](tasks/ui-011_pill_shell_and_vod_poster_grid.md) — Rounded nav pill, compact top bar, 26/74 split, 4-column 16:9 grid, favorite star + 2 dp stroke, rating/language badges, unified VOD favorites, pill-styled filters.
 - [x] 2026-10-29 · `apk-004` · Auto-start on boot and wake · [spec](tasks/apk-004_auto_start_on_boot_and_wake.md) — Receiver + alarm attempted; Android 11 blocks background starts on this TV; launcher alias opt-in added.
 - [x] 2026-10-29 · `liv-013` · En vivo/Canales split and Xtream category hygiene · [spec](tasks/liv-013_en_vivo_canales_split_and_category_hygiene.md) — Separate tabs, independent failures, parser hardening, divider/empty filtering with “Mostrar ocultas”.
 - [x] 2026-10-29 · `ui-001` · Universal MediaItem and capabilities model · [spec](tasks/ui-001_universal_mediaitem_and_capabilities_model.md) — `MediaKind`, `MediaItem`, `MediaCapabilities`; `Channel` remains the source DTO.
@@ -207,6 +211,7 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 | [`ui-001`](tasks/ui-001_universal_mediaitem_and_capabilities_model.md) | Universal MediaItem and capabilities model | Done | `MediaKind`, `MediaItem`, `MediaCapabilities`. |
 | [`ui-005`](tasks/ui-005_font_size_and_ui_scale.md) | Font size and UI scale | Done | Text/UI scale via `LocalDensity`. |
 | [`ui-006`](tasks/ui-006_navigation_rail_and_player_bar_layouts.md) | Navigation rail and player bar layouts | Done | Top/rail + full/compact + button selection. |
+| [`ui-011`](tasks/ui-011_pill_shell_and_vod_poster_grid.md) | Pill shell and VOD poster grid | Done | Nav pill, top bar, split panel, 4-column grid, favorites, badges. |
 | [`vod-003`](tasks/vod-003_xtream_metadata_for_movies_and_series.md) | Xtream metadata for movies and series | Done | Plot/year/rating/genre/cast/backdrop + detail panels. |
 | [`vod-006`](tasks/vod-006_universal_search_across_live_and_vod.md) | Universal fuzzy search across live and VOD | Done | En vivo/Canales/Películas/Series, accents/ñ, typos. |
 | [`cfg-005`](tasks/cfg-005_grandma_mode_lock_with_pin.md) | Grandma mode lock with PIN | v2 | Abuela/grandma mode deferred to v2; PIN policy TBD. |
@@ -227,7 +232,9 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 
 ## Notes for the next session
 
-- **V1 and V1.1 are complete.** `Now` is empty; v1.2 has no committed items yet.
+- **V1, V1.1 and the first V1.2 item are complete.** `Now` is empty; next
+  candidates are themes/font family (`ui-008`, `ui-009`) and the EPG grid
+  (`epg-003`).
 - `liv-007` is deferred: En vivo is the curated gist and Canales is Xtream; no
   multiple-playlist switcher is needed.
 - `liv-008` and `liv-009` remain v2: per-device category/channel overrides conflict
@@ -274,10 +281,16 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
   alias; the system may still prefer its own launcher. `Reanudar al despertar`
   restores the encrypted last playback when the app is started.
 - `Ajustes → Inicio` has boot, wake and launcher toggles (first two default on).
-- `Ajustes → Interfaz` has text/UI scale, top/rail navigation, full/compact player bar
-  and visible player buttons.
-- `vod-001`/`vod-002` are marked done for core browse/playback; movie detail is now
-  implemented in v1.1. Poster grid remains a polish item.
+- `Ajustes → Interfaz` has text/UI scale, full/compact player bar and visible
+  player buttons. The old top/rail navigation choice was removed; the pill shell is
+  unconditional (`ui.navigation` is still parsed for config compatibility).
+- `vod-001`/`vod-002` are marked done for core browse/playback; the poster grid,
+  split categories and VOD favorites are implemented in `ui-011`.
+- Poster cards show `★ rating` from the provider's own score and a language badge
+  only when `tvg-language` or Xtream `lang`/`language` is present. VOD favorites use
+  the encrypted live state with `movie:<id>` / `series:<id>` keys and are visible in
+  the Favoritos category. Long-press OK on a card toggles the favorite; the movie and
+  series detail panels also have a favorite chip.
 
 ## Copy this into a new session
 

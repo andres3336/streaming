@@ -70,6 +70,7 @@ class XtreamClient(
                 logo = json.optString("stream_icon").takeIf(String::isNotBlank),
                 categoryId = json.optString("category_id"),
                 epgChannelId = json.optString("epg_channel_id").takeIf(String::isNotBlank),
+                language = json.firstString("lang", "language", "audio_language", "audio_lang"),
             )
         }
 
@@ -105,6 +106,7 @@ class XtreamClient(
                 rating = json.firstString("rating", "rating_5based"),
                 duration = json.firstString("duration"),
                 genre = json.firstString("genre"),
+                language = json.firstString("lang", "language", "audio_language", "audio_lang"),
                 cast = json.firstString("cast"),
                 director = json.firstString("director"),
                 backdrop = json.firstString("backdrop_path"),
@@ -143,6 +145,7 @@ class XtreamClient(
                 year = json.firstString("year", "releaseDate", "releasedate"),
                 rating = json.firstString("rating", "rating_5based"),
                 genre = json.firstString("genre"),
+                language = json.firstString("lang", "language", "audio_language", "audio_lang"),
                 cast = json.firstString("cast"),
                 director = json.firstString("director"),
                 backdrop = json.firstString("backdrop_path"),
@@ -169,6 +172,7 @@ class XtreamClient(
                 rating = info.firstString("rating", "rating_5based"),
                 duration = info.firstString("duration", "duration_secs"),
                 genre = info.firstString("genre"),
+                language = info.firstString("lang", "language", "audio_language", "audio_lang"),
                 cast = info.firstString("cast", "actors"),
                 director = info.firstString("director"),
                 backdrop = info.firstString("backdrop_path", "movie_image"),
@@ -205,6 +209,7 @@ class XtreamClient(
                 year = info.firstString("year", "releasedate", "releaseDate"),
                 rating = info.firstString("rating", "rating_5based"),
                 genre = info.firstString("genre"),
+                language = info.firstString("lang", "language", "audio_language", "audio_lang"),
                 cast = info.firstString("cast", "actors"),
                 director = info.firstString("director"),
                 backdrop = info.firstString("backdrop_path", "cover_big"),
@@ -229,6 +234,7 @@ class XtreamClient(
         group = categoryName,
         logo = stream.logo,
         tvgId = stream.epgChannelId?.takeIf(String::isNotBlank) ?: "xtream:${stream.id}",
+        language = stream.language,
         isVod = false,
         fallbackUrl = liveFallbackUrl(stream),
         provider = providerLabel,
