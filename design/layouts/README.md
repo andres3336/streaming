@@ -7,7 +7,7 @@ secundarios.
 
 ```text
 INICIO.drawio        Inicio + hero + filas + variantes del hero
-TV.drawio            En vivo + Canales + búsqueda inline + estados
+TV.drawio            En vivo + Canales + EPG en dos columnas + estados
 PELICULAS.drawio     Parrilla + scroll + ficha de película + estados
 SERIES.drawio        Parrilla + scroll + ficha de serie/episodios + estados
 BUSCAR.drawio        Vacío + resultados + sin resultados + estados

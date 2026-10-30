@@ -252,3 +252,14 @@ Append-only. Newest entries at the bottom.
   full-scroll and secondary-state pages. Each page has Wireframe, Anotaciones,
   Etiquetas de elemento and Medidas layers; major blocks carry stable `element` and
   `source` attributes so an edited XML can be mapped back to Compose.
+- Applied the draw.io red/green markup: removed the hint strips from Inicio, Películas
+  and Series; removed the TV section title and inline channel search from both TV tabs;
+  moved the channel EPG into a second column and made live favorite stars plain icons.
+- The movie detail preview is now the play target; its duplicate favorite chips and
+  Reproducir/Favorito buttons are gone and favorites stay on long-press in the poster
+  grid. The player now uses one icon-only top bar that auto-hides 1 s after playback
+  starts, stays visible while paused or in an overlay, and returns on any key. The
+  embedded ExoPlayer controller is disabled so the custom bar is the only chrome;
+  media keys still play/pause and seek. Kept CH+/CH− zapping without the on-screen
+  text. Refreshed `design/layouts/` and its README. 129 unit tests passing; debug APK
+  builds and was verified on the TV.

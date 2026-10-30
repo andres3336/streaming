@@ -16,6 +16,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -63,6 +65,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -132,7 +136,6 @@ import com.andres3336.streaming.data.epg.EpgCache
 import com.andres3336.streaming.data.epg.EpgGuide
 import com.andres3336.streaming.data.epg.EpgNowNext
 import com.andres3336.streaming.data.epg.EpgRepository
-import com.andres3336.streaming.data.live.ChannelSearch
 import com.andres3336.streaming.data.live.LiveState
 import com.andres3336.streaming.data.live.LiveStateStore
 import com.andres3336.streaming.data.live.liveKey
@@ -180,6 +183,8 @@ import com.andres3336.streaming.ui.MediaRow
 import com.andres3336.streaming.ui.NavDestination
 import com.andres3336.streaming.ui.PosterGrid
 import com.andres3336.streaming.ui.PillButton
+import com.andres3336.streaming.ui.PlayerAction
+import com.andres3336.streaming.ui.PlayerTopBar
 import com.andres3336.streaming.ui.ProgressLine
 import com.andres3336.streaming.ui.VideoPreview
 import com.andres3336.streaming.ui.QuickChip
@@ -840,7 +845,6 @@ private fun ReadyScreen(
         context.findActivity()?.intent?.getStringExtra("section")?.takeIf { it.isNotBlank() }
     }
     var section by remember { mutableStateOf(launchSection ?: "home") }
-    var liveQuery by remember { mutableStateOf("") }
     var exitConfirm by remember { mutableStateOf(false) }
     val activity = context.findActivity()
 
@@ -980,8 +984,6 @@ private fun ReadyScreen(
                     GistLiveBrowse(
                         channels = ready.channels,
                         liveState = liveState,
-                        query = liveQuery,
-                        onQueryChange = { liveQuery = it },
                         onToggleFavorite = onToggleFavorite,
                         onSelect = onSelect,
                         playerConfig = config.player,
@@ -997,8 +999,6 @@ private fun ReadyScreen(
                         refreshVersion = refreshVersion,
                         onUpdateConfig = onRefreshConfig,
                         liveState = liveState,
-                        query = liveQuery,
-                        onQueryChange = { liveQuery = it },
                         onToggleFavorite = onToggleFavorite,
                         onSelect = onSelect,
                         xtreamCatalogCache = xtreamCatalogCache,
@@ -1021,8 +1021,6 @@ private fun ReadyScreen(
             else -> GistLiveBrowse(
                 channels = ready.channels,
                 liveState = liveState,
-                query = liveQuery,
-                onQueryChange = { liveQuery = it },
                 onToggleFavorite = onToggleFavorite,
                 onSelect = onSelect,
                 playerConfig = config.player,
@@ -1050,7 +1048,7 @@ private fun ReadyScreen(
         section = navSection,
         destinations = destinations,
         title = sectionTitle,
-        showTitle = activeSection != "home",
+        showTitle = activeSection !in setOf("home", "live", "channels"),
         onHome = { section = "home" },
         onSelect = { id ->
             section = if (id == "tv") {
@@ -1060,11 +1058,7 @@ private fun ReadyScreen(
             }
         },
         hints = when (activeSection) {
-            "home" -> listOf(
-                Hint("OK", "Abrir"),
-                Hint("◀ ▶", "Navegar"),
-                Hint("Back", "Salir"),
-            )
+            "home", "movies", "series" -> emptyList()
 
             "live", "channels" -> listOf(
                 Hint("OK", "Ver"),
@@ -1072,7 +1066,7 @@ private fun ReadyScreen(
                 Hint("Hold OK", "Favorito"),
             )
 
-            "movies", "series", "continue" -> listOf(
+            "continue" -> listOf(
                 Hint("OK", "Abrir"),
                 Hint("◀", "Categorías"),
                 Hint("Hold OK", "Favorito"),
@@ -1290,8 +1284,6 @@ private data class LiveRailEntry(
 private fun GistLiveBrowse(
     channels: List<Channel>,
     liveState: LiveState,
-    query: String,
-    onQueryChange: (String) -> Unit,
     onToggleFavorite: (Channel) -> Unit,
     onSelect: (PlaybackRequest) -> Unit,
     playerConfig: PlayerConfig,
@@ -1351,8 +1343,6 @@ private fun GistLiveBrowse(
                     recents = liveState.recents,
                     lastChannel = liveState.lastChannel,
                     startLastChannel = true,
-                    query = query,
-                    onQueryChange = onQueryChange,
                     onToggleFavorite = onToggleFavorite,
                     onSelect = onSelect,
                     section = LiveListSection.Favorites,
@@ -1365,8 +1355,6 @@ private fun GistLiveBrowse(
                     recents = liveState.recents,
                     lastChannel = liveState.lastChannel,
                     startLastChannel = true,
-                    query = query,
-                    onQueryChange = onQueryChange,
                     onToggleFavorite = onToggleFavorite,
                     onSelect = onSelect,
                     section = LiveListSection.Recents,
@@ -1384,8 +1372,6 @@ private fun GistLiveBrowse(
                         recents = liveState.recents,
                         lastChannel = liveState.lastChannel,
                         startLastChannel = true,
-                        query = query,
-                        onQueryChange = onQueryChange,
                         onToggleFavorite = onToggleFavorite,
                         onSelect = onSelect,
                         section = LiveListSection.Flat,
@@ -1399,8 +1385,6 @@ private fun GistLiveBrowse(
                     recents = liveState.recents,
                     lastChannel = liveState.lastChannel,
                     startLastChannel = true,
-                    query = query,
-                    onQueryChange = onQueryChange,
                     onToggleFavorite = onToggleFavorite,
                     onSelect = onSelect,
                     section = LiveListSection.All,
@@ -1417,8 +1401,6 @@ private fun XtreamLiveBrowse(
     refreshVersion: Int,
     onUpdateConfig: () -> Unit,
     liveState: LiveState,
-    query: String,
-    onQueryChange: (String) -> Unit,
     onToggleFavorite: (Channel) -> Unit,
     onSelect: (PlaybackRequest) -> Unit,
     xtreamCatalogCache: XtreamCatalogCache,
@@ -1637,8 +1619,6 @@ private fun XtreamLiveBrowse(
                                     recents = liveState.recents,
                                     lastChannel = liveState.lastChannel,
                                     startLastChannel = true,
-                                    query = query,
-                                    onQueryChange = onQueryChange,
                                     onToggleFavorite = onToggleFavorite,
                                     onSelect = onSelect,
                                     section = LiveListSection.Flat,
@@ -1683,8 +1663,6 @@ private fun ChannelList(
     recents: List<String>,
     lastChannel: String?,
     startLastChannel: Boolean,
-    query: String,
-    onQueryChange: (String) -> Unit,
     onToggleFavorite: (Channel) -> Unit,
     onSelect: (PlaybackRequest) -> Unit,
     section: LiveListSection = LiveListSection.All,
@@ -1692,12 +1670,11 @@ private fun ChannelList(
     showChannelNumbers: Boolean = true,
     useBaseNumbers: Boolean = true,
 ) {
-    val filtered = remember(channels, query) { ChannelSearch.filter(channels, query) }
-    val visible = remember(filtered, section, favorites, recents) {
+    val visible = remember(channels, section, favorites, recents) {
         when (section) {
-            LiveListSection.Favorites -> LiveState.resolve(favorites, filtered)
-            LiveListSection.Recents -> LiveState.resolve(recents, filtered)
-            else -> filtered
+            LiveListSection.Favorites -> LiveState.resolve(favorites, channels)
+            LiveListSection.Recents -> LiveState.resolve(recents, channels)
+            else -> channels
         }
     }
     val numberByKey = remember(channels) {
@@ -1785,8 +1762,7 @@ private fun ChannelList(
     val focusManager = LocalFocusManager.current
     var focusRequested by remember { mutableStateOf(false) }
 
-    // Focus the last channel only once per visit; filtering while typing must
-    // never steal focus from the search field.
+    // Focus the last channel only once per visit.
     LaunchedEffect(focusIndex) {
         if (!focusRequested && focusIndex >= 0) {
             focusRequested = true
@@ -1796,81 +1772,14 @@ private fun ChannelList(
         }
     }
 
-    var searchOpen by remember { mutableStateOf(false) }
-    val searchFocus = remember { FocusRequester() }
-    LaunchedEffect(searchOpen) {
-        if (searchOpen) {
-            delay(150)
-            runCatching { searchFocus.requestFocus() }
-        }
-    }
-
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            if (!searchOpen) {
-                QuickChip(label = "Buscar", onClick = { searchOpen = true })
-                if (query.isNotEmpty()) {
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        text = "Filtro: $query",
-                        color = StreamColors.AccentBright,
-                        fontSize = 11.sp,
-                        maxLines = 1,
-                        modifier = Modifier.weight(1f),
-                    )
-                    QuickChip(label = "Limpiar", onClick = { onQueryChange("") })
-                } else {
-                    Spacer(Modifier.weight(1f))
-                }
-            } else {
-                BasicTextField(
-                    value = query,
-                    onValueChange = onQueryChange,
-                    singleLine = true,
-                    textStyle = TextStyle(color = StreamColors.TextPrimary, fontSize = 15.sp),
-                    cursorBrush = SolidColor(StreamColors.AccentBright),
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(40.dp)
-                        .background(StreamColors.SurfaceSunken, RoundedCornerShape(10.dp))
-                        .border(1.dp, StreamColors.Border, RoundedCornerShape(10.dp))
-                        .focusRequester(searchFocus),
-                    decorationBox = { innerTextField ->
-                        Box(
-                            modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp),
-                            contentAlignment = Alignment.CenterStart,
-                        ) {
-                            if (query.isEmpty()) {
-                                Text(
-                                    text = "Buscar canal o grupo\u2026",
-                                    color = StreamColors.TextMuted,
-                                    fontSize = 15.sp,
-                                    maxLines = 1,
-                                )
-                            }
-                            innerTextField()
-                        }
-                    },
-                )
-                Spacer(Modifier.width(8.dp))
-                QuickChip(
-                    label = "Cerrar",
-                    onClick = {
-                        onQueryChange("")
-                        searchOpen = false
-                    },
-                )
-            }
-            Spacer(Modifier.width(10.dp))
+            Spacer(Modifier.weight(1f))
             Text(
-                text = if (query.isBlank()) {
-                    "${visible.size} canales"
-                } else {
-                    "${visible.size} de ${channels.size}"
-                },
+                text = "${visible.size} canales",
                 color = StreamColors.TextMuted,
                 fontSize = 12.sp,
                 maxLines = 1,
@@ -1879,13 +1788,7 @@ private fun ChannelList(
         Spacer(Modifier.height(12.dp))
 
         if (visible.isEmpty()) {
-            CenteredMessage(
-                if (query.isBlank()) {
-                    "No hay canales"
-                } else {
-                    "No hay canales para \"$query\""
-                },
-            )
+            CenteredMessage("No hay canales")
         } else {
             LazyColumn(
                 state = listState,
@@ -2023,17 +1926,15 @@ private fun LiveChannelRow(
                     }
                 }
                 Spacer(Modifier.width(10.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = channel.name,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f, fill = false),
-                        )
-                    }
+                Column(modifier = Modifier.weight(0.42f)) {
+                    Text(
+                        text = channel.name,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
                     val details = listOfNotNull(
                         channel.group?.takeIf { showGroup && it.isNotBlank() },
                         channel.provider?.takeIf(String::isNotBlank),
@@ -2044,11 +1945,14 @@ private fun LiveChannelRow(
                             color = StreamColors.TextMuted,
                             fontSize = 11.sp,
                             maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
+                }
+                Spacer(Modifier.width(10.dp))
+                Column(modifier = Modifier.weight(0.58f)) {
                     val current = epgNowNext?.current
                     if (current != null) {
-                        Spacer(Modifier.height(3.dp))
                         val left = EpgGuide.formatTimeLeft(current.stopMs - nowMs)
                         Text(
                             text = current.title + if (left.isNotEmpty()) "  \u00b7  $left" else "",
@@ -2076,29 +1980,30 @@ private fun LiveChannelRow(
 
 @Composable
 private fun StarButton(favorite: Boolean, onClick: () -> Unit) {
-    val shape = RoundedCornerShape(8.dp)
     var focused by remember { mutableStateOf(false) }
-    Surface(
-        onClick = onClick,
+    Box(
         modifier = Modifier
             .size(36.dp)
-            .border(1.dp, if (focused) StreamColors.AccentBright else Color.Transparent, shape),
-        shape = ClickableSurfaceDefaults.shape(shape = shape),
-        colors = ClickableSurfaceDefaults.colors(
-            containerColor = Color.Transparent,
-            contentColor = StreamColors.TextMuted,
-            focusedContainerColor = StreamColors.SurfaceRaised,
-            focusedContentColor = StreamColors.TextPrimary,
-        ),
-        scale = ClickableSurfaceDefaults.scale(focusedScale = 1f, pressedScale = 1f),
+            .onFocusChanged { focused = it.isFocused }
+            .clickable(onClick = onClick)
+            .semantics {
+                contentDescription = if (favorite) {
+                    "Quitar de favoritos"
+                } else {
+                    "Añadir a favoritos"
+                }
+            },
+        contentAlignment = Alignment.Center,
     ) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(
-                text = if (favorite) "\u2605" else "\u2606",
-                color = if (favorite) StreamColors.Favorite else StreamColors.TextMuted,
-                fontSize = 16.sp,
-            )
-        }
+        Text(
+            text = if (favorite) "\u2605" else "\u2606",
+            color = when {
+                focused -> StreamColors.TextPrimary
+                favorite -> StreamColors.Favorite
+                else -> StreamColors.TextMuted
+            },
+            fontSize = 18.sp,
+        )
     }
 }
 
@@ -2191,10 +2096,6 @@ private fun XtreamMoviesScreen(
             movie = selectedMovie,
             playerConfig = playerConfig,
             refreshVersion = refreshVersion,
-            favorite = FavoriteKeys.movie(selectedMovie.id) in favoriteKeys,
-            onToggleFavorite = {
-                onToggleFavoriteKey(FavoriteKeys.movie(selectedMovie.id))
-            },
             onBack = { detail = null },
             onPlay = onPlay,
         )
@@ -2352,8 +2253,6 @@ private fun MovieDetail(
     movie: XtreamMovie,
     playerConfig: PlayerConfig,
     refreshVersion: Int,
-    favorite: Boolean,
-    onToggleFavorite: () -> Unit,
     onBack: () -> Unit,
     onPlay: (Channel) -> Unit,
 ) {
@@ -2400,13 +2299,6 @@ private fun MovieDetail(
     Column(modifier = Modifier.fillMaxSize()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             QuickChip(label = "Volver", fontSize = 13.sp, onClick = onBack)
-            Spacer(Modifier.width(12.dp))
-            Spacer(Modifier.weight(1f))
-            QuickChip(
-                label = if (favorite) "\u2605 Favorito" else "\u2606 Favorito",
-                fontSize = 13.sp,
-                onClick = onToggleFavorite,
-            )
         }
         Spacer(Modifier.height(10.dp))
 
@@ -2418,20 +2310,9 @@ private fun MovieDetail(
                     VideoPreview(
                         channel = detailChannel,
                         playerConfig = playerConfig,
+                        onPlay = playMovie,
+                        modifier = Modifier.focusRequester(detailFocus),
                     )
-                    Spacer(Modifier.height(10.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        PillButton(
-                            label = "Reproducir",
-                            primary = true,
-                            modifier = Modifier.focusRequester(detailFocus),
-                            onClick = playMovie,
-                        )
-                        PillButton(
-                            label = if (favorite) "Quitar favorito" else "Favorito",
-                            onClick = onToggleFavorite,
-                        )
-                    }
                 }
                 Spacer(Modifier.width(18.dp))
                 Column(modifier = Modifier.weight(0.45f)) {
@@ -3157,10 +3038,6 @@ private fun UniversalSearchScreen(
             movie = movie,
             playerConfig = config.player,
             refreshVersion = refreshVersion,
-            favorite = FavoriteKeys.movie(movie.id) in favoriteKeys,
-            onToggleFavorite = {
-                onToggleFavoriteKey(FavoriteKeys.movie(movie.id))
-            },
             onBack = { selectedMovie = null },
             onPlay = { channel -> onPlay(PlaybackRequest(channel)) },
         )
@@ -4267,6 +4144,10 @@ private fun PlaybackScreen(
     var showQuality by remember(channel) { mutableStateOf(false) }
     var showSpeed by remember(channel) { mutableStateOf(false) }
     var showControls by remember(channel) { mutableStateOf(false) }
+    var isPlaying by remember(channel) { mutableStateOf(false) }
+    var chromeVisible by remember(channel) { mutableStateOf(true) }
+    var chromeTick by remember(channel) { mutableIntStateOf(0) }
+    var chromeFocused by remember(channel) { mutableStateOf(false) }
     var qualityOptions by remember(channel) { mutableStateOf<List<QualityOption>>(emptyList()) }
     var speed by remember(channel) { mutableStateOf(1f) }
     var aspectMode by remember(playerConfig.aspectMode) { mutableStateOf(playerConfig.aspectMode) }
@@ -4275,7 +4156,8 @@ private fun PlaybackScreen(
     var streamStats by remember(channel) { mutableStateOf<StreamStats?>(null) }
     val retryFocus = remember { FocusRequester() }
     val nextFocus = remember { FocusRequester() }
-    val tracksButtonFocus = remember { FocusRequester() }
+    val chromeFocus = remember { FocusRequester() }
+    val videoFocus = remember { FocusRequester() }
     val aspectButtonFocus = remember { FocusRequester() }
     val firstTrackFocus = remember { FocusRequester() }
     val statsFirstFocus = remember { FocusRequester() }
@@ -4385,8 +4267,9 @@ private fun PlaybackScreen(
                     qualityOptions = QualitySelection.options(tracks)
                 }
 
-                override fun onIsPlayingChanged(isPlaying: Boolean) {
-                    if (BuildConfig.DEBUG) Log.d("Streaming", "playing=$isPlaying")
+                override fun onIsPlayingChanged(playing: Boolean) {
+                    isPlaying = playing
+                    if (BuildConfig.DEBUG) Log.d("Streaming", "playing=$playing")
                 }
 
                 override fun onVideoSizeChanged(videoSize: VideoSize) {
@@ -4614,6 +4497,30 @@ private fun PlaybackScreen(
         }
     }
 
+    val overlaysOpen = showTracks || showStats || showQuality || showSpeed ||
+        showSubtitleSearch || showControls || showNext || errorMessage != null
+
+    LaunchedEffect(isPlaying, chromeVisible, chromeTick, overlaysOpen, chromeFocused) {
+        if (overlaysOpen) {
+            chromeVisible = true
+            return@LaunchedEffect
+        }
+        if (!isPlaying) {
+            chromeVisible = true
+            return@LaunchedEffect
+        }
+        if (!chromeVisible || chromeFocused) return@LaunchedEffect
+        delay(1_000)
+        chromeVisible = false
+    }
+
+    LaunchedEffect(chromeVisible) {
+        if (!chromeVisible) {
+            delay(40)
+            runCatching { videoFocus.requestFocus() }
+        }
+    }
+
     BackHandler(
         enabled = showTracks || showStats || showQuality || showSpeed || showSubtitleSearch || showControls,
     ) {
@@ -4636,7 +4543,7 @@ private fun PlaybackScreen(
                 showQuality -> qualityFirstFocus.requestFocus()
                 showSpeed -> speedFirstFocus.requestFocus()
                 showControls -> controlsFirstFocus.requestFocus()
-                else -> tracksButtonFocus.requestFocus()
+                else -> videoFocus.requestFocus()
             }
         }
     }
@@ -4652,11 +4559,31 @@ private fun PlaybackScreen(
         modifier = Modifier
             .fillMaxSize()
             .onPreviewKeyEvent { event ->
-                if (event.type != KeyEventType.KeyDown || showTracks || showStats || showQuality || showSpeed || showSubtitleSearch || showControls) {
+                if (event.type != KeyEventType.KeyDown || overlaysOpen) {
                     return@onPreviewKeyEvent false
                 }
+                val keyCode = event.nativeKeyEvent.keyCode
+                val isDpad = keyCode == AndroidKeyEvent.KEYCODE_DPAD_UP ||
+                    keyCode == AndroidKeyEvent.KEYCODE_DPAD_DOWN ||
+                    keyCode == AndroidKeyEvent.KEYCODE_DPAD_LEFT ||
+                    keyCode == AndroidKeyEvent.KEYCODE_DPAD_RIGHT ||
+                    keyCode == AndroidKeyEvent.KEYCODE_DPAD_CENTER ||
+                    keyCode == AndroidKeyEvent.KEYCODE_ENTER
+                if (isDpad && !chromeFocused) {
+                    chromeVisible = true
+                    chromeTick += 1
+                    scope.launch {
+                        delay(60)
+                        runCatching { chromeFocus.requestFocus() }
+                    }
+                    return@onPreviewKeyEvent true
+                }
+                if (keyCode != AndroidKeyEvent.KEYCODE_BACK) {
+                    chromeVisible = true
+                    chromeTick += 1
+                }
 
-                when (event.nativeKeyEvent.keyCode) {
+                when (keyCode) {
                     AndroidKeyEvent.KEYCODE_MEDIA_PLAY_PAUSE,
                     AndroidKeyEvent.KEYCODE_HEADSETHOOK,
                     -> {
@@ -4737,6 +4664,9 @@ private fun PlaybackScreen(
                 (LayoutInflater.from(viewContext)
                     .inflate(R.layout.player_view, null) as PlayerView).apply {
                     this.player = player
+                    useController = false
+                    isFocusable = false
+                    isClickable = false
                     keepScreenOn = true
                     applyAspect(this, aspectMode)
                 }
@@ -4748,116 +4678,82 @@ private fun PlaybackScreen(
             },
         )
 
-        Column(
+        Box(
             modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(
-                    start = 32.dp,
-                    top = if (channel.isVod) 96.dp else 32.dp,
-                    end = 32.dp,
-                )
-                .background(StreamColors.SurfaceRaised, RoundedCornerShape(8.dp))
-                .padding(horizontal = 12.dp, vertical = 6.dp),
-        ) {
-            Text(
-                text = channel.name,
-                color = Color.White,
-                fontSize = 18.sp,
-            )
-            if (!channel.isVod && liveConfig.zapping) {
-                Text(
-                    text = "CH+ / CH− cambia de canal",
-                    color = StreamColors.TextSecondary,
-                    fontSize = 13.sp,
-                )
+                .fillMaxSize()
+                .focusRequester(videoFocus)
+                .focusable(),
+        )
+
+        val actions = if (uiConfig.playerBar == "compact") {
+            listOf(PlayerAction.CONTROLS)
+        } else {
+            buildList {
+                if ("info" in uiConfig.playerButtons) add(PlayerAction.INFO)
+                if ("aspect" in uiConfig.playerButtons) add(PlayerAction.ASPECT)
+                if ("quality" in uiConfig.playerButtons && capabilities.canChangeQuality) {
+                    add(PlayerAction.QUALITY)
+                }
+                if ("speed" in uiConfig.playerButtons && capabilities.canChangeSpeed) {
+                    add(PlayerAction.SPEED)
+                }
+                if ("tracks" in uiConfig.playerButtons) add(PlayerAction.TRACKS)
+                if ("external" in uiConfig.playerButtons && capabilities.canOpenExternally) {
+                    add(PlayerAction.EXTERNAL)
+                }
             }
         }
 
-        if (uiConfig.playerBar == "compact") {
-            QuickChip(
-                label = "Controles",
-                fontSize = 14.sp,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(32.dp),
-                onClick = { showControls = true },
-            )
-        } else {
-            Row(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(32.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                if ("info" in uiConfig.playerButtons) {
-                    QuickChip(
-                        label = "Info",
-                        fontSize = 14.sp,
-                        onClick = {
-                            showTracks = false
-                            showStats = true
-                        },
-                    )
+        PlayerTopBar(
+            title = channel.name,
+            actions = actions,
+            visible = chromeVisible,
+            onAction = { action ->
+                when (action) {
+                    PlayerAction.INFO -> {
+                        showTracks = false
+                        showStats = true
+                    }
+
+                    PlayerAction.ASPECT -> {
+                        aspectTouched = true
+                        val next = nextAspectMode(aspectMode)
+                        aspectMode = next
+                        onAspectChange(next)
+                    }
+
+                    PlayerAction.QUALITY -> {
+                        showStats = false
+                        showTracks = false
+                        showSpeed = false
+                        showQuality = true
+                    }
+
+                    PlayerAction.SPEED -> {
+                        showStats = false
+                        showTracks = false
+                        showQuality = false
+                        showSpeed = true
+                    }
+
+                    PlayerAction.TRACKS -> {
+                        showStats = false
+                        showQuality = false
+                        showSpeed = false
+                        showTracks = true
+                    }
+
+                    PlayerAction.EXTERNAL -> openExternal()
+                    PlayerAction.CONTROLS -> showControls = true
                 }
-                if ("aspect" in uiConfig.playerButtons) {
-                    QuickChip(
-                        label = "Aspecto: ${aspectLabel(aspectMode)}",
-                        fontSize = 14.sp,
-                        modifier = Modifier.focusRequester(aspectButtonFocus),
-                        onClick = {
-                            aspectTouched = true
-                            val next = nextAspectMode(aspectMode)
-                            aspectMode = next
-                            onAspectChange(next)
-                        },
-                    )
-                }
-                if ("quality" in uiConfig.playerButtons && capabilities.canChangeQuality) {
-                    QuickChip(
-                        label = "Calidad",
-                        fontSize = 14.sp,
-                        onClick = {
-                            showStats = false
-                            showTracks = false
-                            showSpeed = false
-                            showQuality = true
-                        },
-                    )
-                }
-                if ("speed" in uiConfig.playerButtons && capabilities.canChangeSpeed) {
-                    QuickChip(
-                        label = "Velocidad ${speedLabel(speed)}",
-                        fontSize = 14.sp,
-                        onClick = {
-                            showStats = false
-                            showTracks = false
-                            showQuality = false
-                            showSpeed = true
-                        },
-                    )
-                }
-                if ("tracks" in uiConfig.playerButtons) {
-                    QuickChip(
-                        label = "Audio/Subs",
-                        fontSize = 14.sp,
-                        modifier = Modifier.focusRequester(tracksButtonFocus),
-                        onClick = {
-                            showStats = false
-                            showQuality = false
-                            showSpeed = false
-                            showTracks = true
-                        },
-                    )
-                }
-                if ("external" in uiConfig.playerButtons && capabilities.canOpenExternally) {
-                    QuickChip(
-                        label = "Externo",
-                        fontSize = 14.sp,
-                        onClick = openExternal,
-                    )
-                }
-            }
-        }
+            },
+            firstActionFocus = chromeFocus,
+            aspectFocus = aspectButtonFocus,
+            onFocusChanged = { chromeFocused = it },
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(start = 32.dp, top = 32.dp, end = 32.dp),
+        )
 
         val error = errorMessage
         if (error != null) {
@@ -5941,16 +5837,6 @@ private fun nextAspectMode(current: String): String {
     val modes = SettingsOptions.UI_ASPECT_MODES
     val index = modes.indexOf(current)
     return modes[(index + 1).takeIf { it in modes.indices } ?: 0]
-}
-
-private fun aspectLabel(mode: String): String = when (mode) {
-    "fill" -> "Rellenar"
-    "stretch" -> "Estirar"
-    "zoom" -> "Zoom"
-    "original" -> "Original"
-    "16:9" -> "16:9"
-    "4:3" -> "4:3"
-    else -> "Ajustar"
 }
 
 private fun applyAspect(view: PlayerView, mode: String) {

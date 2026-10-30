@@ -2,6 +2,7 @@ package com.andres3336.streaming.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,10 +26,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -194,21 +198,48 @@ fun LivePreviewPane(
 fun VideoPreview(
     channel: Channel,
     playerConfig: PlayerConfig,
+    onPlay: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val shape = RoundedCornerShape(Dimens.CardCorner)
+    var focused by remember { mutableStateOf(false) }
     Box(
         modifier = modifier
             .fillMaxWidth()
             .aspectRatio(16f / 9f)
-            .clip(RoundedCornerShape(Dimens.CardCorner))
+            .clip(shape)
             .background(Color.Black)
-            .border(1.dp, StreamColors.Border, RoundedCornerShape(Dimens.CardCorner)),
+            .border(
+                width = if (focused) 2.dp else 1.dp,
+                color = if (focused) StreamColors.AccentBright else StreamColors.Border,
+                shape = shape,
+            )
+            .onFocusChanged { focused = it.isFocused }
+            .clickable(onClick = onPlay)
+            .semantics { contentDescription = "Reproducir" },
     ) {
         ChannelPreview(
             channel = channel,
             playerConfig = playerConfig,
             networkConfig = NetworkConfig(),
         )
+        if (focused) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(12.dp)
+                    .background(StreamColors.SurfaceRaised, RoundedCornerShape(5.dp))
+                    .border(1.dp, StreamColors.Border, RoundedCornerShape(5.dp))
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+            ) {
+                Text(
+                    text = "OK \u00b7 Reproducir",
+                    color = StreamColors.TextPrimary,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+        }
     }
 }
 
@@ -319,6 +350,8 @@ private fun ChannelPreview(
                 resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
                 setShutterBackgroundColor(android.graphics.Color.BLACK)
                 setShowBuffering(PlayerView.SHOW_BUFFERING_NEVER)
+                isFocusable = false
+                isClickable = false
                 this.player = player
                 if (!started) setKeepContentOnPlayerReset(true)
             }

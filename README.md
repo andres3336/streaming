@@ -6,7 +6,7 @@ Target device: Google TV / Android TV, 32-bit ARM, Android 11, limited storage.
 
 ## Current status
 
-Version 0.16.0 is the flat visual pass. The app now uses a monochrome dark palette
+Version 0.16.1 is the flat visual pass. The app now uses a monochrome dark palette
 with a single slate-blue accent (`#485584`), solid fills and 1 px borders: no
 transparency, gradients or motion. The shell is a horizontal top navigation bar
 with icon and label items, a source chip, clock and keycap hints, plus a new **Inicio** landing screen with a hero
@@ -14,6 +14,14 @@ and rows. Live TV browses with a right-hand preview pane and the EPG below it; m
 and series show a hero for the focused poster and the synopsis under it. Live sources
 are merged into one **TV** destination with `En vivo` / `Canales` chips, and the app
 now owns its text scale so the TV's system font scale cannot break layouts.
+
+Inicio, Películas and Series no longer show the bottom keycap strip; TV drops its
+section title and inline search, and its channel rows put the EPG beside the name with
+a plain favorite star. The movie detail uses the preview itself as the play target.
+The player uses one icon-only top bar that hides after a second of playback and returns
+on any key; it stays visible while paused or when an overlay is open. The embedded
+ExoPlayer controller is disabled, so the custom bar is the only chrome; the media keys
+still play/pause and seek.
 
 Everything from 0.15.0 is still there: Xtream movies/series with metadata detail,
 universal fuzzy search across all sources, VOD subtitles with OpenSubtitles and local
