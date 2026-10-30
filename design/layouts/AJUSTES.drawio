@@ -1,0 +1,1347 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-10-30T12:59:40.000Z" agent="opencode" version="24.7.5" type="device">
+  <diagram id="page-1" name="00 · Leyenda">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-wire" value="Wireframe" parent="0" />
+        <mxCell id="layer-notes" value="Anotaciones" parent="0" />
+        <mxCell id="layer-labels" value="Etiquetas de elemento" parent="0" visible="0" />
+        <mxCell id="layer-measures" value="Medidas" parent="0" visible="0" />
+        <mxCell id="legend-title" value="LEYENDA · AJUSTES" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=bottom;fontSize=28;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="40" y="30" width="900" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-sub" value="Wireframe neutro · 1280×720 px · escala 4/3 desde 960×540 dp" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="40" y="72" width="900" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="conventions" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="40" y="130" width="720" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="conventions-title" value="CONVENCIONES" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="56" y="144" width="400" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-0" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F7F7;strokeColor=#333333;strokeWidth=2;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="182" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-0" value="Marco sólido" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="184" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-0" value="Pantalla del TV 1280×720 px" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="184" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-1" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="234" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-1" value="Panel" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="236" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-1" value="Superficie / tarjeta / fila" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="236" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-2" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8E8E8;strokeColor=#909090;strokeWidth=1;dashed=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="286" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-2" value="Placeholder" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="288" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-2" value="Imagen, póster, logo o vídeo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="288" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-3" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="338" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-3" value="Seleccionado" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="340" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-3" value="Sección o chip activo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="340" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-4" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=3;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="390" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-4" value="Foco" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="392" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-4" value="Borde negro de 3 px" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="392" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-5" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;dashed=1;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="442" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-5" value="Condicional" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="444" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-5" value="Elemento que puede no existir" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="444" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-6" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="494" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-6" value="Botón primario" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="496" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-6" value="Acción principal" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="496" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-7" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="546" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-7" value="Botón secundario" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="548" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-7" value="Acción alternativa" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="548" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="ids" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="800" y="130" width="720" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="ids-title" value="ID / ANOTACIONES" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="816" y="144" width="500" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ids-body" value="Cada bloque lógico es un grupo con un id estable y atributos de datos:&lt;br&gt;&lt;br&gt;&lt;b&gt;element&lt;/b&gt; = nombre lógico (ej. &lt;font color='#1A73E8'&gt;movies.hero&lt;/font&gt;)&lt;br&gt;&lt;b&gt;source&lt;/b&gt; = archivo/línea de referencia en Compose&lt;br&gt;&lt;br&gt;Las etiquetas azules &lt;font color='#1A73E8'&gt;[elemento]&lt;/font&gt; están en la capa &lt;b&gt;Etiquetas de elemento&lt;/b&gt; (oculta por defecto). La capa &lt;b&gt;Anotaciones&lt;/b&gt; contiene las notas de página; la capa &lt;b&gt;Medidas&lt;/b&gt; está oculta.&lt;br&gt;&lt;br&gt;Para editar: activa/desactiva capas en el panel derecho; mueve o redimensiona formas; edita el texto con doble clic. Para cambios de estructura, añade una nota o conserva el atributo &lt;b&gt;element&lt;/b&gt;." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="816" y="180" width="688" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-note" value="Ajustes es una LazyColumn de tarjetas. La tarjeta de identidad va arriba; después, secciones con filas de elección. Los cambios se aplican al siguiente inicio de reproducción." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="816" y="490" width="688" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-footer" value="Archivos: un .drawio por pantalla. Páginas: leyenda, viewport, scroll completo y estados secundarios. El XML está sin comprimir para que sea legible y editable." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="40" y="700" width="1480" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-2" name="01 · Ajustes · viewport">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-wire" value="Wireframe" parent="0" />
+        <mxCell id="layer-notes" value="Anotaciones" parent="0" />
+        <mxCell id="layer-labels" value="Etiquetas de elemento" parent="0" visible="0" />
+        <mxCell id="layer-measures" value="Medidas" parent="0" visible="0" />
+        <object label="" id="frame-settings" element="settings.frame" source="wireframe">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="110" width="1280" height="720" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="frame-bg-settings" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F7F7;strokeColor=#333333;strokeWidth=2;fontFamily=Helvetica;" vertex="1" parent="frame-settings">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="frame-label-settings" value="AJUSTES · VIEWPORT 1280×720" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontStyle=1;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="52" y="118" width="1256" height="18" as="geometry" />
+        </mxCell>
+        <object label="" id="nav" element="shell.nav" source="AppShell.kt:135">
+          <mxCell style="group" vertex="1" connectable="0" parent="frame-settings">
+            <mxGeometry x="27" y="16" width="1226" height="59" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-home" value="S" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=18;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="nav">
+          <mxGeometry x="0" y="9" width="40" height="40" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-home" element="nav.home">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="54.0" y="11.5" width="76" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-home-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="54.0" y="11.5" width="76" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-home-icon" value="●" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="61.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-home-label" value="Inicio" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="74.0" y="18" width="54" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-tv" element="nav.tv">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="136.0" y="11.5" width="54" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-tv-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="136.0" y="11.5" width="54" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-tv-icon" value="▣" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="143.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-tv-label" value="TV" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="156.0" y="18" width="32" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-movies" element="nav.movies">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="196.0" y="11.5" width="90" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-movies-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="196.0" y="11.5" width="90" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-movies-icon" value="▣" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="203.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-movies-label" value="Películas" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="216.0" y="18" width="68" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-series" element="nav.series">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="292.0" y="11.5" width="72" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-series-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="292.0" y="11.5" width="72" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-series-icon" value="▣" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="299.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-series-label" value="Series" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="312.0" y="18" width="50" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-continue" element="nav.continue">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="370.0" y="11.5" width="88" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-continue-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;dashed=1;" vertex="1" parent="nav">
+          <mxGeometry x="370.0" y="11.5" width="88" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-continue-icon" value="●" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="377.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-continue-label" value="Continuar*" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="390.0" y="18" width="66" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-search" element="nav.search">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="464.0" y="11.5" width="76" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-search-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="464.0" y="11.5" width="76" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-search-icon" value="●" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="471.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-search-label" value="Buscar" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="484.0" y="18" width="54" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-settings" element="nav.settings">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="546.0" y="11.5" width="82" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-settings-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="nav">
+          <mxGeometry x="546.0" y="11.5" width="82" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-settings-icon" value="●" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="553.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-settings-label" value="Ajustes" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=12;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="nav">
+          <mxGeometry x="566.0" y="18" width="60" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-clock" element="shell.clock">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="1150" y="4" width="76" height="50" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-clock-time" value="21:40" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=18;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="nav">
+          <mxGeometry x="1150" y="2" width="76" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-clock-date" value="vie 30 oct" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="1150" y="30" width="76" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-nav" value="[shell.nav]  S + secciones + chips + reloj" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="186.0" width="500" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="title" element="shell.title" source="AppShell.kt:96">
+          <mxCell style="group" vertex="1" connectable="0" parent="frame-settings">
+            <mxGeometry x="27" y="88" width="1226" height="34" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="title-main" value="Ajustes" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=bottom;fontSize=26;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="title">
+          <mxGeometry x="0" y="-4" width="650" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-title" value="[shell.title]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="300" height="18" as="geometry" />
+        </mxCell>
+        <object label="" id="settings-content" element="settings.content" source="MainActivity.kt:3717">
+          <mxCell style="group" vertex="1" connectable="0" parent="frame-settings">
+            <mxGeometry x="27" y="136" width="1226" height="535" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="settings-identity" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-content">
+          <mxGeometry x="0" y="0" width="1226" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-identity-avatar" value="S" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=18;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-content">
+          <mxGeometry x="14" y="16" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-identity-name" value="Streaming" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=15;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-content">
+          <mxGeometry x="72" y="12" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-identity-meta" value="v0.16.1  ·  Gist + Xtream" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="settings-content">
+          <mxGeometry x="72" y="38" width="400" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-header-bar-5187" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#333333;strokeColor=none;" vertex="1" parent="settings-content">
+          <mxGeometry x="0" y="98" width="3" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-header-5187" value="INICIO" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-content">
+          <mxGeometry x="10" y="94" width="500" height="22" as="geometry" />
+        </mxCell>
+        <object label="" id="choice-choice-iniciar-al-encender" element="settings.choice" source="MainActivity.kt:4184">
+          <mxCell style="group" vertex="1" connectable="0" parent="settings-content">
+            <mxGeometry x="0" y="122" width="1226" height="94" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="choice-bg-iniciar-al-encender" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-content">
+          <mxGeometry x="0" y="122" width="1226" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-label-iniciar-al-encender" value="Iniciar al encender" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-content">
+          <mxGeometry x="12" y="132" width="1046" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-current-iniciar-al-encender" value="Sí" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-content">
+          <mxGeometry x="1066" y="132" width="148" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-iniciar-al-encender-opt-0" value="Sí" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-content">
+          <mxGeometry x="12" y="162" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-iniciar-al-encender-opt-1" value="No" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-content">
+          <mxGeometry x="82" y="162" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-choice-iniciar-al-encender" value="[settings.choice]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="240" height="14" as="geometry" />
+        </mxCell>
+        <object label="" id="choice-choice-reanudar-al-despertar" element="settings.choice" source="MainActivity.kt:4184">
+          <mxCell style="group" vertex="1" connectable="0" parent="settings-content">
+            <mxGeometry x="0" y="224" width="1226" height="94" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="choice-bg-reanudar-al-despertar" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-content">
+          <mxGeometry x="0" y="224" width="1226" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-label-reanudar-al-despertar" value="Reanudar al despertar" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-content">
+          <mxGeometry x="12" y="234" width="1046" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-current-reanudar-al-despertar" value="Sí" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-content">
+          <mxGeometry x="1066" y="234" width="148" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-reanudar-al-despertar-opt-0" value="Sí" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-content">
+          <mxGeometry x="12" y="264" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-reanudar-al-despertar-opt-1" value="No" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-content">
+          <mxGeometry x="82" y="264" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-choice-reanudar-al-despertar" value="[settings.choice]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="240" height="14" as="geometry" />
+        </mxCell>
+        <object label="" id="choice-choice-usar-streaming-como-inicio" element="settings.choice" source="MainActivity.kt:4184">
+          <mxCell style="group" vertex="1" connectable="0" parent="settings-content">
+            <mxGeometry x="0" y="326" width="1226" height="94" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="choice-bg-usar-streaming-como-inicio" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-content">
+          <mxGeometry x="0" y="326" width="1226" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-label-usar-streaming-como-inicio" value="Usar Streaming como inicio" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-content">
+          <mxGeometry x="12" y="336" width="1046" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-current-usar-streaming-como-inicio" value="No" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-content">
+          <mxGeometry x="1066" y="336" width="148" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-usar-streaming-como-inicio-opt-0" value="Sí" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-content">
+          <mxGeometry x="12" y="366" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-usar-streaming-como-inicio-opt-1" value="No" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-content">
+          <mxGeometry x="82" y="366" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-choice-usar-streaming-como-inicio" value="[settings.choice]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="240" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-note-launcher" value="Si el TV bloquea el inicio automático, activa esto y elige Streaming al pulsar Home." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="settings-content">
+          <mxGeometry x="12" y="424" width="1100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-header-bar-8671" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#333333;strokeColor=none;" vertex="1" parent="settings-content">
+          <mxGeometry x="0" y="456" width="3" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-header-8671" value="REPRODUCCIÓN" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-content">
+          <mxGeometry x="10" y="452" width="500" height="22" as="geometry" />
+        </mxCell>
+        <object label="" id="choice-choice-b-fer" element="settings.choice" source="MainActivity.kt:4184">
+          <mxCell style="group" vertex="1" connectable="0" parent="settings-content">
+            <mxGeometry x="0" y="480" width="1226" height="94" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="choice-bg-b-fer" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-content">
+          <mxGeometry x="0" y="480" width="1226" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-label-b-fer" value="Búfer" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-content">
+          <mxGeometry x="12" y="490" width="1046" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-current-b-fer" value="Normal · 3 s" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-content">
+          <mxGeometry x="1066" y="490" width="148" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-b-fer-opt-0" value="Bajo · 2 s" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-content">
+          <mxGeometry x="12" y="520" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-b-fer-opt-1" value="Normal · 3 s" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-content">
+          <mxGeometry x="108" y="520" width="104" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-b-fer-opt-2" value="Alto · 5 s" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-content">
+          <mxGeometry x="218" y="520" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-choice-b-fer" value="[settings.choice]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="240" height="14" as="geometry" />
+        </mxCell>
+        <object label="" id="hints" element="shell.hints" source="AppShell.kt:466">
+          <mxCell style="group" vertex="1" connectable="0" parent="frame-settings">
+            <mxGeometry x="27" y="681" width="1226" height="22" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="hint-key-0" value="OK" style="rounded=1;arcSize=15;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="hints">
+          <mxGeometry x="1012.6" y="0" width="28" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="hint-label-0" value="Seleccionar" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="hints">
+          <mxGeometry x="1046.6" y="1" width="82.2" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="hint-key-1" value="Back" style="rounded=1;arcSize=15;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="hints">
+          <mxGeometry x="1128.8" y="0" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="hint-label-1" value="Volver" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="hints">
+          <mxGeometry x="1174.8" y="1" width="51.2" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="fold" value="" style="endArrow=none;dashed=1;html=1;rounded=0;strokeColor=#C62828;strokeWidth=1;exitX=0;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="frame-settings">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="0" y="720" as="sourcePoint" />
+            <mxPoint x="1280" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fold-label" value="BORDE INFERIOR DEL TV · 720 px" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontStyle=1;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="48" y="834" width="300" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="note-settings" value="Solo caben la identidad, la sección Inicio y el inicio de Reproducción. El resto está en la página 02 (scroll completo)." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="1360" y="110" width="200" height="120" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-3" name="02 · Ajustes · scroll completo">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="3600" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-wire" value="Wireframe" parent="0" />
+        <mxCell id="layer-notes" value="Anotaciones" parent="0" />
+        <mxCell id="layer-labels" value="Etiquetas de elemento" parent="0" visible="0" />
+        <mxCell id="layer-measures" value="Medidas" parent="0" visible="0" />
+        <object label="" id="frame-settings-scroll" element="settings-scroll.frame" source="wireframe">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="110" width="1280" height="3390" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="frame-bg-settings-scroll" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F7F7;strokeColor=#333333;strokeWidth=2;fontFamily=Helvetica;" vertex="1" parent="frame-settings-scroll">
+          <mxGeometry x="0" y="0" width="1280" height="3390" as="geometry" />
+        </mxCell>
+        <mxCell id="frame-label-settings-scroll" value="AJUSTES · CONTENIDO COMPLETO (SCROLL)" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontStyle=1;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="52" y="118" width="1256" height="18" as="geometry" />
+        </mxCell>
+        <object label="" id="nav" element="shell.nav" source="AppShell.kt:135">
+          <mxCell style="group" vertex="1" connectable="0" parent="frame-settings-scroll">
+            <mxGeometry x="27" y="16" width="1226" height="59" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-home" value="S" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=18;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="nav">
+          <mxGeometry x="0" y="9" width="40" height="40" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-home" element="nav.home">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="54.0" y="11.5" width="76" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-home-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="54.0" y="11.5" width="76" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-home-icon" value="●" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="61.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-home-label" value="Inicio" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="74.0" y="18" width="54" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-tv" element="nav.tv">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="136.0" y="11.5" width="54" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-tv-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="136.0" y="11.5" width="54" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-tv-icon" value="▣" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="143.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-tv-label" value="TV" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="156.0" y="18" width="32" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-movies" element="nav.movies">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="196.0" y="11.5" width="90" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-movies-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="196.0" y="11.5" width="90" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-movies-icon" value="▣" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="203.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-movies-label" value="Películas" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="216.0" y="18" width="68" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-series" element="nav.series">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="292.0" y="11.5" width="72" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-series-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="292.0" y="11.5" width="72" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-series-icon" value="▣" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="299.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-series-label" value="Series" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="312.0" y="18" width="50" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-continue" element="nav.continue">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="370.0" y="11.5" width="88" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-continue-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;dashed=1;" vertex="1" parent="nav">
+          <mxGeometry x="370.0" y="11.5" width="88" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-continue-icon" value="●" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="377.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-continue-label" value="Continuar*" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="390.0" y="18" width="66" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-search" element="nav.search">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="464.0" y="11.5" width="76" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-search-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="464.0" y="11.5" width="76" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-search-icon" value="●" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="471.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-search-label" value="Buscar" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="484.0" y="18" width="54" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-settings" element="nav.settings">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="546.0" y="11.5" width="82" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-settings-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="nav">
+          <mxGeometry x="546.0" y="11.5" width="82" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-settings-icon" value="●" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="553.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-settings-label" value="Ajustes" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=12;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="nav">
+          <mxGeometry x="566.0" y="18" width="60" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-clock" element="shell.clock">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="1150" y="4" width="76" height="50" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-clock-time" value="21:40" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=18;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="nav">
+          <mxGeometry x="1150" y="2" width="76" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-clock-date" value="vie 30 oct" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="1150" y="30" width="76" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-nav" value="[shell.nav]  S + secciones + chips + reloj" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="186.0" width="500" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="title" element="shell.title" source="AppShell.kt:96">
+          <mxCell style="group" vertex="1" connectable="0" parent="frame-settings-scroll">
+            <mxGeometry x="27" y="88" width="1226" height="34" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="title-main" value="Ajustes" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=bottom;fontSize=26;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="title">
+          <mxGeometry x="0" y="-4" width="650" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-title" value="[shell.title]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="300" height="18" as="geometry" />
+        </mxCell>
+        <object label="" id="settings-scroll-content" element="settings.content">
+          <mxCell style="group" vertex="1" connectable="0" parent="frame-settings-scroll">
+            <mxGeometry x="27" y="136" width="1226" height="3200" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="settings-scroll-identity" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="0" width="1226" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-scroll-avatar" value="S" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=18;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="14" y="16" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-scroll-name" value="Streaming" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=15;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="72" y="12" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-scroll-meta" value="v0.16.1  ·  Gist + Xtream" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="72" y="38" width="400" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-header-bar-5187" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#333333;strokeColor=none;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="98" width="3" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-header-5187" value="INICIO" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="10" y="94" width="500" height="22" as="geometry" />
+        </mxCell>
+        <object label="" id="choice-choice-iniciar-al-encender" element="settings.choice" source="MainActivity.kt:4184">
+          <mxCell style="group" vertex="1" connectable="0" parent="settings-scroll-content">
+            <mxGeometry x="0" y="124" width="1226" height="94" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="choice-bg-iniciar-al-encender" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="124" width="1226" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-label-iniciar-al-encender" value="Iniciar al encender" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="134" width="1046" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-current-iniciar-al-encender" value="Sí" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="1066" y="134" width="148" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-iniciar-al-encender-opt-0" value="Sí" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="164" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-iniciar-al-encender-opt-1" value="No" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="82" y="164" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-choice-iniciar-al-encender" value="[settings.choice]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="240" height="14" as="geometry" />
+        </mxCell>
+        <object label="" id="choice-choice-reanudar-al-despertar" element="settings.choice" source="MainActivity.kt:4184">
+          <mxCell style="group" vertex="1" connectable="0" parent="settings-scroll-content">
+            <mxGeometry x="0" y="226" width="1226" height="94" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="choice-bg-reanudar-al-despertar" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="226" width="1226" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-label-reanudar-al-despertar" value="Reanudar al despertar" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="236" width="1046" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-current-reanudar-al-despertar" value="Sí" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="1066" y="236" width="148" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-reanudar-al-despertar-opt-0" value="Sí" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="266" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-reanudar-al-despertar-opt-1" value="No" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="82" y="266" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-choice-reanudar-al-despertar" value="[settings.choice]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="240" height="14" as="geometry" />
+        </mxCell>
+        <object label="" id="choice-choice-usar-streaming-como-inicio" element="settings.choice" source="MainActivity.kt:4184">
+          <mxCell style="group" vertex="1" connectable="0" parent="settings-scroll-content">
+            <mxGeometry x="0" y="328" width="1226" height="94" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="choice-bg-usar-streaming-como-inicio" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="328" width="1226" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-label-usar-streaming-como-inicio" value="Usar Streaming como inicio" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="338" width="1046" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-current-usar-streaming-como-inicio" value="No" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="1066" y="338" width="148" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-usar-streaming-como-inicio-opt-0" value="Sí" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="368" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-usar-streaming-como-inicio-opt-1" value="No" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="82" y="368" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-choice-usar-streaming-como-inicio" value="[settings.choice]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="240" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-note-5187" value="Si el TV bloquea el inicio automático, activa esto y elige Streaming al pulsar Home. Se puede desactivar cuando quieras." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="426" width="1160" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-header-bar-8671" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#333333;strokeColor=none;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="458" width="3" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-header-8671" value="REPRODUCCIÓN" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="10" y="454" width="500" height="22" as="geometry" />
+        </mxCell>
+        <object label="" id="choice-choice-b-fer" element="settings.choice" source="MainActivity.kt:4184">
+          <mxCell style="group" vertex="1" connectable="0" parent="settings-scroll-content">
+            <mxGeometry x="0" y="484" width="1226" height="94" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="choice-bg-b-fer" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="484" width="1226" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-label-b-fer" value="Búfer" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="494" width="1046" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-current-b-fer" value="Normal · 3 s" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="1066" y="494" width="148" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-b-fer-opt-0" value="Bajo · 2 s" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="524" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-b-fer-opt-1" value="Normal · 3 s" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="108" y="524" width="104" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-b-fer-opt-2" value="Alto · 5 s" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="218" y="524" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-choice-b-fer" value="[settings.choice]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="240" height="14" as="geometry" />
+        </mxCell>
+        <object label="" id="choice-choice-preb-fer-tras-corte" element="settings.choice" source="MainActivity.kt:4184">
+          <mxCell style="group" vertex="1" connectable="0" parent="settings-scroll-content">
+            <mxGeometry x="0" y="586" width="1226" height="94" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="choice-bg-preb-fer-tras-corte" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="586" width="1226" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-label-preb-fer-tras-corte" value="Prebúfer tras corte" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="596" width="1046" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-current-preb-fer-tras-corte" value="3 s" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="1066" y="596" width="148" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-preb-fer-tras-corte-opt-0" value="1 s" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="626" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-preb-fer-tras-corte-opt-1" value="2 s" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="82" y="626" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-preb-fer-tras-corte-opt-2" value="3 s" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="152" y="626" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-preb-fer-tras-corte-opt-3" value="5 s" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="222" y="626" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-choice-preb-fer-tras-corte" value="[settings.choice]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="240" height="14" as="geometry" />
+        </mxCell>
+        <object label="" id="choice-choice-latencia-baja-en-vivo" element="settings.choice" source="MainActivity.kt:4184">
+          <mxCell style="group" vertex="1" connectable="0" parent="settings-scroll-content">
+            <mxGeometry x="0" y="688" width="1226" height="94" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="choice-bg-latencia-baja-en-vivo" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="688" width="1226" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-label-latencia-baja-en-vivo" value="Latencia baja (en vivo)" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="698" width="1046" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-current-latencia-baja-en-vivo" value="No" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="1066" y="698" width="148" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-latencia-baja-en-vivo-opt-0" value="Sí" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="728" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-latencia-baja-en-vivo-opt-1" value="No" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="82" y="728" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-choice-latencia-baja-en-vivo" value="[settings.choice]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="240" height="14" as="geometry" />
+        </mxCell>
+        <object label="" id="choice-choice-calidad-m-xima" element="settings.choice" source="MainActivity.kt:4184">
+          <mxCell style="group" vertex="1" connectable="0" parent="settings-scroll-content">
+            <mxGeometry x="0" y="790" width="1226" height="94" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="choice-bg-calidad-m-xima" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="790" width="1226" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-label-calidad-m-xima" value="Calidad máxima" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="800" width="1046" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-current-calidad-m-xima" value="Auto" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="1066" y="800" width="148" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-calidad-m-xima-opt-0" value="Auto" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="830" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-calidad-m-xima-opt-1" value="1080p" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="82" y="830" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-calidad-m-xima-opt-2" value="720p" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="152" y="830" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-calidad-m-xima-opt-3" value="480p" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="222" y="830" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-calidad-m-xima-opt-4" value="360p" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="292" y="830" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-choice-calidad-m-xima" value="[settings.choice]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="240" height="14" as="geometry" />
+        </mxCell>
+        <object label="" id="choice-choice-aspecto" element="settings.choice" source="MainActivity.kt:4184">
+          <mxCell style="group" vertex="1" connectable="0" parent="settings-scroll-content">
+            <mxGeometry x="0" y="892" width="1226" height="94" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="choice-bg-aspecto" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="892" width="1226" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-label-aspecto" value="Aspecto" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="902" width="1046" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-current-aspecto" value="Ajustar" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="1066" y="902" width="148" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-aspecto-opt-0" value="Ajustar" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="932" width="69" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-aspecto-opt-1" value="Rellenar" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="87" y="932" width="76" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-aspecto-opt-2" value="Estirar" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="169" y="932" width="69" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-aspecto-opt-3" value="Zoom" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="244" y="932" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-aspecto-opt-4" value="Original" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="314" y="932" width="76" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-aspecto-opt-5" value="16:9" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="396" y="932" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-aspecto-opt-6" value="4:3" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="466" y="932" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-choice-aspecto" value="[settings.choice]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="240" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-header-bar-9680" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#333333;strokeColor=none;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="998" width="3" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-header-9680" value="INTERFAZ" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="10" y="994" width="500" height="22" as="geometry" />
+        </mxCell>
+        <object label="" id="choice-choice-tama-o-del-texto" element="settings.choice" source="MainActivity.kt:4184">
+          <mxCell style="group" vertex="1" connectable="0" parent="settings-scroll-content">
+            <mxGeometry x="0" y="1024" width="1226" height="94" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="choice-bg-tama-o-del-texto" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="1024" width="1226" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-label-tama-o-del-texto" value="Tamaño del texto" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="1034" width="1046" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-current-tama-o-del-texto" value="100 %" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="1066" y="1034" width="148" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-tama-o-del-texto-opt-0" value="85 %" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="1064" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-tama-o-del-texto-opt-1" value="100 %" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="82" y="1064" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-tama-o-del-texto-opt-2" value="115 %" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="152" y="1064" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-tama-o-del-texto-opt-3" value="130 %" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="222" y="1064" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-choice-tama-o-del-texto" value="[settings.choice]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="240" height="14" as="geometry" />
+        </mxCell>
+        <object label="" id="choice-choice-escala-de-la-interfaz" element="settings.choice" source="MainActivity.kt:4184">
+          <mxCell style="group" vertex="1" connectable="0" parent="settings-scroll-content">
+            <mxGeometry x="0" y="1126" width="1226" height="94" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="choice-bg-escala-de-la-interfaz" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="1126" width="1226" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-label-escala-de-la-interfaz" value="Escala de la interfaz" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="1136" width="1046" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-current-escala-de-la-interfaz" value="100 %" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="1066" y="1136" width="148" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-escala-de-la-interfaz-opt-0" value="85 %" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="1166" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-escala-de-la-interfaz-opt-1" value="100 %" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="82" y="1166" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-escala-de-la-interfaz-opt-2" value="115 %" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="152" y="1166" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-choice-escala-de-la-interfaz" value="[settings.choice]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="240" height="14" as="geometry" />
+        </mxCell>
+        <object label="" id="choice-choice-barra-del-reproductor" element="settings.choice" source="MainActivity.kt:4184">
+          <mxCell style="group" vertex="1" connectable="0" parent="settings-scroll-content">
+            <mxGeometry x="0" y="1228" width="1226" height="94" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="choice-bg-barra-del-reproductor" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="1228" width="1226" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-label-barra-del-reproductor" value="Barra del reproductor" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="1238" width="1046" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-current-barra-del-reproductor" value="Completa" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="1066" y="1238" width="148" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-barra-del-reproductor-opt-0" value="Completa" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="1268" width="76" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-barra-del-reproductor-opt-1" value="Compacta" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="94" y="1268" width="76" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-choice-barra-del-reproductor" value="[settings.choice]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="240" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-player-buttons" value="Botones del reproductor" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="1330" width="400" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-pbutton-✓ Info" value="✓ Info" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="1356" width="80" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-pbutton-✓ Aspecto" value="✓ Aspecto" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="100" y="1356" width="87" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-pbutton-✓ Audio" value="✓ Audio" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="195" y="1356" width="80" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-pbutton-✓ Calidad" value="✓ Calidad" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="283" y="1356" width="87" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-pbutton-Velocidad" value="Velocidad" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="378" y="1356" width="87" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-pbutton-Externo" value="Externo" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="473" y="1356" width="80" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-header-bar-9788" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#333333;strokeColor=none;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="1410" width="3" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-header-9788" value="SUBTÍTULOS" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="10" y="1406" width="500" height="22" as="geometry" />
+        </mxCell>
+        <object label="" id="choice-choice-descargar-autom-ticamente" element="settings.choice" source="MainActivity.kt:4184">
+          <mxCell style="group" vertex="1" connectable="0" parent="settings-scroll-content">
+            <mxGeometry x="0" y="1436" width="1226" height="94" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="choice-bg-descargar-autom-ticamente" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="1436" width="1226" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-label-descargar-autom-ticamente" value="Descargar automáticamente" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="1446" width="1046" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-current-descargar-autom-ticamente" value="Sí" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="1066" y="1446" width="148" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-descargar-autom-ticamente-opt-0" value="Sí" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="1476" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-descargar-autom-ticamente-opt-1" value="No" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="82" y="1476" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-choice-descargar-autom-ticamente" value="[settings.choice]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="240" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-note-9788" value="OpenSubtitles: configurado (es, en)  ·  sin apiKey degrada sin bloquear." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="1534" width="1160" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-header-bar-2146" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#333333;strokeColor=none;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="1566" width="3" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-header-2146" value="CACHÉ VOD" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="10" y="1562" width="500" height="22" as="geometry" />
+        </mxCell>
+        <object label="" id="choice-choice-tama-o" element="settings.choice" source="MainActivity.kt:4184">
+          <mxCell style="group" vertex="1" connectable="0" parent="settings-scroll-content">
+            <mxGeometry x="0" y="1592" width="1226" height="94" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="choice-bg-tama-o" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="1592" width="1226" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-label-tama-o" value="Tamaño" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="1602" width="1046" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-current-tama-o" value="1024 MB" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="1066" y="1602" width="148" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-tama-o-opt-0" value="512 MB" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="1632" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-tama-o-opt-1" value="1024 MB" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="82" y="1632" width="69" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-tama-o-opt-2" value="2048 MB" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="157" y="1632" width="69" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-choice-tama-o" value="[settings.choice]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="240" height="14" as="geometry" />
+        </mxCell>
+        <object label="" id="choice-choice-borrar-al-iniciar" element="settings.choice" source="MainActivity.kt:4184">
+          <mxCell style="group" vertex="1" connectable="0" parent="settings-scroll-content">
+            <mxGeometry x="0" y="1694" width="1226" height="94" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="choice-bg-borrar-al-iniciar" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="1694" width="1226" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-label-borrar-al-iniciar" value="Borrar al iniciar" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="1704" width="1046" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-current-borrar-al-iniciar" value="No" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="1066" y="1704" width="148" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-borrar-al-iniciar-opt-0" value="Sí" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="1734" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-borrar-al-iniciar-opt-1" value="No" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="82" y="1734" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-choice-borrar-al-iniciar" value="[settings.choice]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="240" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-note-2146" value="Uso actual: 24 MB · solo películas y series" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="1792" width="1160" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-clear-cache" value="Borrar caché" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="1820" width="130" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-cache-usage" value="Uso actual: 24 MB · solo películas y series" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="154" y="1828" width="500" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-header-bar-5204" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#333333;strokeColor=none;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="1876" width="3" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-header-5204" value="RED" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="10" y="1872" width="500" height="22" as="geometry" />
+        </mxCell>
+        <object label="" id="choice-choice-solo-wifi-ethernet" element="settings.choice" source="MainActivity.kt:4184">
+          <mxCell style="group" vertex="1" connectable="0" parent="settings-scroll-content">
+            <mxGeometry x="0" y="1902" width="1226" height="94" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="choice-bg-solo-wifi-ethernet" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="1902" width="1226" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-label-solo-wifi-ethernet" value="Solo WiFi/Ethernet" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="1912" width="1046" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-current-solo-wifi-ethernet" value="No" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="1066" y="1912" width="148" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-solo-wifi-ethernet-opt-0" value="Sí" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="1942" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-solo-wifi-ethernet-opt-1" value="No" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="82" y="1942" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-choice-solo-wifi-ethernet" value="[settings.choice]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="240" height="14" as="geometry" />
+        </mxCell>
+        <object label="" id="choice-choice-ancho-de-banda-m-ximo" element="settings.choice" source="MainActivity.kt:4184">
+          <mxCell style="group" vertex="1" connectable="0" parent="settings-scroll-content">
+            <mxGeometry x="0" y="2004" width="1226" height="94" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="choice-bg-ancho-de-banda-m-ximo" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="2004" width="1226" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-label-ancho-de-banda-m-ximo" value="Ancho de banda máximo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="2014" width="1046" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-current-ancho-de-banda-m-ximo" value="Sin límite" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="1066" y="2014" width="148" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-ancho-de-banda-m-ximo-opt-0" value="Sin límite" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="2044" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-ancho-de-banda-m-ximo-opt-1" value="2 Mbps" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="108" y="2044" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-ancho-de-banda-m-ximo-opt-2" value="5 Mbps" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="178" y="2044" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-ancho-de-banda-m-ximo-opt-3" value="10 Mbps" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="248" y="2044" width="69" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-choice-ancho-de-banda-m-ximo" value="[settings.choice]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="240" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-header-bar-5737" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#333333;strokeColor=none;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="2110" width="3" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-header-5737" value="FUENTES" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="10" y="2106" width="500" height="22" as="geometry" />
+        </mxCell>
+        <object label="" id="choice-choice-ocultar-categor-as-con-menos-de" element="settings.choice" source="MainActivity.kt:4184">
+          <mxCell style="group" vertex="1" connectable="0" parent="settings-scroll-content">
+            <mxGeometry x="0" y="2136" width="1226" height="94" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="choice-bg-ocultar-categor-as-con-menos-de" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="2136" width="1226" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-label-ocultar-categor-as-con-menos-de" value="Ocultar categorías con menos de" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="2146" width="1046" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-current-ocultar-categor-as-con-menos-de" value="2 canales" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="1066" y="2146" width="148" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-ocultar-categor-as-con-menos-de-opt-0" value="Desactivado" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="2176" width="97" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-ocultar-categor-as-con-menos-de-opt-1" value="1 canal" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="115" y="2176" width="69" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-ocultar-categor-as-con-menos-de-opt-2" value="2 canales" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="190" y="2176" width="83" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-ocultar-categor-as-con-menos-de-opt-3" value="5 canales" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="279" y="2176" width="83" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-choice-ocultar-categor-as-con-menos-de" value="[settings.choice]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="240" height="14" as="geometry" />
+        </mxCell>
+        <object label="" id="choice-choice-ocultar-categor-as-vac-as" element="settings.choice" source="MainActivity.kt:4184">
+          <mxCell style="group" vertex="1" connectable="0" parent="settings-scroll-content">
+            <mxGeometry x="0" y="2238" width="1226" height="94" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="choice-bg-ocultar-categor-as-vac-as" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="2238" width="1226" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-label-ocultar-categor-as-vac-as" value="Ocultar categorías vacías" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="2248" width="1046" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-current-ocultar-categor-as-vac-as" value="Sí" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="1066" y="2248" width="148" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-ocultar-categor-as-vac-as-opt-0" value="Sí" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="2278" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="choice-ocultar-categor-as-vac-as-opt-1" value="No" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="82" y="2278" width="64" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-choice-ocultar-categor-as-vac-as" value="[settings.choice]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="240" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-note-5737" value="Comprobar fuentes: En vivo OK · Xtream OK" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="2336" width="1160" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-check-sources" value="Comprobar fuentes" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="2364" width="170" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-source-hint" value="Comprueba la lista M3U y el acceso a Xtream." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="194" y="2372" width="600" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-header-bar-5804" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#333333;strokeColor=none;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="2418" width="3" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-header-5804" value="DIAGNÓSTICO" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="10" y="2414" width="500" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-note-5804" value="Sin errores registrados.  ·  Borrar registro" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="2440" width="1160" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-error-log" value="Últimos errores:  Canal X · ERROR_CODE_IO_BAD_HTTP_STATUS · El canal no está disponible." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="2468" width="1100" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-clear-log" value="Borrar registro" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="2508" width="140" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-header-bar-3954" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#333333;strokeColor=none;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="0" y="2564" width="3" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-header-3954" value="CONFIGURACIÓN" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="10" y="2560" width="500" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-note-3954" value="Actualizar configuración  ·  Restablecer ajustes locales" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="2586" width="1160" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-refresh" value="Actualizar configuración" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="2614" width="220" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-refresh-hint" value="Se revisa al abrir y al volver a la app." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="244" y="2622" width="500" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-reset" value="Restablecer ajustes locales" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="2666" width="240" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-footer" value="Los valores del gist se usan cuando no hay un ajuste local. Los cambios se aplican al siguiente inicio de reproducción." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="settings-scroll-content">
+          <mxGeometry x="12" y="2718" width="1100" height="40" as="geometry" />
+        </mxCell>
+        <object label="" id="hints" element="shell.hints" source="AppShell.kt:466">
+          <mxCell style="group" vertex="1" connectable="0" parent="frame-settings-scroll">
+            <mxGeometry x="27" y="3350" width="1226" height="22" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="hint-key-0" value="OK" style="rounded=1;arcSize=15;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="hints">
+          <mxGeometry x="1012.6" y="0" width="28" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="hint-label-0" value="Seleccionar" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="hints">
+          <mxGeometry x="1046.6" y="1" width="82.2" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="hint-key-1" value="Back" style="rounded=1;arcSize=15;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="hints">
+          <mxGeometry x="1128.8" y="0" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="hint-label-1" value="Volver" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="hints">
+          <mxGeometry x="1174.8" y="1" width="51.2" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="fold-settings" value="" style="endArrow=none;dashed=1;html=1;rounded=0;strokeColor=#C62828;strokeWidth=1;exitX=0;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="frame-settings-scroll">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="0" y="720" as="sourcePoint" />
+            <mxPoint x="1280" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fold-settings-label" value="BORDE INFERIOR DEL TV · 720 px" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontStyle=1;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="48" y="834" width="300" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="note-settings-scroll" value="Todas las secciones y filas de Ajustes. Las filas con muchos chips pueden desbordar el ancho; el diseño real las mantiene en una sola línea y deja que el foco las recorra." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="1360" y="110" width="200" height="140" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-4" name="03 · Ajustes · estados">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-wire" value="Wireframe" parent="0" />
+        <mxCell id="layer-notes" value="Anotaciones" parent="0" />
+        <mxCell id="layer-labels" value="Etiquetas de elemento" parent="0" visible="0" />
+        <mxCell id="layer-measures" value="Medidas" parent="0" visible="0" />
+        <object label="" id="settings-state-0" element="settings.state[0]">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="110" width="720" height="240" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="settings-state-0-bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-state-0">
+          <mxGeometry x="0" y="0" width="720" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-state-0-title" value="Comprobando fuentes" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-state-0">
+          <mxGeometry x="14" y="10" width="500" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-state-0-desc" value="El botón se deshabilita y muestra 'Comprobando…'." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="settings-state-0">
+          <mxGeometry x="14" y="36" width="690" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-state-0-msg" value="Comprobando…" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-state-0">
+          <mxGeometry x="14" y="96" width="600" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-state-0-btn" value="Comprobando…" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-state-0">
+          <mxGeometry x="14" y="150" width="180" height="36" as="geometry" />
+        </mxCell>
+        <object label="" id="settings-state-1" element="settings.state[1]">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="820" y="110" width="720" height="240" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="settings-state-1-bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-state-1">
+          <mxGeometry x="0" y="0" width="720" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-state-1-title" value="Fuentes OK" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-state-1">
+          <mxGeometry x="14" y="10" width="500" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-state-1-desc" value="Resumen en acento; los mensajes por fuente quedan ocultos si están sanas." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="settings-state-1">
+          <mxGeometry x="14" y="36" width="690" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-state-1-msg" value="En vivo: OK · Xtream: OK" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-state-1">
+          <mxGeometry x="14" y="96" width="600" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-state-1-btn" value="Comprobar fuentes" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-state-1">
+          <mxGeometry x="14" y="150" width="170" height="36" as="geometry" />
+        </mxCell>
+        <object label="" id="settings-state-2" element="settings.state[2]">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="390" width="720" height="240" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="settings-state-2-bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-state-2">
+          <mxGeometry x="0" y="0" width="720" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-state-2-title" value="Fuentes con error" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-state-2">
+          <mxGeometry x="14" y="10" width="500" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-state-2-desc" value="Resumen en Danger y detalle por fuente debajo." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="settings-state-2">
+          <mxGeometry x="14" y="36" width="690" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-state-2-msg" value="En vivo: error de red" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-state-2">
+          <mxGeometry x="14" y="96" width="600" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-state-2-btn" value="Comprobar fuentes" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-state-2">
+          <mxGeometry x="14" y="150" width="170" height="36" as="geometry" />
+        </mxCell>
+        <object label="" id="settings-state-3" element="settings.state[3]">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="820" y="390" width="720" height="240" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="settings-state-3-bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-state-3">
+          <mxGeometry x="0" y="0" width="720" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-state-3-title" value="Caché borrada" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-state-3">
+          <mxGeometry x="14" y="10" width="500" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-state-3-desc" value="El botón cambia a 'Caché borrada' y el uso pasa a 0 MB." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="settings-state-3">
+          <mxGeometry x="14" y="36" width="690" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-state-3-msg" value="Caché borrada · Uso actual: 0 MB" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-state-3">
+          <mxGeometry x="14" y="96" width="600" height="34" as="geometry" />
+        </mxCell>
+        <object label="" id="settings-state-4" element="settings.state[4]">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="670" width="720" height="240" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="settings-state-4-bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-state-4">
+          <mxGeometry x="0" y="0" width="720" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-state-4-title" value="Actualizando config" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-state-4">
+          <mxGeometry x="14" y="10" width="500" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-state-4-desc" value="El botón se deshabilita mientras se fuerza el gist." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="settings-state-4">
+          <mxGeometry x="14" y="36" width="690" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-state-4-msg" value="Actualizando…" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-state-4">
+          <mxGeometry x="14" y="96" width="600" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-state-4-btn" value="Actualizando…" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="settings-state-4">
+          <mxGeometry x="14" y="150" width="180" height="36" as="geometry" />
+        </mxCell>
+        <object label="" id="settings-state-5" element="settings.state[5]">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="820" y="670" width="720" height="240" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="settings-state-5-bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="settings-state-5">
+          <mxGeometry x="0" y="0" width="720" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-state-5-title" value="Subtítulos sin API key" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-state-5">
+          <mxGeometry x="14" y="10" width="500" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-state-5-desc" value="El estado se muestra en Danger, pero la app sigue funcionando." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="settings-state-5">
+          <mxGeometry x="14" y="36" width="690" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="settings-state-5-msg" value="OpenSubtitles: falta apiKey en el gist" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="settings-state-5">
+          <mxGeometry x="14" y="96" width="600" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="note-settings-states" value="Estados de la comprobación de fuentes, caché, actualización de config y subtítulos." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="1360" y="110" width="200" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

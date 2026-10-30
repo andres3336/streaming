@@ -1,0 +1,1056 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-10-30T12:59:40.000Z" agent="opencode" version="24.7.5" type="device">
+  <diagram id="page-1" name="00 · Leyenda">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-wire" value="Wireframe" parent="0" />
+        <mxCell id="layer-notes" value="Anotaciones" parent="0" />
+        <mxCell id="layer-labels" value="Etiquetas de elemento" parent="0" visible="0" />
+        <mxCell id="layer-measures" value="Medidas" parent="0" visible="0" />
+        <mxCell id="legend-title" value="LEYENDA · BUSCAR" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=bottom;fontSize=28;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="40" y="30" width="900" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-sub" value="Wireframe neutro · 1280×720 px · escala 4/3 desde 960×540 dp" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="40" y="72" width="900" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="conventions" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="40" y="130" width="720" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="conventions-title" value="CONVENCIONES" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="56" y="144" width="400" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-0" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F7F7;strokeColor=#333333;strokeWidth=2;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="182" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-0" value="Marco sólido" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="184" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-0" value="Pantalla del TV 1280×720 px" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="184" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-1" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="234" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-1" value="Panel" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="236" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-1" value="Superficie / tarjeta / fila" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="236" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-2" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8E8E8;strokeColor=#909090;strokeWidth=1;dashed=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="286" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-2" value="Placeholder" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="288" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-2" value="Imagen, póster, logo o vídeo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="288" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-3" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="338" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-3" value="Seleccionado" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="340" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-3" value="Sección o chip activo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="340" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-4" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=3;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="390" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-4" value="Foco" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="392" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-4" value="Borde negro de 3 px" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="392" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-5" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;dashed=1;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="442" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-5" value="Condicional" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="444" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-5" value="Elemento que puede no existir" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="444" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-6" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="494" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-6" value="Botón primario" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="496" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-6" value="Acción principal" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="496" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-7" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="546" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-7" value="Botón secundario" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="548" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-7" value="Acción alternativa" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="548" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="ids" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="800" y="130" width="720" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="ids-title" value="ID / ANOTACIONES" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="816" y="144" width="500" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ids-body" value="Cada bloque lógico es un grupo con un id estable y atributos de datos:&lt;br&gt;&lt;br&gt;&lt;b&gt;element&lt;/b&gt; = nombre lógico (ej. &lt;font color='#1A73E8'&gt;movies.hero&lt;/font&gt;)&lt;br&gt;&lt;b&gt;source&lt;/b&gt; = archivo/línea de referencia en Compose&lt;br&gt;&lt;br&gt;Las etiquetas azules &lt;font color='#1A73E8'&gt;[elemento]&lt;/font&gt; están en la capa &lt;b&gt;Etiquetas de elemento&lt;/b&gt; (oculta por defecto). La capa &lt;b&gt;Anotaciones&lt;/b&gt; contiene las notas de página; la capa &lt;b&gt;Medidas&lt;/b&gt; está oculta.&lt;br&gt;&lt;br&gt;Para editar: activa/desactiva capas en el panel derecho; mueve o redimensiona formas; edita el texto con doble clic. Para cambios de estructura, añade una nota o conserva el atributo &lt;b&gt;element&lt;/b&gt;." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="816" y="180" width="688" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-note" value="Buscar es universal: En vivo, Canales, Películas y Series. La entrada se debounca 250 ms; el catálogo Xtream se carga bajo demanda y se cachea por sesión." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="816" y="490" width="688" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-footer" value="Archivos: un .drawio por pantalla. Páginas: leyenda, viewport, scroll completo y estados secundarios. El XML está sin comprimir para que sea legible y editable." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="40" y="700" width="1480" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-2" name="01 · Buscar · vacío">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-wire" value="Wireframe" parent="0" />
+        <mxCell id="layer-notes" value="Anotaciones" parent="0" />
+        <mxCell id="layer-labels" value="Etiquetas de elemento" parent="0" visible="0" />
+        <mxCell id="layer-measures" value="Medidas" parent="0" visible="0" />
+        <object label="" id="frame-search-empty" element="search-empty.frame" source="wireframe">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="110" width="1280" height="720" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="frame-bg-search-empty" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F7F7;strokeColor=#333333;strokeWidth=2;fontFamily=Helvetica;" vertex="1" parent="frame-search-empty">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="frame-label-search-empty" value="BUSCAR · ESTADO VACÍO" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontStyle=1;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="52" y="118" width="1256" height="18" as="geometry" />
+        </mxCell>
+        <object label="" id="nav" element="shell.nav" source="AppShell.kt:135">
+          <mxCell style="group" vertex="1" connectable="0" parent="frame-search-empty">
+            <mxGeometry x="27" y="16" width="1226" height="59" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-home" value="S" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=18;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="nav">
+          <mxGeometry x="0" y="9" width="40" height="40" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-home" element="nav.home">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="54.0" y="11.5" width="76" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-home-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="54.0" y="11.5" width="76" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-home-icon" value="●" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="61.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-home-label" value="Inicio" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="74.0" y="18" width="54" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-tv" element="nav.tv">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="136.0" y="11.5" width="54" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-tv-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="136.0" y="11.5" width="54" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-tv-icon" value="▣" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="143.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-tv-label" value="TV" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="156.0" y="18" width="32" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-movies" element="nav.movies">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="196.0" y="11.5" width="90" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-movies-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="196.0" y="11.5" width="90" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-movies-icon" value="▣" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="203.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-movies-label" value="Películas" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="216.0" y="18" width="68" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-series" element="nav.series">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="292.0" y="11.5" width="72" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-series-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="292.0" y="11.5" width="72" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-series-icon" value="▣" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="299.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-series-label" value="Series" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="312.0" y="18" width="50" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-continue" element="nav.continue">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="370.0" y="11.5" width="88" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-continue-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;dashed=1;" vertex="1" parent="nav">
+          <mxGeometry x="370.0" y="11.5" width="88" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-continue-icon" value="●" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="377.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-continue-label" value="Continuar*" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="390.0" y="18" width="66" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-search" element="nav.search">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="464.0" y="11.5" width="76" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-search-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="nav">
+          <mxGeometry x="464.0" y="11.5" width="76" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-search-icon" value="●" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="471.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-search-label" value="Buscar" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=12;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="nav">
+          <mxGeometry x="484.0" y="18" width="54" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-settings" element="nav.settings">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="546.0" y="11.5" width="82" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-settings-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="546.0" y="11.5" width="82" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-settings-icon" value="●" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="553.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-settings-label" value="Ajustes" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="566.0" y="18" width="60" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-clock" element="shell.clock">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="1150" y="4" width="76" height="50" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-clock-time" value="21:40" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=18;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="nav">
+          <mxGeometry x="1150" y="2" width="76" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-clock-date" value="vie 30 oct" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="1150" y="30" width="76" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-nav" value="[shell.nav]  S + secciones + chips + reloj" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="186.0" width="500" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="title" element="shell.title" source="AppShell.kt:96">
+          <mxCell style="group" vertex="1" connectable="0" parent="frame-search-empty">
+            <mxGeometry x="27" y="88" width="1226" height="34" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="title-main" value="Buscar" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=bottom;fontSize=26;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="title">
+          <mxGeometry x="0" y="-4" width="650" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-title" value="[shell.title]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="300" height="18" as="geometry" />
+        </mxCell>
+        <object label="" id="search-empty-content" element="search.content">
+          <mxCell style="group" vertex="1" connectable="0" parent="frame-search-empty">
+            <mxGeometry x="27" y="136" width="1226" height="535" as="geometry" />
+          </mxCell>
+        </object>
+        <object label="" id="search-field" element="search.input" source="MainActivity.kt:3190">
+          <mxCell style="group" vertex="1" connectable="0" parent="search-empty-content">
+            <mxGeometry x="0" y="0" width="1100" height="56" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="search-input" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#F2F2F2;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="search-field">
+          <mxGeometry x="0" y="0" width="1100" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="search-placeholder" value="Buscar en vivo, canales, películas y series…" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=15;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="search-field">
+          <mxGeometry x="14" y="16" width="990" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-search" value="[search.input]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="298.0" width="240" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="search-empty-count" value="47.646 elementos" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="search-empty-content">
+          <mxGeometry x="1110" y="14" width="116" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="filter-chips" element="search.filters" source="MainActivity.kt:3242">
+          <mxCell style="group" vertex="1" connectable="0" parent="search-empty-content">
+            <mxGeometry x="0" y="68" width="600" height="32" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="filter-todo" value="Todo" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="filter-chips">
+          <mxGeometry x="0" y="0" width="70" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="filter-en-vivo" value="En vivo" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="filter-chips">
+          <mxGeometry x="78" y="0" width="80" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="filter-canales" value="Canales" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="filter-chips">
+          <mxGeometry x="166" y="0" width="80" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="filter-películas" value="Películas" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="filter-chips">
+          <mxGeometry x="254" y="0" width="96" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="filter-series" value="Series" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="filter-chips">
+          <mxGeometry x="358" y="0" width="72" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-filters" value="[search.filters]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="67.0" y="348.0" width="240" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="search-empty-message" value="Escribe para buscar en vivo, canales, películas y series." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="search-empty-content">
+          <mxGeometry x="0" y="180" width="1226" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="search-empty-icon" value="⌕" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=26;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="search-empty-content">
+          <mxGeometry x="0" y="240" width="56" height="56" as="geometry" />
+        </mxCell>
+        <object label="" id="hints" element="shell.hints" source="AppShell.kt:466">
+          <mxCell style="group" vertex="1" connectable="0" parent="frame-search-empty">
+            <mxGeometry x="27" y="681" width="1226" height="22" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="hint-key-0" value="OK" style="rounded=1;arcSize=15;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="hints">
+          <mxGeometry x="1012.6" y="0" width="28" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="hint-label-0" value="Seleccionar" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="hints">
+          <mxGeometry x="1046.6" y="1" width="82.2" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="hint-key-1" value="Back" style="rounded=1;arcSize=15;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="hints">
+          <mxGeometry x="1128.8" y="0" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="hint-label-1" value="Volver" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="hints">
+          <mxGeometry x="1174.8" y="1" width="51.2" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="fold" value="" style="endArrow=none;dashed=1;html=1;rounded=0;strokeColor=#C62828;strokeWidth=1;exitX=0;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="frame-search-empty">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="0" y="720" as="sourcePoint" />
+            <mxPoint x="1280" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fold-label" value="BORDE INFERIOR DEL TV · 720 px" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontStyle=1;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="48" y="834" width="300" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="note-search-empty" value="El campo tiene foco al entrar. Down mueve el foco a los filtros/resultados. Limpiar borra la query y vuelve al estado vacío." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="1360" y="110" width="200" height="120" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-3" name="02 · Buscar · resultados">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-wire" value="Wireframe" parent="0" />
+        <mxCell id="layer-notes" value="Anotaciones" parent="0" />
+        <mxCell id="layer-labels" value="Etiquetas de elemento" parent="0" visible="0" />
+        <mxCell id="layer-measures" value="Medidas" parent="0" visible="0" />
+        <object label="" id="frame-search-results" element="search-results.frame" source="wireframe">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="110" width="1280" height="720" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="frame-bg-search-results" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F7F7;strokeColor=#333333;strokeWidth=2;fontFamily=Helvetica;" vertex="1" parent="frame-search-results">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="frame-label-search-results" value="BUSCAR · RESULTADOS" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontStyle=1;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="52" y="118" width="1256" height="18" as="geometry" />
+        </mxCell>
+        <object label="" id="nav" element="shell.nav" source="AppShell.kt:135">
+          <mxCell style="group" vertex="1" connectable="0" parent="frame-search-results">
+            <mxGeometry x="27" y="16" width="1226" height="59" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-home" value="S" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=18;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="nav">
+          <mxGeometry x="0" y="9" width="40" height="40" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-home" element="nav.home">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="54.0" y="11.5" width="76" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-home-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="54.0" y="11.5" width="76" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-home-icon" value="●" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="61.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-home-label" value="Inicio" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="74.0" y="18" width="54" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-tv" element="nav.tv">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="136.0" y="11.5" width="54" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-tv-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="136.0" y="11.5" width="54" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-tv-icon" value="▣" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="143.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-tv-label" value="TV" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="156.0" y="18" width="32" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-movies" element="nav.movies">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="196.0" y="11.5" width="90" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-movies-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="196.0" y="11.5" width="90" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-movies-icon" value="▣" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="203.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-movies-label" value="Películas" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="216.0" y="18" width="68" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-series" element="nav.series">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="292.0" y="11.5" width="72" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-series-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="292.0" y="11.5" width="72" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-series-icon" value="▣" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="299.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-series-label" value="Series" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="312.0" y="18" width="50" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-continue" element="nav.continue">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="370.0" y="11.5" width="88" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-continue-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;dashed=1;" vertex="1" parent="nav">
+          <mxGeometry x="370.0" y="11.5" width="88" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-continue-icon" value="●" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="377.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-continue-label" value="Continuar*" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="390.0" y="18" width="66" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-search" element="nav.search">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="464.0" y="11.5" width="76" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-search-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="nav">
+          <mxGeometry x="464.0" y="11.5" width="76" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-search-icon" value="●" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="471.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-search-label" value="Buscar" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=12;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="nav">
+          <mxGeometry x="484.0" y="18" width="54" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-settings" element="nav.settings">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="546.0" y="11.5" width="82" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-settings-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="546.0" y="11.5" width="82" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-settings-icon" value="●" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="553.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-settings-label" value="Ajustes" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="566.0" y="18" width="60" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-clock" element="shell.clock">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="1150" y="4" width="76" height="50" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-clock-time" value="21:40" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=18;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="nav">
+          <mxGeometry x="1150" y="2" width="76" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-clock-date" value="vie 30 oct" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="1150" y="30" width="76" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-nav" value="[shell.nav]  S + secciones + chips + reloj" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="186.0" width="500" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="title" element="shell.title" source="AppShell.kt:96">
+          <mxCell style="group" vertex="1" connectable="0" parent="frame-search-results">
+            <mxGeometry x="27" y="88" width="1226" height="34" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="title-main" value="Buscar" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=bottom;fontSize=26;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="title">
+          <mxGeometry x="0" y="-4" width="650" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-title" value="[shell.title]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="300" height="18" as="geometry" />
+        </mxCell>
+        <object label="" id="search-results-content" element="search.content">
+          <mxCell style="group" vertex="1" connectable="0" parent="frame-search-results">
+            <mxGeometry x="27" y="136" width="1226" height="535" as="geometry" />
+          </mxCell>
+        </object>
+        <object label="" id="search-field" element="search.input" source="MainActivity.kt:3190">
+          <mxCell style="group" vertex="1" connectable="0" parent="search-results-content">
+            <mxGeometry x="0" y="0" width="1030" height="56" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="search-input" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#F2F2F2;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="search-field">
+          <mxGeometry x="0" y="0" width="944" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="search-placeholder" value="nino" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=15;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="search-field">
+          <mxGeometry x="14" y="16" width="920" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="search-clear" value="Limpiar" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="search-field">
+          <mxGeometry x="952" y="8" width="78" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-search" value="[search.input]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="298.0" width="240" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="search-results-count" value="12 resultados" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="search-results-content">
+          <mxGeometry x="1038" y="14" width="188" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="filter-chips" element="search.filters" source="MainActivity.kt:3242">
+          <mxCell style="group" vertex="1" connectable="0" parent="search-results-content">
+            <mxGeometry x="0" y="68" width="600" height="32" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="filter-todo" value="Todo" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="filter-chips">
+          <mxGeometry x="0" y="0" width="70" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="filter-en-vivo" value="En vivo" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="filter-chips">
+          <mxGeometry x="78" y="0" width="80" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="filter-canales" value="Canales" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="filter-chips">
+          <mxGeometry x="166" y="0" width="80" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="filter-películas" value="Películas" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="filter-chips">
+          <mxGeometry x="254" y="0" width="96" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="filter-series" value="Series" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="filter-chips">
+          <mxGeometry x="358" y="0" width="72" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-filters" value="[search.filters]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="67.0" y="348.0" width="240" height="18" as="geometry" />
+        </mxCell>
+        <object label="" id="result-ninotchka" element="search.result">
+          <mxCell style="group" vertex="1" connectable="0" parent="search-results-content">
+            <mxGeometry x="0" y="116" width="1226" height="58" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="result-bg-ninotchka" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#F2F2F2;strokeColor=#000000;strokeWidth=3;fontFamily=Helvetica;" vertex="1" parent="result-ninotchka">
+          <mxGeometry x="0" y="0" width="1226" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="result-title-ninotchka" value="Ninotchka" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="result-ninotchka">
+          <mxGeometry x="10" y="10" width="1006" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="result-sub-ninotchka" value="Comedia · 1939" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="result-ninotchka">
+          <mxGeometry x="10" y="32" width="1006" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="result-kind-ninotchka" value="Película" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="result-ninotchka">
+          <mxGeometry x="1106" y="16" width="110" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-result-ninotchka" value="[search.result]  título · subtítulo · tipo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="348.0" width="320" height="14" as="geometry" />
+        </mxCell>
+        <object label="" id="result-ni-o-santo" element="search.result">
+          <mxCell style="group" vertex="1" connectable="0" parent="search-results-content">
+            <mxGeometry x="0" y="166" width="1226" height="58" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="result-bg-ni-o-santo" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="result-ni-o-santo">
+          <mxGeometry x="0" y="0" width="1226" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="result-title-ni-o-santo" value="Niño Santo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="result-ni-o-santo">
+          <mxGeometry x="10" y="10" width="1006" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="result-sub-ni-o-santo" value="Drama · 2021" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="result-ni-o-santo">
+          <mxGeometry x="10" y="32" width="1006" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="result-kind-ni-o-santo" value="Película" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="result-ni-o-santo">
+          <mxGeometry x="1106" y="16" width="110" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-result-ni-o-santo" value="[search.result]  título · subtítulo · tipo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="398.0" width="320" height="14" as="geometry" />
+        </mxCell>
+        <object label="" id="result-ni-o-ardilla" element="search.result">
+          <mxCell style="group" vertex="1" connectable="0" parent="search-results-content">
+            <mxGeometry x="0" y="216" width="1226" height="58" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="result-bg-ni-o-ardilla" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="result-ni-o-ardilla">
+          <mxGeometry x="0" y="0" width="1226" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="result-title-ni-o-ardilla" value="Niño Ardilla" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="result-ni-o-ardilla">
+          <mxGeometry x="10" y="10" width="1006" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="result-sub-ni-o-ardilla" value="Infantil · 2019" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="result-ni-o-ardilla">
+          <mxGeometry x="10" y="32" width="1006" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="result-kind-ni-o-ardilla" value="Película" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="result-ni-o-ardilla">
+          <mxGeometry x="1106" y="16" width="110" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-result-ni-o-ardilla" value="[search.result]  título · subtítulo · tipo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="448.0" width="320" height="14" as="geometry" />
+        </mxCell>
+        <object label="" id="result-noticias-ni-o" element="search.result">
+          <mxCell style="group" vertex="1" connectable="0" parent="search-results-content">
+            <mxGeometry x="0" y="266" width="1226" height="58" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="result-bg-noticias-ni-o" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="result-noticias-ni-o">
+          <mxGeometry x="0" y="0" width="1226" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="result-title-noticias-ni-o" value="Noticias niño" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="result-noticias-ni-o">
+          <mxGeometry x="10" y="10" width="1006" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="result-sub-noticias-ni-o" value="Noticias" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="result-noticias-ni-o">
+          <mxGeometry x="10" y="32" width="1006" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="result-kind-noticias-ni-o" value="En vivo" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="result-noticias-ni-o">
+          <mxGeometry x="1106" y="16" width="110" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-result-noticias-ni-o" value="[search.result]  título · subtítulo · tipo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="498.0" width="320" height="14" as="geometry" />
+        </mxCell>
+        <object label="" id="result-canal-ni-o" element="search.result">
+          <mxCell style="group" vertex="1" connectable="0" parent="search-results-content">
+            <mxGeometry x="0" y="316" width="1226" height="58" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="result-bg-canal-ni-o" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="result-canal-ni-o">
+          <mxGeometry x="0" y="0" width="1226" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="result-title-canal-ni-o" value="Canal Niño" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="result-canal-ni-o">
+          <mxGeometry x="10" y="10" width="1006" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="result-sub-canal-ni-o" value="Infantil" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="result-canal-ni-o">
+          <mxGeometry x="10" y="32" width="1006" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="result-kind-canal-ni-o" value="Canales" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="result-canal-ni-o">
+          <mxGeometry x="1106" y="16" width="110" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-result-canal-ni-o" value="[search.result]  título · subtítulo · tipo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="548.0" width="320" height="14" as="geometry" />
+        </mxCell>
+        <object label="" id="result-serie-ni-o" element="search.result">
+          <mxCell style="group" vertex="1" connectable="0" parent="search-results-content">
+            <mxGeometry x="0" y="366" width="1226" height="58" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="result-bg-serie-ni-o" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="result-serie-ni-o">
+          <mxGeometry x="0" y="0" width="1226" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="result-title-serie-ni-o" value="Serie Niño" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="result-serie-ni-o">
+          <mxGeometry x="10" y="10" width="1006" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="result-sub-serie-ni-o" value="Comedia · 2020" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="result-serie-ni-o">
+          <mxGeometry x="10" y="32" width="1006" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="result-kind-serie-ni-o" value="Serie" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="result-serie-ni-o">
+          <mxGeometry x="1106" y="16" width="110" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-result-serie-ni-o" value="[search.result]  título · subtítulo · tipo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="598.0" width="320" height="14" as="geometry" />
+        </mxCell>
+        <object label="" id="result-el-ni-o-y-el-mar" element="search.result">
+          <mxCell style="group" vertex="1" connectable="0" parent="search-results-content">
+            <mxGeometry x="0" y="416" width="1226" height="58" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="result-bg-el-ni-o-y-el-mar" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="result-el-ni-o-y-el-mar">
+          <mxGeometry x="0" y="0" width="1226" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="result-title-el-ni-o-y-el-mar" value="El niño y el mar" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="result-el-ni-o-y-el-mar">
+          <mxGeometry x="10" y="10" width="1006" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="result-sub-el-ni-o-y-el-mar" value="Aventura · 2018" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="result-el-ni-o-y-el-mar">
+          <mxGeometry x="10" y="32" width="1006" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="result-kind-el-ni-o-y-el-mar" value="Película" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="result-el-ni-o-y-el-mar">
+          <mxGeometry x="1106" y="16" width="110" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-result-el-ni-o-y-el-mar" value="[search.result]  título · subtítulo · tipo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="648.0" width="320" height="14" as="geometry" />
+        </mxCell>
+        <object label="" id="result-ni-os-del-barrio" element="search.result">
+          <mxCell style="group" vertex="1" connectable="0" parent="search-results-content">
+            <mxGeometry x="0" y="466" width="1226" height="58" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="result-bg-ni-os-del-barrio" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="result-ni-os-del-barrio">
+          <mxGeometry x="0" y="0" width="1226" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="result-title-ni-os-del-barrio" value="Niños del barrio" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="result-ni-os-del-barrio">
+          <mxGeometry x="10" y="10" width="1006" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="result-sub-ni-os-del-barrio" value="Documental · 2017" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="result-ni-os-del-barrio">
+          <mxGeometry x="10" y="32" width="1006" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="result-kind-ni-os-del-barrio" value="Película" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="result-ni-os-del-barrio">
+          <mxGeometry x="1106" y="16" width="110" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-result-ni-os-del-barrio" value="[search.result]  título · subtítulo · tipo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="698.0" width="320" height="14" as="geometry" />
+        </mxCell>
+        <object label="" id="hints" element="shell.hints" source="AppShell.kt:466">
+          <mxCell style="group" vertex="1" connectable="0" parent="frame-search-results">
+            <mxGeometry x="27" y="681" width="1226" height="22" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="hint-key-0" value="OK" style="rounded=1;arcSize=15;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="hints">
+          <mxGeometry x="959.6" y="0" width="28" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="hint-label-0" value="Abrir" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="hints">
+          <mxGeometry x="993.6" y="1" width="45.0" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="hint-key-1" value="◀ ▶" style="rounded=1;arcSize=15;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="hints">
+          <mxGeometry x="1038.6" y="0" width="33" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="hint-label-1" value="Filtro" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="hints">
+          <mxGeometry x="1077.6" y="1" width="51.2" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="hint-key-2" value="Back" style="rounded=1;arcSize=15;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="hints">
+          <mxGeometry x="1128.8" y="0" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="hint-label-2" value="Volver" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="hints">
+          <mxGeometry x="1174.8" y="1" width="51.2" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="note-search-results" value="Resultados rankeados por similitud; se pliegan acentos y ñ/n. La etiqueta de tipo abre ficha (película/serie) o reproduce (canal/en vivo)." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="1360" y="110" width="200" height="120" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-4" name="03 · Buscar · sin resultados">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-wire" value="Wireframe" parent="0" />
+        <mxCell id="layer-notes" value="Anotaciones" parent="0" />
+        <mxCell id="layer-labels" value="Etiquetas de elemento" parent="0" visible="0" />
+        <mxCell id="layer-measures" value="Medidas" parent="0" visible="0" />
+        <object label="" id="frame-search-none" element="search-none.frame" source="wireframe">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="110" width="1280" height="720" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="frame-bg-search-none" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F7F7;strokeColor=#333333;strokeWidth=2;fontFamily=Helvetica;" vertex="1" parent="frame-search-none">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="frame-label-search-none" value="BUSCAR · SIN RESULTADOS" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontStyle=1;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="52" y="118" width="1256" height="18" as="geometry" />
+        </mxCell>
+        <object label="" id="nav" element="shell.nav" source="AppShell.kt:135">
+          <mxCell style="group" vertex="1" connectable="0" parent="frame-search-none">
+            <mxGeometry x="27" y="16" width="1226" height="59" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-home" value="S" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=18;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="nav">
+          <mxGeometry x="0" y="9" width="40" height="40" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-home" element="nav.home">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="54.0" y="11.5" width="76" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-home-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="54.0" y="11.5" width="76" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-home-icon" value="●" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="61.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-home-label" value="Inicio" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="74.0" y="18" width="54" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-tv" element="nav.tv">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="136.0" y="11.5" width="54" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-tv-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="136.0" y="11.5" width="54" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-tv-icon" value="▣" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="143.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-tv-label" value="TV" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="156.0" y="18" width="32" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-movies" element="nav.movies">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="196.0" y="11.5" width="90" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-movies-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="196.0" y="11.5" width="90" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-movies-icon" value="▣" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="203.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-movies-label" value="Películas" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="216.0" y="18" width="68" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-series" element="nav.series">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="292.0" y="11.5" width="72" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-series-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="292.0" y="11.5" width="72" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-series-icon" value="▣" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="299.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-series-label" value="Series" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="312.0" y="18" width="50" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-continue" element="nav.continue">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="370.0" y="11.5" width="88" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-continue-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;dashed=1;" vertex="1" parent="nav">
+          <mxGeometry x="370.0" y="11.5" width="88" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-continue-icon" value="●" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="377.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-continue-label" value="Continuar*" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="390.0" y="18" width="66" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-search" element="nav.search">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="464.0" y="11.5" width="76" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-search-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="nav">
+          <mxGeometry x="464.0" y="11.5" width="76" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-search-icon" value="●" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="471.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-search-label" value="Buscar" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=12;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="nav">
+          <mxGeometry x="484.0" y="18" width="54" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-item-settings" element="nav.settings">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="546.0" y="11.5" width="82" height="36" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-item-settings-box" value="" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="546.0" y="11.5" width="82" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-settings-icon" value="●" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="553.0" y="18" width="14" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-item-settings-label" value="Ajustes" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="566.0" y="18" width="60" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="nav-clock" element="shell.clock">
+          <mxCell style="group" vertex="1" connectable="0" parent="nav">
+            <mxGeometry x="1150" y="4" width="76" height="50" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="nav-clock-time" value="21:40" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=18;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="nav">
+          <mxGeometry x="1150" y="2" width="76" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-clock-date" value="vie 30 oct" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="nav">
+          <mxGeometry x="1150" y="30" width="76" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-nav" value="[shell.nav]  S + secciones + chips + reloj" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="186.0" width="500" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="title" element="shell.title" source="AppShell.kt:96">
+          <mxCell style="group" vertex="1" connectable="0" parent="frame-search-none">
+            <mxGeometry x="27" y="88" width="1226" height="34" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="title-main" value="Buscar" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=bottom;fontSize=26;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="title">
+          <mxGeometry x="0" y="-4" width="650" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-title" value="[shell.title]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="232.0" width="300" height="18" as="geometry" />
+        </mxCell>
+        <object label="" id="search-none-content" element="search.content">
+          <mxCell style="group" vertex="1" connectable="0" parent="frame-search-none">
+            <mxGeometry x="27" y="136" width="1226" height="535" as="geometry" />
+          </mxCell>
+        </object>
+        <object label="" id="search-field" element="search.input" source="MainActivity.kt:3190">
+          <mxCell style="group" vertex="1" connectable="0" parent="search-none-content">
+            <mxGeometry x="0" y="0" width="1030" height="56" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="search-input" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#F2F2F2;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="search-field">
+          <mxGeometry x="0" y="0" width="944" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="search-placeholder" value="zzzz" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=15;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="search-field">
+          <mxGeometry x="14" y="16" width="920" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="search-clear" value="Limpiar" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="search-field">
+          <mxGeometry x="952" y="8" width="78" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-search" value="[search.input]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="71.0" y="298.0" width="240" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="search-none-count" value="0 resultados" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="search-none-content">
+          <mxGeometry x="1038" y="14" width="188" height="20" as="geometry" />
+        </mxCell>
+        <object label="" id="filter-chips" element="search.filters" source="MainActivity.kt:3242">
+          <mxCell style="group" vertex="1" connectable="0" parent="search-none-content">
+            <mxGeometry x="0" y="68" width="600" height="32" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="filter-todo" value="Todo" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="filter-chips">
+          <mxGeometry x="0" y="0" width="70" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="filter-en-vivo" value="En vivo" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="filter-chips">
+          <mxGeometry x="78" y="0" width="80" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="filter-canales" value="Canales" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="filter-chips">
+          <mxGeometry x="166" y="0" width="80" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="filter-películas" value="Películas" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="filter-chips">
+          <mxGeometry x="254" y="0" width="96" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="filter-series" value="Series" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="filter-chips">
+          <mxGeometry x="358" y="0" width="72" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="ann-filters" value="[search.filters]" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-labels">
+          <mxGeometry x="67.0" y="348.0" width="240" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="search-none-message" value="Sin resultados para &quot;zzzz&quot;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=15;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="search-none-content">
+          <mxGeometry x="0" y="180" width="1226" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="search-none-hint" value="Prueba con otro título, canal o género." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="search-none-content">
+          <mxGeometry x="0" y="214" width="1226" height="24" as="geometry" />
+        </mxCell>
+        <object label="" id="hints" element="shell.hints" source="AppShell.kt:466">
+          <mxCell style="group" vertex="1" connectable="0" parent="frame-search-none">
+            <mxGeometry x="27" y="681" width="1226" height="22" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="hint-key-0" value="OK" style="rounded=1;arcSize=15;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="hints">
+          <mxGeometry x="1012.6" y="0" width="28" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="hint-label-0" value="Seleccionar" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="hints">
+          <mxGeometry x="1046.6" y="1" width="82.2" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="hint-key-1" value="Back" style="rounded=1;arcSize=15;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=9;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="hints">
+          <mxGeometry x="1128.8" y="0" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="hint-label-1" value="Volver" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="hints">
+          <mxGeometry x="1174.8" y="1" width="51.2" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="note-search-none" value="El estado vacío de resultados mantiene los filtros visibles para corregir la búsqueda." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="1360" y="110" width="200" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-5" name="04 · Buscar · estados">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-wire" value="Wireframe" parent="0" />
+        <mxCell id="layer-notes" value="Anotaciones" parent="0" />
+        <mxCell id="layer-labels" value="Etiquetas de elemento" parent="0" visible="0" />
+        <mxCell id="layer-measures" value="Medidas" parent="0" visible="0" />
+        <object label="" id="search-state-0" element="search.state[0]">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="110" width="720" height="240" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="search-state-0-bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="search-state-0">
+          <mxGeometry x="0" y="0" width="720" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="search-state-0-title" value="Cargando catálogo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="search-state-0">
+          <mxGeometry x="14" y="10" width="500" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="search-state-0-desc" value="Mientras Xtream carga en vivo, canales, películas y series." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="search-state-0">
+          <mxGeometry x="14" y="36" width="690" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="search-state-0-msg" value="Cargando catálogo de Xtream…" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=15;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="search-state-0">
+          <mxGeometry x="14" y="96" width="500" height="28" as="geometry" />
+        </mxCell>
+        <object label="" id="search-state-1" element="search.state[1]">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="820" y="110" width="720" height="240" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="search-state-1-bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="search-state-1">
+          <mxGeometry x="0" y="0" width="720" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="search-state-1-title" value="Cargando más" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="search-state-1">
+          <mxGeometry x="14" y="10" width="500" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="search-state-1-desc" value="El índice ya tiene En vivo y sigue incorporando VOD; el contador lo indica." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="search-state-1">
+          <mxGeometry x="14" y="36" width="690" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="search-state-1-msg" value="12.345 · cargando más…" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=15;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="search-state-1">
+          <mxGeometry x="14" y="96" width="500" height="28" as="geometry" />
+        </mxCell>
+        <object label="" id="search-state-2" element="search.state[2]">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="390" width="720" height="240" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="search-state-2-bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="search-state-2">
+          <mxGeometry x="0" y="0" width="720" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="search-state-2-title" value="Error de fuente" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="search-state-2">
+          <mxGeometry x="14" y="10" width="500" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="search-state-2-desc" value="Fallo al cargar el catálogo y sin resultados locales." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="search-state-2">
+          <mxGeometry x="14" y="36" width="690" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="search-state-2-msg" value="No se pudo cargar el catálogo." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=15;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="search-state-2">
+          <mxGeometry x="14" y="96" width="500" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="search-state-2-retry" value="Reintentar" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="search-state-2">
+          <mxGeometry x="14" y="150" width="120" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="search-state-2-update" value="Actualizar configuración" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="search-state-2">
+          <mxGeometry x="146" y="150" width="210" height="36" as="geometry" />
+        </mxCell>
+        <object label="" id="search-state-3" element="search.state[3]">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="820" y="390" width="720" height="240" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="search-state-3-bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="search-state-3">
+          <mxGeometry x="0" y="0" width="720" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="search-state-3-title" value="Filtro activo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="search-state-3">
+          <mxGeometry x="14" y="10" width="500" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="search-state-3-desc" value="Un chip de tipo restringe los resultados sin borrar la query." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="search-state-3">
+          <mxGeometry x="14" y="36" width="690" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="search-state-3-msg" value="Películas · 8 resultados" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=15;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="search-state-3">
+          <mxGeometry x="14" y="96" width="500" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="search-state-3-chip" value="Películas" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="search-state-3">
+          <mxGeometry x="14" y="150" width="100" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="note-search-states" value="El catálogo se cachea por sesión. Si falla, se conservan los resultados locales ya cargados. Ver 'Ficha' en PELÍCULAS/SERIES." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="1360" y="110" width="200" height="120" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,830 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-10-30T12:59:40.000Z" agent="opencode" version="24.7.5" type="device">
+  <diagram id="page-1" name="00 · Leyenda">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-wire" value="Wireframe" parent="0" />
+        <mxCell id="layer-notes" value="Anotaciones" parent="0" />
+        <mxCell id="layer-labels" value="Etiquetas de elemento" parent="0" visible="0" />
+        <mxCell id="layer-measures" value="Medidas" parent="0" visible="0" />
+        <mxCell id="legend-title" value="LEYENDA · REPRODUCTOR" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=bottom;fontSize=28;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="40" y="30" width="900" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-sub" value="Wireframe neutro · 1280×720 px · escala 4/3 desde 960×540 dp" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="40" y="72" width="900" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="conventions" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="40" y="130" width="720" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="conventions-title" value="CONVENCIONES" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="56" y="144" width="400" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-0" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F7F7;strokeColor=#333333;strokeWidth=2;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="182" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-0" value="Marco sólido" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="184" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-0" value="Pantalla del TV 1280×720 px" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="184" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-1" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="234" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-1" value="Panel" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="236" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-1" value="Superficie / tarjeta / fila" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="236" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-2" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8E8E8;strokeColor=#909090;strokeWidth=1;dashed=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="286" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-2" value="Placeholder" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="288" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-2" value="Imagen, póster, logo o vídeo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="288" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-3" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="338" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-3" value="Seleccionado" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="340" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-3" value="Sección o chip activo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="340" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-4" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=3;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="390" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-4" value="Foco" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="392" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-4" value="Borde negro de 3 px" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="392" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-5" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;dashed=1;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="442" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-5" value="Condicional" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="444" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-5" value="Elemento que puede no existir" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="444" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-6" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="494" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-6" value="Botón primario" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="496" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-6" value="Acción principal" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="496" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-swatch-7" value="" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="58" y="546" width="56" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-name-7" value="Botón secundario" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="126" y="548" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="conv-desc-7" value="Acción alternativa" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="300" y="548" width="420" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="ids" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="800" y="130" width="720" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="ids-title" value="ID / ANOTACIONES" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="816" y="144" width="500" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ids-body" value="Cada bloque lógico es un grupo con un id estable y atributos de datos:&lt;br&gt;&lt;br&gt;&lt;b&gt;element&lt;/b&gt; = nombre lógico (ej. &lt;font color='#1A73E8'&gt;movies.hero&lt;/font&gt;)&lt;br&gt;&lt;b&gt;source&lt;/b&gt; = archivo/línea de referencia en Compose&lt;br&gt;&lt;br&gt;Las etiquetas azules &lt;font color='#1A73E8'&gt;[elemento]&lt;/font&gt; están en la capa &lt;b&gt;Etiquetas de elemento&lt;/b&gt; (oculta por defecto). La capa &lt;b&gt;Anotaciones&lt;/b&gt; contiene las notas de página; la capa &lt;b&gt;Medidas&lt;/b&gt; está oculta.&lt;br&gt;&lt;br&gt;Para editar: activa/desactiva capas en el panel derecho; mueve o redimensiona formas; edita el texto con doble clic. Para cambios de estructura, añade una nota o conserva el atributo &lt;b&gt;element&lt;/b&gt;." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="816" y="180" width="688" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-note" value="El player es una pantalla completa sin barra superior de la app. La barra completa/compacta y los overlays se dibujan sobre el vídeo. Los overlays comparten fondo modal y foco inicial." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="816" y="490" width="688" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-footer" value="Archivos: un .drawio por pantalla. Páginas: leyenda, viewport, scroll completo y estados secundarios. El XML está sin comprimir para que sea legible y editable." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="40" y="700" width="1480" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-2" name="01 · Player · en vivo">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-wire" value="Wireframe" parent="0" />
+        <mxCell id="layer-notes" value="Anotaciones" parent="0" />
+        <mxCell id="layer-labels" value="Etiquetas de elemento" parent="0" visible="0" />
+        <mxCell id="layer-measures" value="Medidas" parent="0" visible="0" />
+        <object label="" id="frame-player-live" element="player-live.frame" source="wireframe">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="110" width="1280" height="720" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="frame-bg-player-live" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F7F7;strokeColor=#333333;strokeWidth=2;fontFamily=Helvetica;" vertex="1" parent="frame-player-live">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="frame-label-player-live" value="REPRODUCTOR · EN VIVO · barra completa" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontStyle=1;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="52" y="118" width="1256" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="player-live-video" value="VÍDEO A PANTALLA COMPLETA" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D0D0D0;strokeColor=#606060;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-live">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="player-live-title-chip" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#F2F2F2;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-live">
+          <mxGeometry x="32" y="32" width="420" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="player-live-title" value="Título del contenido" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-live">
+          <mxGeometry x="44" y="40" width="390" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="player-live-zap" value="CH+ / CH− cambia de canal" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="frame-player-live">
+          <mxGeometry x="44" y="62" width="390" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="player-live-btn-0" value="Info" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-live">
+          <mxGeometry x="818" y="32" width="70" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="player-live-btn-1" value="Aspecto: Ajustar" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-live">
+          <mxGeometry x="896" y="32" width="152" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="player-live-btn-2" value="Calidad" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-live">
+          <mxGeometry x="1056" y="32" width="80" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="player-live-btn-3" value="Audio/Subs" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-live">
+          <mxGeometry x="1144" y="32" width="104" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="player-live-note" value="La barra superior del player no es la barra de la app: no hay navegación de secciones." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="1360" y="110" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="note-player-live" value="En vivo: título arriba izquierda, botones Info/Aspecto/Calidad/Audio-Subs arriba derecha. Las teclas CH+/CH− cambian de canal si el zapping está activo." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="1360" y="220" width="200" height="120" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-3" name="02 · Player · VOD">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-wire" value="Wireframe" parent="0" />
+        <mxCell id="layer-notes" value="Anotaciones" parent="0" />
+        <mxCell id="layer-labels" value="Etiquetas de elemento" parent="0" visible="0" />
+        <mxCell id="layer-measures" value="Medidas" parent="0" visible="0" />
+        <object label="" id="frame-player-vod" element="player-vod.frame" source="wireframe">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="110" width="1280" height="720" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="frame-bg-player-vod" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F7F7;strokeColor=#333333;strokeWidth=2;fontFamily=Helvetica;" vertex="1" parent="frame-player-vod">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="frame-label-player-vod" value="REPRODUCTOR · VOD · barra completa" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontStyle=1;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="52" y="118" width="1256" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="player-vod-video" value="VÍDEO A PANTALLA COMPLETA" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D0D0D0;strokeColor=#606060;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-vod">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="player-vod-title-chip" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#F2F2F2;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-vod">
+          <mxGeometry x="32" y="96" width="420" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="player-vod-title" value="Título del contenido" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-vod">
+          <mxGeometry x="44" y="104" width="390" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="player-vod-btn-0" value="Info" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-vod">
+          <mxGeometry x="602" y="32" width="70" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="player-vod-btn-1" value="Aspecto: Ajustar" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-vod">
+          <mxGeometry x="680" y="32" width="152" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="player-vod-btn-2" value="Calidad" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-vod">
+          <mxGeometry x="840" y="32" width="80" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="player-vod-btn-3" value="Velocidad 1x" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-vod">
+          <mxGeometry x="928" y="32" width="120" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="player-vod-btn-4" value="Audio/Subs" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-vod">
+          <mxGeometry x="1056" y="32" width="104" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="player-vod-btn-5" value="Externo" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-vod">
+          <mxGeometry x="1168" y="32" width="80" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="player-vod-note" value="La barra superior del player no es la barra de la app: no hay navegación de secciones." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="1360" y="110" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="note-player-vod" value="VOD: el título baja a 96 dp para dejar sitio a la barra. Se añaden Velocidad y Externo; las teclas de medios buscan ±30 s." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="1360" y="220" width="200" height="120" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-4" name="03 · Player · barra compacta">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-wire" value="Wireframe" parent="0" />
+        <mxCell id="layer-notes" value="Anotaciones" parent="0" />
+        <mxCell id="layer-labels" value="Etiquetas de elemento" parent="0" visible="0" />
+        <mxCell id="layer-measures" value="Medidas" parent="0" visible="0" />
+        <object label="" id="frame-player-compact" element="player-compact.frame" source="wireframe">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="110" width="1280" height="720" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="frame-bg-player-compact" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F7F7;strokeColor=#333333;strokeWidth=2;fontFamily=Helvetica;" vertex="1" parent="frame-player-compact">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="frame-label-player-compact" value="REPRODUCTOR · BARRA COMPACTA" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontStyle=1;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="52" y="118" width="1256" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="player-compact-video" value="VÍDEO A PANTALLA COMPLETA" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D0D0D0;strokeColor=#606060;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-compact">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="player-compact-title-chip" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#F2F2F2;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-compact">
+          <mxGeometry x="32" y="32" width="420" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="player-compact-title" value="Título del contenido" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-compact">
+          <mxGeometry x="44" y="40" width="390" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="player-compact-zap" value="CH+ / CH− cambia de canal" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="frame-player-compact">
+          <mxGeometry x="44" y="62" width="390" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="player-compact-controls-chip" value="Controles" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;strokeWidth=1;fontSize=10;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-compact">
+          <mxGeometry x="1160" y="32" width="88" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="player-compact-note" value="La barra superior del player no es la barra de la app: no hay navegación de secciones." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="1360" y="110" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="note-player-compact" value="La barra compacta solo muestra el chip Controles; al pulsarlo se abre el overlay con todas las acciones." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="1360" y="220" width="200" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-5" name="04 · Player · controles">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-wire" value="Wireframe" parent="0" />
+        <mxCell id="layer-notes" value="Anotaciones" parent="0" />
+        <mxCell id="layer-labels" value="Etiquetas de elemento" parent="0" visible="0" />
+        <mxCell id="layer-measures" value="Medidas" parent="0" visible="0" />
+        <object label="" id="frame-player-controls" element="player-controls.frame" source="wireframe">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="110" width="1280" height="720" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="frame-bg-player-controls" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F7F7;strokeColor=#333333;strokeWidth=2;fontFamily=Helvetica;" vertex="1" parent="frame-player-controls">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="frame-label-player-controls" value="REPRODUCTOR · OVERLAY CONTROLES" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontStyle=1;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="52" y="118" width="1256" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="controls-video" value="VÍDEO + SCRIM" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D0D0D0;strokeColor=#606060;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-controls">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="controls-panel" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-controls">
+          <mxGeometry x="450" y="120" width="380" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="controls-title" value="Controles" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=16;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-controls">
+          <mxGeometry x="468" y="138" width="300" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="controls-btn-0" value="Info" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="frame-player-controls">
+          <mxGeometry x="468" y="176" width="344" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="controls-btn-1" value="Aspecto" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-controls">
+          <mxGeometry x="468" y="224" width="344" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="controls-btn-2" value="Audio y subtítulos" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-controls">
+          <mxGeometry x="468" y="272" width="344" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="controls-btn-3" value="Calidad" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-controls">
+          <mxGeometry x="468" y="320" width="344" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="controls-btn-4" value="Velocidad" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-controls">
+          <mxGeometry x="468" y="368" width="344" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="controls-btn-5" value="Abrir en otro reproductor" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-controls">
+          <mxGeometry x="468" y="416" width="344" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="controls-btn-6" value="Cerrar" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-controls">
+          <mxGeometry x="468" y="464" width="344" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="note-controls" value="Overlay de 380 dp. 'Velocidad' y 'Externo' solo aparecen en VOD. Cerrar devuelve el foco a la barra." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="1360" y="110" width="200" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-6" name="05 · Player · información del stream">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-wire" value="Wireframe" parent="0" />
+        <mxCell id="layer-notes" value="Anotaciones" parent="0" />
+        <mxCell id="layer-labels" value="Etiquetas de elemento" parent="0" visible="0" />
+        <mxCell id="layer-measures" value="Medidas" parent="0" visible="0" />
+        <object label="" id="frame-player-stats" element="player-stats.frame" source="wireframe">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="110" width="1280" height="720" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="frame-bg-player-stats" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F7F7;strokeColor=#333333;strokeWidth=2;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="frame-label-player-stats" value="REPRODUCTOR · INFORMACIÓN DEL STREAM" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontStyle=1;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="52" y="118" width="1256" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-video" value="VÍDEO + SCRIM" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D0D0D0;strokeColor=#606060;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-panel" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="230" y="60" width="820" height="600" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-title" value="Información del stream" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=18;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="254" y="84" width="500" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-sub" value="Datos actualizados cada segundo. La URL completa se oculta." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="254" y="116" width="500" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-close" value="Cerrar" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="960" y="84" width="70" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-l-0" value="Tipo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="254" y="164" width="330" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-lv-0" value="—" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="254" y="182" width="330" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-l-1" value="Códec de vídeo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="254" y="222" width="330" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-lv-1" value="—" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="254" y="240" width="330" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-l-2" value="Resolución" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="254" y="280" width="330" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-lv-2" value="—" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="254" y="298" width="330" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-l-3" value="Fotogramas por segundo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="254" y="338" width="330" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-lv-3" value="—" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="254" y="356" width="330" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-l-4" value="Bitrate de vídeo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="254" y="396" width="330" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-lv-4" value="—" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="254" y="414" width="330" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-r-0" value="Búfer actual" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="650" y="164" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-rv-0" value="—" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="650" y="182" width="360" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-r-1" value="Búfer configurado" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="650" y="222" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-rv-1" value="—" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="650" y="240" width="360" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-r-2" value="Fotogramas descartados" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="650" y="280" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-rv-2" value="—" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="650" y="298" width="360" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-r-3" value="Decodificador" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="650" y="338" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-rv-3" value="—" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="650" y="356" width="360" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-r-4" value="Ancho de banda estimado" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="650" y="396" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-rv-4" value="—" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="650" y="414" width="360" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-r-5" value="Fuente" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="650" y="454" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="stats-rv-5" value="—" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-stats">
+          <mxGeometry x="650" y="472" width="360" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="note-stats" value="Panel de 820 dp con dos columnas. La fuente se reduce al host; nunca se muestran tokens ni credenciales." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="1360" y="110" width="200" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-7" name="06 · Player · audio y subtítulos">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-wire" value="Wireframe" parent="0" />
+        <mxCell id="layer-notes" value="Anotaciones" parent="0" />
+        <mxCell id="layer-labels" value="Etiquetas de elemento" parent="0" visible="0" />
+        <mxCell id="layer-measures" value="Medidas" parent="0" visible="0" />
+        <object label="" id="frame-player-tracks" element="player-tracks.frame" source="wireframe">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="110" width="1280" height="720" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="frame-bg-player-tracks" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F7F7;strokeColor=#333333;strokeWidth=2;fontFamily=Helvetica;" vertex="1" parent="frame-player-tracks">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="frame-label-player-tracks" value="REPRODUCTOR · AUDIO Y SUBTÍTULOS" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontStyle=1;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="52" y="118" width="1256" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="tracks-video" value="VÍDEO + SCRIM" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D0D0D0;strokeColor=#606060;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-tracks">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="tracks-panel" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-tracks">
+          <mxGeometry x="300" y="40" width="680" height="640" as="geometry" />
+        </mxCell>
+        <mxCell id="tracks-title" value="Audio y subtítulos" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=18;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-tracks">
+          <mxGeometry x="324" y="62" width="500" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="tracks-audio" value="Audio" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-tracks">
+          <mxGeometry x="324" y="108" width="200" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="tracks-audio-0" value="✓ Español · AAC · Estéreo" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-tracks">
+          <mxGeometry x="324" y="136" width="632" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="tracks-audio-1" value="Inglés · AAC · 5.1" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-tracks">
+          <mxGeometry x="324" y="176" width="632" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="tracks-subs" value="Subtítulos" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-tracks">
+          <mxGeometry x="324" y="228" width="200" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="tracks-sub-0" value="✓ Desactivado" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-tracks">
+          <mxGeometry x="324" y="256" width="632" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="tracks-sub-1" value="Español · SRT" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-tracks">
+          <mxGeometry x="324" y="296" width="632" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="tracks-sub-2" value="Inglés · SRT" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-tracks">
+          <mxGeometry x="324" y="336" width="632" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="tracks-search" value="Buscar subtítulos" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-tracks">
+          <mxGeometry x="324" y="386" width="150" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="tracks-file" value="Archivo .srt" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-tracks">
+          <mxGeometry x="486" y="386" width="120" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="tracks-sync" value="Sincronización: 0 s" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=9;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="frame-player-tracks">
+          <mxGeometry x="324" y="430" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="tracks-offset-0" value="−5 s" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-tracks">
+          <mxGeometry x="324" y="454" width="74" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="tracks-offset-1" value="−0.5 s" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-tracks">
+          <mxGeometry x="406" y="454" width="74" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="tracks-offset-2" value="+0.5 s" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-tracks">
+          <mxGeometry x="488" y="454" width="74" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="tracks-offset-3" value="+5 s" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-tracks">
+          <mxGeometry x="570" y="454" width="74" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="tracks-offset-4" value="0" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-tracks">
+          <mxGeometry x="652" y="454" width="74" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="tracks-close" value="Cerrar" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-tracks">
+          <mxGeometry x="324" y="610" width="632" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="note-tracks" value="Panel de 680 dp. Audio arriba; debajo, Desactivado + pistas. Buscar subtítulos y Archivo .srt solo en VOD. Los offsets persisten por medio." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="1360" y="110" width="200" height="130" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-8" name="07 · Player · calidad">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-wire" value="Wireframe" parent="0" />
+        <mxCell id="layer-notes" value="Anotaciones" parent="0" />
+        <mxCell id="layer-labels" value="Etiquetas de elemento" parent="0" visible="0" />
+        <mxCell id="layer-measures" value="Medidas" parent="0" visible="0" />
+        <object label="" id="frame-player-quality" element="player-quality.frame" source="wireframe">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="110" width="1280" height="720" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="frame-bg-player-quality" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F7F7;strokeColor=#333333;strokeWidth=2;fontFamily=Helvetica;" vertex="1" parent="frame-player-quality">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="frame-label-player-quality" value="REPRODUCTOR · CALIDAD" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontStyle=1;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="52" y="118" width="1256" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="quality-video" value="VÍDEO + SCRIM" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D0D0D0;strokeColor=#606060;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-quality">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="quality-panel" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-quality">
+          <mxGeometry x="360" y="80" width="560" height="560" as="geometry" />
+        </mxCell>
+        <mxCell id="quality-title" value="Calidad de vídeo" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=18;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-quality">
+          <mxGeometry x="384" y="104" width="500" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="quality-opt-0" value="✓ Auto" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-quality">
+          <mxGeometry x="384" y="152" width="512" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="quality-opt-1" value="1080p" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-quality">
+          <mxGeometry x="384" y="200" width="512" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="quality-opt-2" value="720p" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-quality">
+          <mxGeometry x="384" y="248" width="512" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="quality-opt-3" value="480p" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-quality">
+          <mxGeometry x="384" y="296" width="512" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="quality-opt-4" value="360p" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-quality">
+          <mxGeometry x="384" y="344" width="512" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="quality-opt-5" value="Este canal tiene una sola calidad." style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-quality">
+          <mxGeometry x="384" y="392" width="512" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="quality-close" value="Cerrar" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-quality">
+          <mxGeometry x="384" y="560" width="512" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="note-quality" value="Panel de 560 dp. Auto siempre está; las variantes salen de las pistas HLS. Si solo hay una, se muestra el aviso." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="1360" y="110" width="200" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-9" name="08 · Player · velocidad">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-wire" value="Wireframe" parent="0" />
+        <mxCell id="layer-notes" value="Anotaciones" parent="0" />
+        <mxCell id="layer-labels" value="Etiquetas de elemento" parent="0" visible="0" />
+        <mxCell id="layer-measures" value="Medidas" parent="0" visible="0" />
+        <object label="" id="frame-player-speed" element="player-speed.frame" source="wireframe">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="110" width="1280" height="720" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="frame-bg-player-speed" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F7F7;strokeColor=#333333;strokeWidth=2;fontFamily=Helvetica;" vertex="1" parent="frame-player-speed">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="frame-label-player-speed" value="REPRODUCTOR · VELOCIDAD" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontStyle=1;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="52" y="118" width="1256" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="speed-video" value="VÍDEO + SCRIM" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D0D0D0;strokeColor=#606060;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-speed">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="speed-panel" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-speed">
+          <mxGeometry x="410" y="70" width="460" height="580" as="geometry" />
+        </mxCell>
+        <mxCell id="speed-title" value="Velocidad de reproducción" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=17;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-speed">
+          <mxGeometry x="434" y="92" width="420" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="speed-opt-0" value="0.5x" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-speed">
+          <mxGeometry x="434" y="138" width="412" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="speed-opt-1" value="0.75x" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-speed">
+          <mxGeometry x="434" y="182" width="412" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="speed-opt-2" value="✓ 1x" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-speed">
+          <mxGeometry x="434" y="226" width="412" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="speed-opt-3" value="1.25x" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-speed">
+          <mxGeometry x="434" y="270" width="412" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="speed-opt-4" value="1.5x" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-speed">
+          <mxGeometry x="434" y="314" width="412" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="speed-opt-5" value="2x" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-speed">
+          <mxGeometry x="434" y="358" width="412" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="speed-close" value="Cerrar" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-speed">
+          <mxGeometry x="434" y="560" width="412" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="note-speed" value="Solo VOD. La velocidad se aplica al instante y no se persiste entre reproducciones." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="1360" y="110" width="200" height="90" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-10" name="09 · Player · buscar subtítulos">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-wire" value="Wireframe" parent="0" />
+        <mxCell id="layer-notes" value="Anotaciones" parent="0" />
+        <mxCell id="layer-labels" value="Etiquetas de elemento" parent="0" visible="0" />
+        <mxCell id="layer-measures" value="Medidas" parent="0" visible="0" />
+        <object label="" id="frame-player-subsearch" element="player-subsearch.frame" source="wireframe">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="110" width="1280" height="720" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="frame-bg-player-subsearch" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F7F7;strokeColor=#333333;strokeWidth=2;fontFamily=Helvetica;" vertex="1" parent="frame-player-subsearch">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="frame-label-player-subsearch" value="REPRODUCTOR · BUSCAR SUBTÍTULOS" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontStyle=1;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="52" y="118" width="1256" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="subsearch-video" value="VÍDEO + SCRIM" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D0D0D0;strokeColor=#606060;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-subsearch">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="subsearch-panel" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-subsearch">
+          <mxGeometry x="260" y="40" width="760" height="640" as="geometry" />
+        </mxCell>
+        <mxCell id="subsearch-title" value="Buscar subtítulos · OpenSubtitles" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=17;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-subsearch">
+          <mxGeometry x="284" y="62" width="600" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="subsearch-opt-0" value="ES · Título del subtítulo · 1.234 descargas" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-subsearch">
+          <mxGeometry x="284" y="112" width="712" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="subsearch-opt-1" value="EN · Another subtitle · 987 descargas" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-subsearch">
+          <mxGeometry x="284" y="160" width="712" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="subsearch-opt-2" value="ES · Otra opción · 654 descargas" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-subsearch">
+          <mxGeometry x="284" y="208" width="712" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="subsearch-loading" value="Buscando… / No hay resultados. / Mensaje de error" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="frame-player-subsearch">
+          <mxGeometry x="284" y="300" width="600" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="subsearch-close" value="Cerrar" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-subsearch">
+          <mxGeometry x="284" y="620" width="712" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="note-subsearch" value="Panel de 760 dp. Español primero, inglés como fallback. Sin API key, el flujo degrada con mensaje." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="1360" y="110" width="200" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-11" name="10 · Player · siguiente episodio">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-wire" value="Wireframe" parent="0" />
+        <mxCell id="layer-notes" value="Anotaciones" parent="0" />
+        <mxCell id="layer-labels" value="Etiquetas de elemento" parent="0" visible="0" />
+        <mxCell id="layer-measures" value="Medidas" parent="0" visible="0" />
+        <object label="" id="frame-player-next" element="player-next.frame" source="wireframe">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="110" width="1280" height="720" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="frame-bg-player-next" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F7F7;strokeColor=#333333;strokeWidth=2;fontFamily=Helvetica;" vertex="1" parent="frame-player-next">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="frame-label-player-next" value="REPRODUCTOR · SIGUIENTE EPISODIO" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontStyle=1;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="52" y="118" width="1256" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="next-video" value="VÍDEO + SCRIM" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D0D0D0;strokeColor=#606060;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-next">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="next-title" value="Siguiente episodio" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=24;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-next">
+          <mxGeometry x="340" y="230" width="600" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="next-name" value="Serie T1 E3 · Título del episodio" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="frame-player-next">
+          <mxGeometry x="340" y="280" width="600" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="next-count" value="Se reproduce en 10 s" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=16;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-next">
+          <mxGeometry x="340" y="322" width="600" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="next-play" value="Reproducir ahora" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="frame-player-next">
+          <mxGeometry x="340" y="380" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="next-cancel" value="Cancelar" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-next">
+          <mxGeometry x="522" y="380" width="110" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="note-next" value="Aparece al terminar un episodio si hay siguiente. Cuenta atrás de 10 s; foco inicial en Reproducir ahora." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="1360" y="110" width="200" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-12" name="11 · Player · error">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-wire" value="Wireframe" parent="0" />
+        <mxCell id="layer-notes" value="Anotaciones" parent="0" />
+        <mxCell id="layer-labels" value="Etiquetas de elemento" parent="0" visible="0" />
+        <mxCell id="layer-measures" value="Medidas" parent="0" visible="0" />
+        <object label="" id="frame-player-error" element="player-error.frame" source="wireframe">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="110" width="1280" height="720" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="frame-bg-player-error" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F7F7;strokeColor=#333333;strokeWidth=2;fontFamily=Helvetica;" vertex="1" parent="frame-player-error">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="frame-label-player-error" value="REPRODUCTOR · ERROR DE REPRODUCCIÓN" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontStyle=1;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="52" y="118" width="1256" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="error-video" value="VÍDEO + SCRIM" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D0D0D0;strokeColor=#606060;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-error">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="error-title" value="No se pudo reproducir" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=26;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-player-error">
+          <mxGeometry x="340" y="220" width="600" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="error-message" value="El canal no está disponible en este momento." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=14;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-error">
+          <mxGeometry x="340" y="270" width="600" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="error-source" value="Puede ser un problema de la fuente o de la cuenta." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="frame-player-error">
+          <mxGeometry x="340" y="306" width="600" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="error-update" value="Actualizar configuración" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-error">
+          <mxGeometry x="340" y="360" width="220" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="error-retry" value="Reintentar" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="frame-player-error">
+          <mxGeometry x="572" y="360" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="error-close" value="Cerrar" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-player-error">
+          <mxGeometry x="704" y="360" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="note-error" value="Si el fallo es de fuente (401/403/5xx), se muestra Actualizar configuración. El mensaje está sanitizado." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="1360" y="110" width="200" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="page-13" name="12 · Shell · salir y red bloqueada">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-wire" value="Wireframe" parent="0" />
+        <mxCell id="layer-notes" value="Anotaciones" parent="0" />
+        <mxCell id="layer-labels" value="Etiquetas de elemento" parent="0" visible="0" />
+        <mxCell id="layer-measures" value="Medidas" parent="0" visible="0" />
+        <object label="" id="frame-exit" element="exit.frame" source="wireframe">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="110" width="1280" height="720" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="frame-bg-exit" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F7F7;strokeColor=#333333;strokeWidth=2;fontFamily=Helvetica;" vertex="1" parent="frame-exit">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="frame-label-exit" value="SHELL · CONFIRMAR SALIDA" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontStyle=1;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="52" y="118" width="1256" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="exit-video" value="PANTALLA ACTUAL + SCRIM" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8E8E8;strokeColor=#909090;strokeWidth=1;dashed=1;fontFamily=Helvetica;" vertex="1" parent="frame-exit">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="exit-panel" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-exit">
+          <mxGeometry x="380" y="220" width="520" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="exit-title" value="¿Salir de Streaming?" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=22;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-exit">
+          <mxGeometry x="404" y="248" width="472" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="exit-sub" value="Se cerrará la aplicación." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#777777;fontFamily=Helvetica;" vertex="1" parent="frame-exit">
+          <mxGeometry x="404" y="292" width="472" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="exit-cancel" value="Cancelar" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#D9D9D9;strokeColor=#333333;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;fontStyle=1;" vertex="1" parent="frame-exit">
+          <mxGeometry x="468" y="350" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="exit-exit" value="Salir" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;strokeWidth=1;fontSize=11;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-exit">
+          <mxGeometry x="600" y="350" width="100" height="40" as="geometry" />
+        </mxCell>
+        <object label="" id="frame-network" element="network.frame" source="wireframe">
+          <mxCell style="group" vertex="1" connectable="0" parent="layer-wire">
+            <mxGeometry x="40" y="110" width="1280" height="720" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="frame-bg-network" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F7F7;strokeColor=#333333;strokeWidth=2;fontFamily=Helvetica;" vertex="1" parent="frame-network">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="frame-label-network" value="PLAYER · RED BLOQUEADA" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontStyle=1;fontColor=#1A73E8;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="52" y="118" width="1256" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="network-video" value="PANTALLA DE RED" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A6A6A6;strokeWidth=1;fontFamily=Helvetica;" vertex="1" parent="frame-network">
+          <mxGeometry x="0" y="0" width="1280" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="network-title" value="Red no permitida" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=24;fontColor=#111111;fontStyle=1;fontFamily=Helvetica;" vertex="1" parent="frame-network">
+          <mxGeometry x="340" y="280" width="600" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="network-body" value="La configuración solo permite WiFi/Ethernet y el TV no está en una red permitida." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#111111;fontFamily=Helvetica;" vertex="1" parent="frame-network">
+          <mxGeometry x="340" y="330" width="600" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="note-shell-extra" value="Estos dos estados no son del player, pero aparecen sobre la app: confirmación de salida y bloqueo de red." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" vertex="1" parent="layer-notes">
+          <mxGeometry x="1360" y="110" width="200" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

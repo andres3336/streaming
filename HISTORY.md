@@ -247,3 +247,8 @@ Append-only. Newest entries at the bottom.
   items, so Up from the content reaches the sections directly. The inline channel
   search is now a `Buscar` button that opens the field on demand, because the always
   visible field used to trap Up and open the keyboard. Version 0.16.1.
+- Added editable neutral draw.io wireframes in `design/layouts/`: one file per screen
+  (Inicio, TV, Películas, Series, Buscar, Ajustes, Reproductor) with viewport,
+  full-scroll and secondary-state pages. Each page has Wireframe, Anotaciones,
+  Etiquetas de elemento and Medidas layers; major blocks carry stable `element` and
+  `source` attributes so an edited XML can be mapped back to Compose.
