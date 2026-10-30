@@ -1,7 +1,7 @@
 # Streaming — V1 reconciled TODO
 
 **Last reconciled:** 2026-10-29  
-**App:** Streaming 0.12.0 (`versionCode 12`)  
+**App:** Streaming 0.13.0 (`versionCode 13`)  
 **TV:** `192.168.100.16:5555` — MOTOROLA GOOGLE TV, Android 11 / API 30, armeabi-v7a  
 **Specs:** 74 tasks in `tasks/`  
 **Change log:** `HISTORY.md`  
@@ -22,7 +22,8 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 
 - **Live:** curated gist, Xtream or merge modes; lazy Xtream categories; group rail;
   channel numbers; logos/initials; favorites, recents, last channel; CH+/CH− and
-  media-key zapping; channel search; merged deduplication with provider labels.
+  media-key zapping; channel search; merged deduplication with provider labels;
+  optional XMLTV guide with now/next in rows.
 - **Movies:** Xtream categories, posters, playback (1920x960 verified).
 - **Series:** Xtream categories, seasons/episodes, playback, next-episode queue.
 - **Player:** audio/subtitle pickers, aspect modes (fit/fill/stretch/zoom/original/
@@ -40,22 +41,20 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
   source masking.
 - **Security:** config cache, playback positions, live state, playlist cache and
   Xtream catalog cache use Keystore AES-GCM; errors do not log/display URLs.
-- **Tests:** 87 unit tests passing.
+- **Tests:** 95 unit tests passing.
 
 ## Now (max 3)
 
-- [ ] `epg-001` · Optional XMLTV source from config · [spec](tasks/epg-001_optional_xmltv_source_from_config.md)
-- [ ] `epg-002` · Now and next in channel rows · [spec](tasks/epg-002_now_and_next_in_channel_rows.md)
+- [ ] `ply-012` · Quality cap and HLS variant selector · [spec](tasks/ply-012_quality_cap_and_hls_variant_selector.md)
+- [ ] `ply-013` · Buffer and latency settings · [spec](tasks/ply-013_buffer_and_latency_settings.md)
+- [ ] `ply-017` · Playback speed and media keys · [spec](tasks/ply-017_playback_speed_and_media_keys.md)
 
 ## Next (V1.1)
 
 - [ ] `liv-007` · Multiple playlists and switcher · [spec](tasks/liv-007_multiple_playlists_and_switcher.md)
 - [ ] `ply-011` · Universal player scaffold with capabilities · [spec](tasks/ply-011_universal_player_scaffold_with_capabilities.md) — Architecture/refactor; not user-visible.
-- [ ] `ply-012` · Quality cap and HLS variant selector · [spec](tasks/ply-012_quality_cap_and_hls_variant_selector.md)
-- [ ] `ply-013` · Buffer and latency settings · [spec](tasks/ply-013_buffer_and_latency_settings.md)
 - [ ] `ply-014` · Local subtitle file · [spec](tasks/ply-014_local_subtitle_file.md)
 - [ ] `ply-015` · External player handoff · [spec](tasks/ply-015_external_player_handoff.md)
-- [ ] `ply-017` · Playback speed and media keys · [spec](tasks/ply-017_playback_speed_and_media_keys.md)
 - [ ] `ui-001` · Universal MediaItem and capabilities model · [spec](tasks/ui-001_universal_mediaitem_and_capabilities_model.md) — Architecture/refactor; not user-visible.
 - [ ] `ui-005` · Font size and UI scale · [spec](tasks/ui-005_font_size_and_ui_scale.md)
 - [ ] `ui-006` · Navigation rail and player bar layouts · [spec](tasks/ui-006_navigation_rail_and_player_bar_layouts.md)
@@ -105,6 +104,8 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 - [x] 2026-10-29 · `ply-010` · Cache controls and storage usage · [spec](tasks/ply-010_cache_controls_and_storage_usage.md) — Usage in MB, clear now, clear on start, live-not-cached note.
 - [x] 2026-10-29 · `cfg-010` · Atomic config apply and cache invalidation · [spec](tasks/cfg-010_atomic_config_apply_and_cache_invalidation.md) — Source identities invalidate only the affected M3U/Xtream cache; live state preserved.
 - [x] 2026-10-29 · `ui-002` · Reusable browse shell · [spec](tasks/ui-002_reusable_browse_shell.md) — Shared shell, category rail, poster row, optional detail slot and focus handling.
+- [x] 2026-10-30 · `epg-001` · Optional XMLTV source from config · [spec](tasks/epg-001_optional_xmltv_source_from_config.md) — Optional XMLTV/gzip, SAX parser, encrypted rolling two-day cache.
+- [x] 2026-10-30 · `epg-002` · Now and next in channel rows · [spec](tasks/epg-002_now_and_next_in_channel_rows.md) — tvg-id then display-name matching, now/time-left/next, hidden when absent.
 
 ## Deferred — v2
 
@@ -173,19 +174,19 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 | [`ply-010`](tasks/ply-010_cache_controls_and_storage_usage.md) | Cache controls and storage usage | Done | Usage in MB, clear now, clear on start, live-not-cached note. |
 | [`cfg-010`](tasks/cfg-010_atomic_config_apply_and_cache_invalidation.md) | Atomic config apply and cache invalidation | Done | Source identities invalidate only the affected cache; live state preserved. |
 | [`ui-002`](tasks/ui-002_reusable_browse_shell.md) | Reusable browse shell | Done | Shared shell, category rail, poster row, optional detail slot and focus handling. |
-| [`epg-001`](tasks/epg-001_optional_xmltv_source_from_config.md) | Optional XMLTV source from config | Now | First v1.1 item. |
-| [`epg-002`](tasks/epg-002_now_and_next_in_channel_rows.md) | Now and next in channel rows | Now | Depends on epg-001. |
+| [`epg-001`](tasks/epg-001_optional_xmltv_source_from_config.md) | Optional XMLTV source from config | Done | Optional XMLTV/gzip, SAX parser, encrypted rolling two-day cache. |
+| [`epg-002`](tasks/epg-002_now_and_next_in_channel_rows.md) | Now and next in channel rows | Done | tvg-id then display-name matching, now/time-left/next, hidden when absent. |
 | [`liv-007`](tasks/liv-007_multiple_playlists_and_switcher.md) | Multiple playlists and switcher | v1.1 |  |
 | [`liv-008`](tasks/liv-008_category_hide_rename_and_reorder.md) | Category hide, rename and reorder | v2 | Conflicts with the gist as the single remote source. |
 | [`liv-009`](tasks/liv-009_hide_individual_channels.md) | Hide individual channels | v2 | Conflicts with the gist as the single remote source. |
 | [`liv-012`](tasks/liv-012_live_preview_pane.md) | Live preview pane with session handoff | v2 | Not required for the product. |
 | [`ply-011`](tasks/ply-011_universal_player_scaffold_with_capabilities.md) | Universal player scaffold with capabilities | v1.1 | Architecture/refactor; not user-visible. |
-| [`ply-012`](tasks/ply-012_quality_cap_and_hls_variant_selector.md) | Quality cap and HLS variant selector | v1.1 |  |
-| [`ply-013`](tasks/ply-013_buffer_and_latency_settings.md) | Buffer and latency settings | v1.1 |  |
+| [`ply-012`](tasks/ply-012_quality_cap_and_hls_variant_selector.md) | Quality cap and HLS variant selector | Now | Resolution/bitrate cap exists; manual variant selection pending. |
+| [`ply-013`](tasks/ply-013_buffer_and_latency_settings.md) | Buffer and latency settings | Now | Buffer preset exists; pre-buffer/latency pending. |
 | [`ply-014`](tasks/ply-014_local_subtitle_file.md) | Local subtitle file | v1.1 |  |
 | [`ply-015`](tasks/ply-015_external_player_handoff.md) | External player handoff | v1.1 |  |
 | [`ply-016`](tasks/ply-016_sleep_timer.md) | Sleep timer | v2 | Not required for the product. |
-| [`ply-017`](tasks/ply-017_playback_speed_and_media_keys.md) | Playback speed and media keys | v1.1 |  |
+| [`ply-017`](tasks/ply-017_playback_speed_and_media_keys.md) | Playback speed and media keys | Now | Media keys zap live; VOD speed selector pending. |
 | [`ui-001`](tasks/ui-001_universal_mediaitem_and_capabilities_model.md) | Universal MediaItem and capabilities model | v1.1 | Architecture/refactor; not user-visible. |
 | [`ui-005`](tasks/ui-005_font_size_and_ui_scale.md) | Font size and UI scale | v1.1 |  |
 | [`ui-006`](tasks/ui-006_navigation_rail_and_player_bar_layouts.md) | Navigation rail and player bar layouts | v1.1 |  |
@@ -209,14 +210,17 @@ holds the reconciled status. The old Kandown board is frozen in `archive/kandown
 
 ## Notes for the next session
 
-- **V1 is complete.** The next milestone opens with `epg-001`/`epg-002`, then the rest
-  of v1.1.
+- **V1 is complete.** v1.1 started with EPG; the next Now items are `ply-012`,
+  `ply-013` and `ply-017`.
 - `liv-008` and `liv-009` moved to v2: per-device category/channel overrides conflict
   with the gist as the single remote source of truth.
 - `liv-012` and `ply-016` moved to v2: not required for the product.
 - The config gist is the canonical config; sources and credentials are central-only.
 - Live modes: `gist`, `xtream` (lazy categories) and `merge` (gist + selected Xtream
   category, deduped by name, provider label `Xtream`). Gist mode never calls Xtream live.
+- EPG is optional (`epg.url`). XMLTV may be plain or gzip; the guide is cached encrypted
+  for a rolling window (6 h back, 48 h forward) and refreshed per `epg.refreshHours`.
+  Rows match `tvg-id` first, then XMLTV display name, and hide when there is no data.
 - `Ajustes` is visible and has no PIN. Local overrides live in `files/device-settings.json`.
 - Live state (favorites, recents, last channel) is encrypted in `files/live-state.bin`
   because channel keys can contain playlist tokens. It survives playlist refreshes by

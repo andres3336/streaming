@@ -139,3 +139,14 @@ Append-only. Newest entries at the bottom.
   config applied after a cold restart and after Home/resume, and a changed M3U URL
   invalidated the old playlist cache.
 - 87 unit tests passing. Version 0.12.0. V1 is complete.
+- Added optional XMLTV EPG (`epg-001`): SAX parser, transparent gzip, encrypted
+  source-keyed cache with a rolling 6 h back / 48 h forward window and
+  `epg.refreshHours` refresh policy. No URL means no EPG work.
+- Added now/next to live channel rows (`epg-002`): tvg-id first, XMLTV display-name
+  fallback, programme title, time left and next title; rows stay unchanged when no
+  guide data exists. A 30 s ticker keeps the countdown current.
+- Verified on the TV with a local gzipped XMLTV guide: TD+ showed
+  `Ahora: Noticias TD · 29 min` + `Después: Documental`; after killing the guide
+  server and restarting, the same data came from the encrypted cache.
+- 95 unit tests passing. Version 0.13.0. v1.1 Now starts with `ply-012`, `ply-013`
+  and `ply-017`.

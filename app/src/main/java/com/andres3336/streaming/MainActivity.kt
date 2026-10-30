@@ -28,8 +28,10 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -108,6 +110,10 @@ import com.andres3336.streaming.data.config.SourcesConfig
 import com.andres3336.streaming.data.config.XtreamConfig
 import com.andres3336.streaming.data.diagnostics.ErrorLogEntry
 import com.andres3336.streaming.data.diagnostics.ErrorLogStore
+import com.andres3336.streaming.data.epg.EpgCache
+import com.andres3336.streaming.data.epg.EpgGuide
+import com.andres3336.streaming.data.epg.EpgNowNext
+import com.andres3336.streaming.data.epg.EpgRepository
 import com.andres3336.streaming.data.live.ChannelSearch
 import com.andres3336.streaming.data.live.LiveState
 import com.andres3336.streaming.data.live.LiveStateStore
@@ -150,6 +156,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+private val LocalEpgGuide = compositionLocalOf<EpgGuide?> { null }
+
 private sealed interface AppState {
     data object Loading : AppState
     data class Error(val message: String) : AppState
@@ -173,6 +181,8 @@ private fun StreamingApp() {
     val configCache = remember { ConfigCache(context) }
     val channelCache = remember { ChannelCache(context) }
     val xtreamCatalogCache = remember { XtreamCatalogCache(context) }
+    val epgCache = remember { EpgCache(context) }
+    val epgRepository = remember(client) { EpgRepository(client) }
     val settingsStore = remember { DeviceSettingsStore(context) }
     val playbackStore = remember { PlaybackStore(context) }
     val liveStateStore = remember { LiveStateStore(context) }
@@ -187,6 +197,7 @@ private fun StreamingApp() {
     var deviceSettings by remember { mutableStateOf(DeviceSettings()) }
     var playbackEntries by remember { mutableStateOf<List<PlaybackEntry>>(emptyList()) }
     var liveState by remember { mutableStateOf(LiveState()) }
+    var epgGuide by remember { mutableStateOf<EpgGuide?>(null) }
     var playing by remember { mutableStateOf<PlaybackRequest?>(null) }
     var refreshTick by remember { mutableIntStateOf(0) }
     var refreshVersion by remember { mutableIntStateOf(0) }
@@ -335,6 +346,22 @@ private fun StreamingApp() {
     }
 
     val effectiveConfig = centralConfig?.let { ConfigMerger.apply(it, deviceSettings) }
+    LaunchedEffect(
+        effectiveConfig?.epg?.url,
+        effectiveConfig?.epg?.refreshHours,
+        refreshTick,
+    ) {
+        val config = effectiveConfig ?: return@LaunchedEffect
+        val sourceKey = CacheIdentity.epg(config)
+        if (sourceKey == null) {
+            epgGuide = null
+            return@LaunchedEffect
+        }
+        epgGuide = withContext(Dispatchers.IO) {
+            epgRepository.load(config.epg, sourceKey, epgCache)
+        }
+    }
+
     var startCacheCleared by remember { mutableStateOf(false) }
     LaunchedEffect(effectiveConfig?.cache?.clearOnStart) {
         if (!startCacheCleared && effectiveConfig?.cache?.clearOnStart == true) {
@@ -362,34 +389,36 @@ private fun StreamingApp() {
             },
         )
 
-        is AppState.Ready -> ReadyScreen(
-            ready = current,
-            config = effectiveConfig ?: current.config,
-            settings = deviceSettings,
-            selected = playing,
-            onSelect = onSelect,
-            onClose = closePlayback,
-            playbackEntries = playbackEntries,
-            onProgress = onProgress,
-            onFinished = onFinished,
-            onRecoverSource = recoverSource,
-            liveState = liveState,
-            onToggleFavorite = onToggleFavorite,
-            refreshVersion = refreshVersion,
-            xtreamCatalogCache = xtreamCatalogCache,
-            onCheckSources = checkSources,
-            refreshing = refreshing,
-            onRefreshConfig = {
-                if (playing == null) {
-                    forceConfigRefresh = true
-                    refreshTick++
-                }
-            },
-            onSettingsChange = { updated ->
-                deviceSettings = updated
-                scope.launch(Dispatchers.IO) { settingsStore.save(updated) }
-            },
-        )
+        is AppState.Ready -> CompositionLocalProvider(LocalEpgGuide provides epgGuide) {
+            ReadyScreen(
+                ready = current,
+                config = effectiveConfig ?: current.config,
+                settings = deviceSettings,
+                selected = playing,
+                onSelect = onSelect,
+                onClose = closePlayback,
+                playbackEntries = playbackEntries,
+                onProgress = onProgress,
+                onFinished = onFinished,
+                onRecoverSource = recoverSource,
+                liveState = liveState,
+                onToggleFavorite = onToggleFavorite,
+                refreshVersion = refreshVersion,
+                xtreamCatalogCache = xtreamCatalogCache,
+                onCheckSources = checkSources,
+                refreshing = refreshing,
+                onRefreshConfig = {
+                    if (playing == null) {
+                        forceConfigRefresh = true
+                        refreshTick++
+                    }
+                },
+                onSettingsChange = { updated ->
+                    deviceSettings = updated
+                    scope.launch(Dispatchers.IO) { settingsStore.save(updated) }
+                },
+            )
+        }
     }
 }
 
@@ -1462,6 +1491,15 @@ private fun ChannelList(
     val showLogos = remember(channels) {
         channels.mapNotNull { it.logo?.takeIf(String::isNotBlank) }.distinct().size > 1
     }
+    val epgGuide = LocalEpgGuide.current
+    var nowMs by remember { mutableStateOf(System.currentTimeMillis()) }
+    LaunchedEffect(epgGuide) {
+        if (epgGuide == null) return@LaunchedEffect
+        while (true) {
+            delay(30_000)
+            nowMs = System.currentTimeMillis()
+        }
+    }
     val focusKey = remember(lastChannel, startLastChannel, visible) {
         if (startLastChannel) {
             lastChannel?.takeIf { key -> visible.any { it.liveKey() == key } }
@@ -1586,6 +1624,8 @@ private fun ChannelList(
                             showLogo = showLogos,
                             number = row.number,
                             showNumber = showChannelNumbers,
+                            epgNowNext = epgGuide?.nowNext(row.channel, nowMs),
+                            nowMs = nowMs,
                             focusModifier = if (index == focusIndex) {
                                 Modifier.focusRequester(focusRequester)
                             } else {
@@ -1620,6 +1660,8 @@ private fun LiveChannelRow(
     showLogo: Boolean,
     number: Int,
     showNumber: Boolean,
+    epgNowNext: EpgNowNext?,
+    nowMs: Long,
     focusModifier: Modifier,
     onSelect: () -> Unit,
     onToggleFavorite: () -> Unit,
@@ -1677,6 +1719,25 @@ private fun LiveChannelRow(
                             text = details,
                             color = Color(0xFF64748B),
                             fontSize = 13.sp,
+                            maxLines = 1,
+                        )
+                    }
+                    val current = epgNowNext?.current
+                    if (current != null) {
+                        val left = EpgGuide.formatTimeLeft(current.stopMs - nowMs)
+                        Text(
+                            text = "Ahora: ${current.title}" +
+                                if (left.isNotEmpty()) " · $left" else "",
+                            color = Color(0xFF93C5FD),
+                            fontSize = 12.sp,
+                            maxLines = 1,
+                        )
+                    }
+                    epgNowNext?.next?.let { next ->
+                        Text(
+                            text = "Después: ${next.title}",
+                            color = Color(0xFF64748B),
+                            fontSize = 12.sp,
                             maxLines = 1,
                         )
                     }
