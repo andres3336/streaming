@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -2724,19 +2725,20 @@ private fun SeriesDetail(
 
     Column(modifier = Modifier.fillMaxSize()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            QuickChip(label = "Volver", fontSize = 15.sp, onClick = onBack)
-            Spacer(Modifier.width(16.dp))
+            QuickChip(label = "Volver", fontSize = 13.sp, onClick = onBack)
+            Spacer(Modifier.width(12.dp))
             Text(
                 text = series.name,
-                color = Color.White,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
+                color = StreamColors.TextPrimary,
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Black,
                 maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f),
             )
             QuickChip(
-                label = if (favorite) "★ Favorito" else "☆ Favorito",
-                fontSize = 15.sp,
+                label = if (favorite) "\u2605 Favorito" else "\u2606 Favorito",
+                fontSize = 13.sp,
                 onClick = onToggleFavorite,
             )
         }
@@ -2802,16 +2804,39 @@ private fun SeriesDetail(
                     ) {
                         seriesInfo.seasons.forEach { season ->
                             item(key = "season-${season.number}") {
-                                Text(
-                                    text = "Temporada ${season.number}",
-                                    color = StreamColors.AccentBright,
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.Bold,
+                                Row(
                                     modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
-                                )
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .width(3.dp)
+                                            .height(14.dp)
+                                            .background(
+                                                StreamColors.Accent,
+                                                RoundedCornerShape(2.dp),
+                                            ),
+                                    )
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(
+                                        text = "Temporada ${season.number}",
+                                        color = StreamColors.TextSecondary,
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        letterSpacing = 1.2.sp,
+                                    )
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(
+                                        text = "${season.episodes.size} episodios",
+                                        color = StreamColors.TextMuted,
+                                        fontSize = 11.sp,
+                                    )
+                                }
                             }
                             items(season.episodes) { episode ->
-                                Button(
+                                EpisodeRow(
+                                    label = "T${episode.season} E${episode.episode}",
+                                    title = episode.title,
                                     onClick = {
                                         val queue = allEpisodes.map { item ->
                                             Channel(
@@ -2838,19 +2863,58 @@ private fun SeriesDetail(
                                             ),
                                         )
                                     },
-                                    modifier = Modifier.fillMaxWidth(),
-                                ) {
-                                    Text(
-                                        text = "T${episode.season} E${episode.episode} · ${episode.title}",
-                                        fontSize = 17.sp,
-                                        maxLines = 1,
-                                    )
-                                }
+                                )
                             }
                         }
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun EpisodeRow(
+    label: String,
+    title: String,
+    onClick: () -> Unit,
+) {
+    val shape = RoundedCornerShape(8.dp)
+    var focused by remember { mutableStateOf(false) }
+    Surface(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(1.dp, if (focused) StreamColors.AccentBright else Color.Transparent, shape)
+            .onFocusChanged { focused = it.isFocused },
+        shape = ClickableSurfaceDefaults.shape(shape = shape),
+        colors = ClickableSurfaceDefaults.colors(
+            containerColor = StreamColors.Surface,
+            contentColor = StreamColors.TextPrimary,
+            focusedContainerColor = StreamColors.AccentDeep,
+            focusedContentColor = StreamColors.TextPrimary,
+        ),
+        scale = ClickableSurfaceDefaults.scale(focusedScale = 1f, pressedScale = 1f),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 9.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = label,
+                color = StreamColors.AccentBright,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.width(52.dp),
+            )
+            Text(
+                text = title,
+                color = StreamColors.TextPrimary,
+                fontSize = 14.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f),
+            )
         }
     }
 }
@@ -2903,16 +2967,14 @@ private fun SourceFailurePane(
                 textAlign = TextAlign.Center,
             )
             Spacer(Modifier.height(20.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Button(
-                    onClick = onUpdateConfig,
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                PillButton(
+                    label = "Actualizar configuración",
+                    primary = true,
                     modifier = Modifier.focusRequester(updateFocus),
-                ) {
-                    Text("Actualizar configuración", fontSize = 18.sp)
-                }
-                Button(onClick = onRetry) {
-                    Text("Reintentar", fontSize = 18.sp)
-                }
+                    onClick = onUpdateConfig,
+                )
+                PillButton(label = "Reintentar", onClick = onRetry)
             }
             Spacer(Modifier.height(12.dp))
             Text(
@@ -3625,6 +3687,46 @@ private fun SettingsScreen(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(StreamColors.Surface, RoundedCornerShape(12.dp))
+                    .border(1.dp, StreamColors.Border, RoundedCornerShape(12.dp))
+                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(44.dp)
+                        .background(StreamColors.Accent, CircleShape),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = "S",
+                        color = StreamColors.OnAccent,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Black,
+                    )
+                }
+                Spacer(Modifier.width(12.dp))
+                Column {
+                    Text(
+                        text = "Streaming",
+                        color = StreamColors.TextPrimary,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Black,
+                    )
+                    Text(
+                        text = "v${BuildConfig.VERSION_NAME} · ${liveSourceLabel(config)}",
+                        color = StreamColors.TextMuted,
+                        fontSize = 11.sp,
+                        maxLines = 1,
+                    )
+                }
+            }
+        }
+
         item { SettingsHeader("Inicio") }
         item {
             ChoiceRow(
@@ -4026,13 +4128,25 @@ private fun SettingsScreen(
 
 @Composable
 private fun SettingsHeader(text: String) {
-    Text(
-        text = text,
-        color = StreamColors.AccentBright,
-        fontSize = 22.sp,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier.padding(top = 8.dp),
-    )
+    Row(
+        modifier = Modifier.padding(top = 10.dp, bottom = 2.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            modifier = Modifier
+                .width(3.dp)
+                .height(14.dp)
+                .background(StreamColors.Accent, RoundedCornerShape(2.dp)),
+        )
+        Spacer(Modifier.width(8.dp))
+        Text(
+            text = text.uppercase(),
+            color = StreamColors.TextSecondary,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 1.2.sp,
+        )
+    }
 }
 
 @Composable
@@ -4042,21 +4156,39 @@ private fun ChoiceRow(
     options: List<Pair<String, String>>,
     onSelect: (String) -> Unit,
 ) {
-    Column {
-        Text(
-            text = label,
-            color = Color.White,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-        )
-        Spacer(Modifier.height(6.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            options.forEach { (text, value) ->
-                QuickChip(
-                    label = text,
-                    selected = value == current,
-                    onClick = { onSelect(value) },
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(StreamColors.Surface, RoundedCornerShape(10.dp))
+            .border(1.dp, StreamColors.Border, RoundedCornerShape(10.dp)),
+    ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = label,
+                    color = StreamColors.TextPrimary,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.weight(1f),
                 )
+                options.firstOrNull { it.second == current }?.let { selected ->
+                    Text(
+                        text = selected.first,
+                        color = StreamColors.AccentBright,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+            }
+            Spacer(Modifier.height(8.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                options.forEach { (text, value) ->
+                    QuickChip(
+                        label = text,
+                        selected = value == current,
+                        onClick = { onSelect(value) },
+                    )
+                }
             }
         }
     }

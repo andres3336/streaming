@@ -217,3 +217,27 @@ Append-only. Newest entries at the bottom.
   archive with a single README marker. `AGENTS.md` points at `README.md`,
   `DECISIONS.md` and `HISTORY.md` instead, and the README task-tracking section was
   rewritten. No spec file was moved or deleted.
+- Replaced the blue/green palette with a flat monochrome theme and one slate-blue
+  accent (`#485584`): solid fills, 1 px borders, no transparency, gradients, glass or
+  focus scaling. The only non-opaque layer left is the modal backdrop over video.
+- Rebuilt the shell as an icon-only navigation pill with the app monogram, a source
+  chip, a large clock with the date and a keycap hint strip. Section titles moved out
+  of the top bar and into the content.
+- Merged `En vivo` and `Canales` into one **TV** destination switched by header chips.
+- Added the **Inicio** landing screen: a hero with the text on a solid panel next to
+  the artwork, plus Continuar viendo, Favoritos, En vivo ahora, Películas and Series
+  rows. Continue cards keep the resume bar.
+- Added the live preview pane: channel list on the left, autoplaying stream with audio
+  on the right and the EPG now/next plus progress below it. Preview requests start only
+  after focus settles and are released on leave. Verified TD+ and South Park on the TV.
+- Added hero-on-focus to Películas and Series: the focused poster fills a compact hero
+  with year, genre, rating and synopsis; `vodInfo` fills the plot on demand. The movie
+  detail now shows an autoplaying preview with the synopsis beside it.
+- Restyled Ajustes into flat bordered cards with a section rail marker, an identity
+  card and the current value on each row; restyled the series detail with flat season
+  headers and episode rows.
+- The app now owns its text scale (`ui.fontScale`) instead of multiplying the TV's
+  system font scale, which is 1.4 on the test device and was clipping every title.
+- Verified on the TV at 1280x720: home hero and rows, live list plus preview and EPG,
+  movie/series hero-on-focus, movie detail preview, series episodes and Ajustes.
+  129 unit tests passing. Version 0.16.0.

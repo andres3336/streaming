@@ -43,6 +43,19 @@ Short record of product and architecture decisions. `HISTORY.md` is the running 
 Secret gist caveat: GitHub secret gists are unlisted, not access-controlled. Treat the
 config URL as a password. A truly private source requires a backend, which is out of scope.
 
+## Visual theme
+
+- Flat, monochrome dark UI with one slate-blue accent (`#485584`)
+- Solid fills and 1 px borders only: no transparency, gradients, glass or focus scaling
+- The only non-opaque color is the modal backdrop over playing video
+- Icon-only navigation pill; section titles live in the content, not in a top bar
+- Keycap hint strip in the bottom-right of every section
+- The app owns its text scale: the TV's system font scale is ignored so layouts stay stable
+- Hero banners put the text on a solid panel next to the artwork, never on a photo
+- The live list has a right-hand preview pane with the EPG below it; movies and series
+  preview through a hero-on-focus above the grid, with the full synopsis
+- OwnTV is a UX reference only; all code is clean-room
+
 ## UI and profiles
 
 - One universal browse/player skeleton for live, movies and series

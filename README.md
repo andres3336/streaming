@@ -6,14 +6,19 @@ Target device: Google TV / Android TV, 32-bit ARM, Android 11, limited storage.
 
 ## Current status
 
-Version 0.15.0 adds the v1.2 TV shell: a rounded navigation pill, compact top bar,
-split category/poster-grid browsing for movies and series, unified live/VOD
-favorites, and rating/language badges. The app already has separate **En vivo**
-(curated gist) and **Canales** (Xtream) live tabs, Xtream movies/series with
-metadata detail, universal fuzzy search across all sources, VOD subtitles with
-OpenSubtitles and local files, quality/buffer/speed controls, text/UI scale,
-VOD external-player handoff, and boot/wake auto-start settings. See `todo-v1.md`
-and `HISTORY.md`.
+Version 0.16.0 is the flat visual pass. The app now uses a monochrome dark palette
+with a single slate-blue accent (`#485584`), solid fills and 1 px borders: no
+transparency, gradients or motion. The shell is an icon-only navigation pill with a
+source chip, clock and keycap hints, plus a new **Inicio** landing screen with a hero
+and rows. Live TV browses with a right-hand preview pane and the EPG below it; movies
+and series show a hero for the focused poster and the synopsis under it. Live sources
+are merged into one **TV** destination with `En vivo` / `Canales` chips, and the app
+now owns its text scale so the TV's system font scale cannot break layouts.
+
+Everything from 0.15.0 is still there: Xtream movies/series with metadata detail,
+universal fuzzy search across all sources, VOD subtitles with OpenSubtitles and local
+files, quality/buffer/speed controls, text/UI scale, VOD external-player handoff and
+boot/wake auto-start settings. See `HISTORY.md`.
 
 Android 11 on the test Google TV blocks background activity starts after boot; the
 app keeps the boot receiver and offers an opt-in HOME alias as the fallback.
@@ -71,6 +76,7 @@ Included:
 - curated M3U live list from a private/secret gist (`En vivo`)
 - Xtream live (`Canales`), movies and series
 - remote config through a secret-gist JSON file
+- live preview pane with EPG, hero-on-focus for movies and series
 - universal fuzzy search, movie/series metadata detail
 - subtitles: embedded, local SRT and OpenSubtitles
 - ExoPlayer, stream stats, quality/buffer/speed, aspect modes, VOD cache
