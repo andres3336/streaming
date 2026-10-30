@@ -11,7 +11,6 @@
     }
   },
   "network": {
-    "wifiOnly": false,
     "maxBitrateKbps": 0,
     "connectTimeoutMs": 15000,
     "readTimeoutMs": 20000
@@ -44,10 +43,6 @@
     "startLastChannel": true,
     "zapping": true
   },
-  "epg": {
-    "url": null,
-    "refreshHours": 12
-  },
   "diagnostics": {
     "showStats": false,
     "logLevel": "warn"
@@ -57,21 +52,33 @@
     "apiKey": "",
     "username": "",
     "password": "",
-    "languages": ["es", "en"],
+    "languages": [
+      "es",
+      "en"
+    ],
     "autoDownload": true
   },
   "ui": {
-    "sections": ["live", "channels", "movies", "series"],
+    "sections": [
+      "tv",
+      "movies",
+      "series"
+    ],
     "theme": "dark",
     "accentColor": "#3B82F6",
     "fontScale": 1.0,
-    "uiScale": 1.0,
     "navigation": "top",
     "playerBar": "full",
-    "playerButtons": ["info", "aspect", "tracks", "quality", "speed", "external"],
+    "playerButtons": [
+      "info",
+      "aspect",
+      "tracks",
+      "quality",
+      "speed",
+      "external"
+    ],
     "showChannelNumbers": true,
-    "showLogos": true,
-    "showNowNext": false
+    "showLogos": true
   },
   "forceUpdate": false
 }

@@ -34,7 +34,6 @@ data class XtreamCatalog(
                                     .put("categoryId", stream.categoryId)
                                     .apply {
                                         stream.logo?.let { put("logo", it) }
-                                        stream.epgChannelId?.let { put("epgChannelId", it) }
                                     },
                             )
                         }
@@ -66,7 +65,6 @@ data class XtreamCatalog(
                             name = item.optString("name").ifBlank { "Sin título" },
                             logo = item.optString("logo").takeIf(String::isNotBlank),
                             categoryId = item.optString("categoryId").ifBlank { categoryId },
-                            epgChannelId = item.optString("epgChannelId").takeIf(String::isNotBlank),
                         )
                     }
                 }

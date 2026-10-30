@@ -16,7 +16,6 @@ class MediaItemTest {
         assertFalse(item.capabilities.canSeek)
         assertFalse(item.capabilities.canChangeSpeed)
         assertFalse(item.capabilities.canOpenExternally)
-        assertTrue(item.capabilities.hasEpg)
     }
 
     @Test

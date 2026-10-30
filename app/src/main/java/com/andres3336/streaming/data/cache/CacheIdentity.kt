@@ -23,11 +23,6 @@ object CacheIdentity {
         return sha256("xtream|${xtream.baseUrl}|${xtream.username}|${xtream.password}")
     }
 
-    fun epg(config: AppConfig): String? {
-        val url = config.epg.url?.takeIf(String::isNotBlank) ?: return null
-        return sha256("epg|$url")
-    }
-
     fun sha256(text: String): String = MessageDigest.getInstance("SHA-256")
         .digest(text.toByteArray(Charsets.UTF_8))
         .joinToString("") { "%02x".format(it) }

@@ -11,7 +11,6 @@ class XtreamCategoryFilterTest {
         name = name,
         logo = null,
         categoryId = "c",
-        epgChannelId = null,
     )
 
     @Test

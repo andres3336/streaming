@@ -84,10 +84,10 @@ fun CategoryPanel(
                 fontSize = 11.sp,
             )
         }
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(6.dp))
         LazyColumn(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(3.dp),
             contentPadding = PaddingValues(bottom = 4.dp),
         ) {
             items(entries, key = { it.id }) { entry ->
@@ -168,7 +168,7 @@ private fun CategoryRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 10.dp, vertical = 8.dp),
+                .padding(horizontal = 8.dp, vertical = 5.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Spacer(Modifier.width(2.dp))
@@ -176,9 +176,9 @@ private fun CategoryRow(
                 Text(
                     text = "★",
                     color = StreamColors.Favorite,
-                    fontSize = 14.sp,
+                    fontSize = 12.sp,
                 )
-                Spacer(Modifier.width(6.dp))
+                Spacer(Modifier.width(5.dp))
             }
             Text(
                 text = entry.label,

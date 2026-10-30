@@ -1,6 +1,7 @@
 package com.andres3336.streaming
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,18 +31,18 @@ import com.andres3336.streaming.data.config.PlayerConfig
 import com.andres3336.streaming.data.config.XtreamConfig
 import com.andres3336.streaming.data.media.FavoriteKeys
 import com.andres3336.streaming.data.media.LanguageTag
+import com.andres3336.streaming.data.media.TitleVariants
 import com.andres3336.streaming.data.xtream.XtreamCategory
 import com.andres3336.streaming.data.xtream.XtreamClient
 import com.andres3336.streaming.data.xtream.XtreamMovie
 import com.andres3336.streaming.data.xtream.XtreamResult
 import com.andres3336.streaming.ui.CategoryEntry
 import com.andres3336.streaming.ui.CategoryPanel
-import com.andres3336.streaming.ui.HeroBlock
+import com.andres3336.streaming.ui.CinematicDetails
 import com.andres3336.streaming.ui.PosterGrid
 import com.andres3336.streaming.ui.VideoPreview
 import com.andres3336.streaming.ui.QuickChip
 import com.andres3336.streaming.ui.StreamColors
-import com.andres3336.streaming.ui.TextSizes
 import kotlinx.coroutines.delay
 
 @Composable
@@ -51,6 +53,7 @@ internal fun XtreamMoviesScreen(
     onUpdateConfig: () -> Unit,
     favorites: List<String>,
     onToggleFavoriteKey: (String) -> Unit,
+    initialCategoryId: String? = null,
     onPlay: (Channel) -> Unit,
 ) {
     val client = remember(xtream, playerConfig.userAgent) {
@@ -68,9 +71,10 @@ internal fun XtreamMoviesScreen(
     var error by remember { mutableStateOf<String?>(null) }
     var favoritesError by remember { mutableStateOf<String?>(null) }
     var retry by remember { mutableIntStateOf(0) }
-    var detail by remember { mutableStateOf<XtreamMovie?>(null) }
+    var detail by remember { mutableStateOf<MovieGroup?>(null) }
     val categoryFocus = remember { FocusRequester() }
     val gridFocus = remember { FocusRequester() }
+    val gridState = rememberLazyGridState()
     val favoriteKeys = remember(favorites) { favorites.toSet() }
     val favoritesMode = selectedId == FAVORITES_CATEGORY
 
@@ -94,6 +98,10 @@ internal fun XtreamMoviesScreen(
                 loadingCategories = false
             }
         }
+    }
+
+    LaunchedEffect(initialCategoryId) {
+        if (!initialCategoryId.isNullOrBlank()) selectedId = initialCategoryId
     }
 
     LaunchedEffect(selectedId, retry, refreshVersion, xtream) {
@@ -125,15 +133,22 @@ internal fun XtreamMoviesScreen(
         }
     }
 
-    val selectedMovie = detail
-    if (selectedMovie != null) {
+    var focusedGroup by remember(selectedId) { mutableStateOf<MovieGroup?>(null) }
+
+    val selectedGroup = detail
+    if (selectedGroup != null) {
         MovieDetail(
             client = client,
-            movie = selectedMovie,
+            movie = selectedGroup.primary,
+            variants = selectedGroup.variants,
             playerConfig = playerConfig,
             refreshVersion = refreshVersion,
             onBack = { detail = null },
             onPlay = onPlay,
+            favorite = FavoriteKeys.movie(selectedGroup.primary.id) in favoriteKeys,
+            onToggleFavorite = {
+                onToggleFavoriteKey(FavoriteKeys.movie(selectedGroup.primary.id))
+            },
         )
         return
     }
@@ -159,12 +174,22 @@ internal fun XtreamMoviesScreen(
             movies
         }
     }
-    var focusedMovie by remember(selectedId) { mutableStateOf<XtreamMovie?>(null) }
+    val groups = remember(visibleMovies) {
+        visibleMovies
+            .groupBy { TitleVariants.groupKey(it.name, it.year) }
+            .map { (key, variants) ->
+                MovieGroup(
+                    key = key,
+                    title = TitleVariants.parse(variants.first().name).baseTitle,
+                    variants = variants,
+                )
+            }
+    }
     var infoCache by remember(selectedId) {
         mutableStateOf<Map<String, XtreamMovie>>(emptyMap())
     }
-    LaunchedEffect(focusedMovie?.id) {
-        val item = focusedMovie ?: return@LaunchedEffect
+    LaunchedEffect(focusedGroup?.primary?.id) {
+        val item = focusedGroup?.primary ?: return@LaunchedEffect
         if (infoCache.containsKey(item.id)) return@LaunchedEffect
         delay(260)
         val result = client.vodInfo(item.id)
@@ -172,9 +197,26 @@ internal fun XtreamMoviesScreen(
             infoCache = infoCache + (item.id to result.value)
         }
     }
-    val heroMovie = focusedMovie ?: visibleMovies.firstOrNull()
+    val heroMovie = focusedGroup?.primary ?: groups.firstOrNull()?.primary
 
-    BrowseShell(
+    val heroBase = heroMovie
+    val heroInfo = heroBase?.let { infoCache[it.id] }
+    val hero = heroBase?.let { item ->
+        if (heroInfo == null) {
+            item
+        } else {
+            item.copy(
+                plot = heroInfo.plot ?: item.plot,
+                backdrop = heroInfo.backdrop ?: item.backdrop,
+                genre = heroInfo.genre ?: item.genre,
+                year = heroInfo.year ?: item.year,
+                rating = heroInfo.rating ?: item.rating,
+                duration = heroInfo.duration ?: item.duration,
+            )
+        }
+    }
+
+    CinematicBrowse(
         rail = {
             CategoryPanel(
                 entries = buildList {
@@ -186,15 +228,21 @@ internal fun XtreamMoviesScreen(
                 modifier = Modifier.fillMaxSize(),
                 selectedFocusRequester = categoryFocus,
                 rightFocusRequester = gridFocus,
-                footer = {
-                    Text(
-                        text = "Mantén OK: ★ favorito",
-                        color = StreamColors.TextMuted,
-                        fontSize = 10.sp,
-                        maxLines = 2,
-                    )
-                },
             )
+        },
+        details = {
+            if (hero != null) {
+                CinematicDetails(
+                    title = TitleVariants.parse(hero.name).baseTitle,
+                    meta = listOfNotNull(
+                        yearOnly(hero.year),
+                        hero.genre,
+                        hero.rating?.let { "\u2605 $it" },
+                        if (FavoriteKeys.movie(hero.id) in favoriteKeys) "Favorito" else null,
+                    ),
+                    synopsis = hero.plot,
+                )
+            }
         },
         content = {
             when {
@@ -212,75 +260,33 @@ internal fun XtreamMoviesScreen(
                     onUpdateConfig = onUpdateConfig,
                 )
 
-                else -> Column(modifier = Modifier.fillMaxSize()) {
-                    val heroBase = heroMovie
-                    val heroInfo = heroBase?.let { infoCache[it.id] }
-                    val hero = heroBase?.let { item ->
-                        if (heroInfo == null) {
-                            item
-                        } else {
-                            item.copy(
-                                plot = heroInfo.plot ?: item.plot,
-                                backdrop = heroInfo.backdrop ?: item.backdrop,
-                                genre = heroInfo.genre ?: item.genre,
-                                year = heroInfo.year ?: item.year,
-                                rating = heroInfo.rating ?: item.rating,
-                                duration = heroInfo.duration ?: item.duration,
-                            )
-                        }
-                    }
-                    if (hero != null) {
-                        HeroBlock(
-                            title = hero.name,
-                            badge = "Película",
-                            meta = listOfNotNull(
-                                yearOnly(hero.year),
-                                hero.genre,
-                                hero.rating?.let { "\u2605 $it" },
-                                if (FavoriteKeys.movie(hero.id) in favoriteKeys) "Favorito" else null,
-                            ),
-                            synopsis = hero.plot,
-                            image = hero.logo,
-                            primaryLabel = "Reproducir",
-                            onPrimary = { onPlay(hero.toChannel(client)) },
-                            secondaryLabel = "Ficha",
-                            onSecondary = { detail = hero },
-                            height = 206,
-                            titleSize = TextSizes.ScreenTitle,
-                        )
-                        Spacer(Modifier.height(12.dp))
-                    }
-                    PosterGrid(
-                        items = visibleMovies,
-                        key = { it.id },
-                        title = { it.name },
-                        subtitle = {
-                            listOfNotNull(yearOnly(it.year), it.genre)
-                                .joinToString(" · ")
-                                .ifBlank { null }
-                        },
-                        image = { it.logo },
-                        rating = { it.rating },
-                        language = { LanguageTag.normalize(it.language) },
-                        favorite = { FavoriteKeys.movie(it.id) in favoriteKeys },
-                        onClick = { detail = it },
-                        onToggleFavorite = {
-                            onToggleFavoriteKey(FavoriteKeys.movie(it.id))
-                        },
-                        onFocusItem = { focusedMovie = it },
-                        gridFocusRequester = gridFocus,
-                        leftFocusRequester = categoryFocus,
-                        modifier = Modifier.weight(1f),
-                        emptyMessage = if (favoritesMode) {
-                            "Aún no hay películas favoritas"
-                        } else {
-                            "No hay películas en esta categoría"
-                        },
-                    )
-                }
+                else -> PosterGrid(
+                    items = groups,
+                    key = { it.key },
+                    title = { it.title },
+                    image = { it.primary.logo },
+                    rating = { it.primary.rating },
+                    favorite = { FavoriteKeys.movie(it.primary.id) in favoriteKeys },
+                    onClick = { detail = it },
+                    onToggleFavorite = { group ->
+                        onToggleFavoriteKey(FavoriteKeys.movie(group.primary.id))
+                    },
+                    onFocusItem = { focusedGroup = it },
+                    gridFocusRequester = gridFocus,
+                    leftFocusRequester = categoryFocus,
+                    gridState = gridState,
+                    initialFocusKey = focusedGroup?.key,
+                    modifier = Modifier.weight(1f),
+                    emptyMessage = if (favoritesMode) {
+                        "Aún no hay películas favoritas"
+                    } else {
+                        "No hay películas en esta categoría"
+                    },
+                )
             }
         },
     )
+
 }
 
 @Composable
@@ -291,17 +297,24 @@ internal fun MovieDetail(
     refreshVersion: Int,
     onBack: () -> Unit,
     onPlay: (Channel) -> Unit,
+    favorite: Boolean = false,
+    onToggleFavorite: () -> Unit = {},
+    variants: List<XtreamMovie> = listOf(movie),
 ) {
-    var info by remember(movie.id) { mutableStateOf<XtreamMovie?>(null) }
-    var loading by remember(movie.id) { mutableStateOf(true) }
-    var retry by remember(movie.id) { mutableIntStateOf(0) }
+    var selected by remember(movie.id, variants) {
+        mutableStateOf(variants.firstOrNull { it.id == movie.id } ?: variants.firstOrNull() ?: movie)
+    }
+    var info by remember(selected.id) { mutableStateOf<XtreamMovie?>(null) }
+    var loading by remember(selected.id) { mutableStateOf(true) }
+    var retry by remember(selected.id) { mutableIntStateOf(0) }
     val detailFocus = remember { FocusRequester() }
 
     BackHandler { onBack() }
 
-    LaunchedEffect(movie.id, retry, refreshVersion) {
+    LaunchedEffect(selected.id, retry, refreshVersion) {
         loading = true
-        when (val result = client.vodInfo(movie.id)) {
+        info = null
+        when (val result = client.vodInfo(selected.id)) {
             is XtreamResult.Success -> info = result.value
             is XtreamResult.Failure -> Unit
         }
@@ -315,19 +328,19 @@ internal fun MovieDetail(
         }
     }
 
-    val current = info ?: movie
-    val detailChannel = remember(current, movie.id) {
+    val current = info ?: selected
+    val detailChannel = remember(current, selected.id) {
         Channel(
-            name = current.name,
-            url = client.movieUrl(current.copy(extension = movie.extension)),
+            name = TitleVariants.parse(current.name).baseTitle,
+            url = client.movieUrl(current.copy(extension = selected.extension)),
             group = "Películas",
-            logo = current.logo ?: movie.logo,
+            logo = current.logo ?: selected.logo,
             tvgId = current.id,
-            language = LanguageTag.normalize(current.language ?: movie.language),
+            language = LanguageTag.normalize(current.language ?: selected.language),
             isVod = true,
-            year = current.year ?: movie.year,
-            imdbId = current.imdbId ?: movie.imdbId,
-            tmdbId = current.tmdbId ?: movie.tmdbId,
+            year = current.year ?: selected.year,
+            imdbId = current.imdbId ?: selected.imdbId,
+            tmdbId = current.tmdbId ?: selected.tmdbId,
         )
     }
     val playMovie = { onPlay(detailChannel) }
@@ -335,6 +348,12 @@ internal fun MovieDetail(
     Column(modifier = Modifier.fillMaxSize()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             QuickChip(label = "Volver", fontSize = 13.sp, onClick = onBack)
+            Spacer(Modifier.weight(1f))
+            QuickChip(
+                label = if (favorite) "\u2605 Favorito" else "\u2606 Favorito",
+                fontSize = 13.sp,
+                onClick = onToggleFavorite,
+            )
         }
         Spacer(Modifier.height(10.dp))
 
@@ -352,8 +371,20 @@ internal fun MovieDetail(
                 }
                 Spacer(Modifier.width(18.dp))
                 Column(modifier = Modifier.weight(0.45f)) {
+                    if (variants.size > 1) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            variants.forEach { variant ->
+                                QuickChip(
+                                    label = TitleVariants.parse(variant.name).tag,
+                                    selected = variant.id == selected.id,
+                                    onClick = { selected = variant },
+                                )
+                            }
+                        }
+                        Spacer(Modifier.height(8.dp))
+                    }
                     Text(
-                        text = current.name,
+                        text = TitleVariants.parse(current.name).baseTitle,
                         color = StreamColors.TextPrimary,
                         fontSize = 26.sp,
                         fontWeight = FontWeight.Black,
@@ -398,4 +429,13 @@ internal fun MovieDetail(
             }
         }
     }
+}
+
+/** One poster per title; the language variants are chosen in the detail. */
+internal data class MovieGroup(
+    val key: String,
+    val title: String,
+    val variants: List<XtreamMovie>,
+) {
+    val primary: XtreamMovie get() = variants.first()
 }

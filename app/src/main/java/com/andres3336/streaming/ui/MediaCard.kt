@@ -85,8 +85,8 @@ fun MediaRow(
         }
         Spacer(Modifier.height(8.dp))
         LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(start = 2.dp, end = 24.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(start = 2.dp, end = 16.dp),
             modifier = Modifier.fillMaxWidth(),
         ) {
             items(items, key = { it.key }) { item ->
@@ -100,7 +100,7 @@ fun MediaRow(
 fun MediaCard(
     model: MediaCardModel,
     modifier: Modifier = Modifier,
-    width: Int = 196,
+    width: Int = 172,
     onClick: () -> Unit,
 ) {
     val shape = RoundedCornerShape(Dimens.CardCorner)
@@ -120,7 +120,7 @@ fun MediaCard(
         ),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f, pressedScale = 1f),
     ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(6.dp)) {
+        Column(modifier = Modifier.fillMaxWidth().padding(4.dp)) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -171,13 +171,14 @@ fun MediaCard(
                     }
                 }
             }
-            Spacer(Modifier.height(6.dp))
+            Spacer(Modifier.height(4.dp))
             Text(
                 text = model.title,
                 color = StreamColors.TextPrimary,
                 fontSize = 13.sp,
+                lineHeight = 15.sp,
                 fontWeight = FontWeight.SemiBold,
-                maxLines = 1,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
             if (!model.subtitle.isNullOrBlank()) {

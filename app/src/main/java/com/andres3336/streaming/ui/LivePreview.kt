@@ -51,8 +51,6 @@ import com.andres3336.streaming.R
 import com.andres3336.streaming.data.Channel
 import com.andres3336.streaming.data.config.NetworkConfig
 import com.andres3336.streaming.data.config.PlayerConfig
-import com.andres3336.streaming.data.epg.EpgGuide
-import com.andres3336.streaming.data.epg.EpgNowNext
 import kotlinx.coroutines.delay
 
 /**
@@ -61,18 +59,19 @@ import kotlinx.coroutines.delay
  */
 val LocalLiveFocus = androidx.compose.runtime.staticCompositionLocalOf<((Channel) -> Unit)?> { null }
 
+/** State of an autoplaying preview, so the screen can show a loading label. */
+enum class PreviewState { Loading, Playing, Failed }
+
 /**
- * Right-hand preview for the live list: muted-free (audio on), flat pane with the
- * programme guide below it. The stream starts only after the focus settles, so
- * scrolling the list does not open a request per row.
+ * Right-hand preview for the live list: a flat pane with the muted-free stream and
+ * its identity. There is no programme guide; the EPG was removed as unreliable.
  */
 @Composable
 fun LivePreviewPane(
     channel: Channel?,
-    nowNext: EpgNowNext?,
-    nowMs: Long,
     playerConfig: PlayerConfig,
     networkConfig: NetworkConfig,
+    source: String? = null,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -101,12 +100,12 @@ fun LivePreviewPane(
             }
         }
 
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(8.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
                 modifier = Modifier
-                    .size(width = 40.dp, height = 28.dp)
-                    .clip(RoundedCornerShape(6.dp))
+                    .size(width = 36.dp, height = 25.dp)
+                    .clip(RoundedCornerShape(5.dp))
                     .background(StreamColors.SurfaceRaised),
                 contentAlignment = Alignment.Center,
             ) {
@@ -118,7 +117,7 @@ fun LivePreviewPane(
                         error = painterResource(R.drawable.ic_channel_placeholder),
                         fallback = painterResource(R.drawable.ic_channel_placeholder),
                         contentScale = ContentScale.Fit,
-                        modifier = Modifier.fillMaxSize().padding(4.dp),
+                        modifier = Modifier.fillMaxSize().padding(2.dp),
                     )
                 }
             }
@@ -126,68 +125,25 @@ fun LivePreviewPane(
             Text(
                 text = channel?.name ?: "Sin canal",
                 color = StreamColors.TextPrimary,
-                fontSize = 16.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
         }
 
-        val current = nowNext?.current
-        if (current != null) {
-            Spacer(Modifier.height(8.dp))
+        val meta = listOfNotNull(
+            channel?.group?.takeIf(String::isNotBlank),
+            source?.takeIf(String::isNotBlank),
+        ).joinToString(" \u00b7 ")
+        if (meta.isNotEmpty()) {
+            Spacer(Modifier.height(3.dp))
             Text(
-                text = current.title,
-                color = StreamColors.TextPrimary,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Spacer(Modifier.height(4.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = "${EpgGuide.formatClock(current.startMs)} – ${EpgGuide.formatClock(current.stopMs)}",
-                    color = StreamColors.TextMuted,
-                    fontSize = 11.sp,
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    text = EpgGuide.formatTimeLeft(current.stopMs - nowMs),
-                    color = StreamColors.AccentBright,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.SemiBold,
-                )
-            }
-            Spacer(Modifier.height(6.dp))
-            ProgressLine(
-                fraction = (
-                    (nowMs - current.startMs).toFloat() /
-                        (current.stopMs - current.startMs).coerceAtLeast(1L)
-                    ).coerceIn(0f, 1f),
-            )
-            nowNext?.next?.let { next ->
-                Spacer(Modifier.height(10.dp))
-                Text(
-                    text = "Después",
-                    color = StreamColors.TextMuted,
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Bold,
-                )
-                Text(
-                    text = "${EpgGuide.formatClock(next.startMs)}  ${next.title}",
-                    color = StreamColors.TextSecondary,
-                    fontSize = 12.sp,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-        } else if (channel != null) {
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = "Sin guía de programación para este canal.",
+                text = meta,
                 color = StreamColors.TextMuted,
-                fontSize = 12.sp,
+                fontSize = 11.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }
@@ -203,6 +159,7 @@ fun VideoPreview(
 ) {
     val shape = RoundedCornerShape(Dimens.CardCorner)
     var focused by remember { mutableStateOf(false) }
+    var previewState by remember(channel.url) { mutableStateOf(PreviewState.Loading) }
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -222,23 +179,26 @@ fun VideoPreview(
             channel = channel,
             playerConfig = playerConfig,
             networkConfig = NetworkConfig(),
+            onState = { previewState = it },
         )
-        if (focused) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(12.dp)
-                    .background(StreamColors.SurfaceRaised, RoundedCornerShape(5.dp))
-                    .border(1.dp, StreamColors.Border, RoundedCornerShape(5.dp))
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
-            ) {
+        if (previewState == PreviewState.Loading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(
-                    text = "OK \u00b7 Reproducir",
-                    color = StreamColors.TextPrimary,
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Bold,
+                    text = "Cargando vista previa\u2026",
+                    color = StreamColors.TextMuted,
+                    fontSize = 12.sp,
                 )
             }
+        }
+        if (previewState == PreviewState.Failed) {
+            Text(
+                text = "Vista previa no disponible",
+                color = StreamColors.TextMuted,
+                fontSize = 10.sp,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 8.dp),
+            )
         }
     }
 }
@@ -267,33 +227,12 @@ private fun LiveTag(modifier: Modifier = Modifier) {
     }
 }
 
-/** Solid progress line: no alpha, no animation. */
-@Composable
-fun ProgressLine(
-    fraction: Float,
-    modifier: Modifier = Modifier,
-    height: Int = 3,
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(height.dp)
-            .background(StreamColors.Border, RoundedCornerShape(2.dp)),
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(fraction.coerceIn(0f, 1f))
-                .fillMaxSize()
-                .background(StreamColors.Accent, RoundedCornerShape(2.dp)),
-        )
-    }
-}
-
 @Composable
 private fun ChannelPreview(
     channel: Channel,
     playerConfig: PlayerConfig,
     networkConfig: NetworkConfig,
+    onState: (PreviewState) -> Unit = {},
 ) {
     val context = LocalContext.current
     var failed by remember(channel.url) { mutableStateOf(false) }
@@ -306,6 +245,11 @@ private fun ChannelPreview(
         val listener = object : androidx.media3.common.Player.Listener {
             override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
                 failed = true
+                onState(PreviewState.Failed)
+            }
+
+            override fun onRenderedFirstFrame() {
+                onState(PreviewState.Playing)
             }
         }
         player.addListener(listener)
@@ -316,12 +260,16 @@ private fun ChannelPreview(
     }
 
     LaunchedEffect(player) {
+        onState(PreviewState.Loading)
         delay(600)
         runCatching {
             player.prepare()
             player.playWhenReady = true
             started = true
-        }.onFailure { failed = true }
+        }.onFailure {
+            failed = true
+            onState(PreviewState.Failed)
+        }
     }
 
     if (failed) {

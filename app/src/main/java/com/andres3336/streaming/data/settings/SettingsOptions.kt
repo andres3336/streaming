@@ -8,9 +8,8 @@ object SettingsOptions {
     val ALL_ASPECT_MODES = listOf("fit", "fill", "stretch", "zoom", "original", "16:9", "4:3")
     val UI_ASPECT_MODES = ALL_ASPECT_MODES
     val CACHE_SIZES = listOf(100, 250, 500)
-    val BITRATES_KBPS = listOf(0, 15_000, 10_000, 8_000, 5_000, 3_000)
-    val TEXT_SCALES = listOf(0.85f, 1.0f, 1.15f, 1.3f)
-    val UI_SCALES = listOf(0.9f, 1.0f, 1.1f, 1.2f)
+    val BITRATES_KBPS = listOf(0, 200_000, 100_000, 50_000)
+    val TEXT_SCALES = listOf(0.9f, 1.0f, 1.15f, 1.3f, 1.45f)
     val NAVIGATION_MODES = listOf("top", "rail")
     val PLAYER_BARS = listOf("full", "compact")
     val PLAYER_BUTTONS = listOf("info", "aspect", "tracks", "quality", "speed", "external")

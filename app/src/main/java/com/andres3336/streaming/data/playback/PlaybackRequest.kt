@@ -7,6 +7,8 @@ data class PlaybackRequest(
     val queue: List<Channel> = emptyList(),
     val index: Int = -1,
     val startPositionMs: Long = 0L,
+    /** Number shown for this channel in the live list, when there is one. */
+    val number: Int? = null,
 ) {
 
     val next: Channel?
@@ -19,6 +21,7 @@ data class PlaybackRequest(
             queue = queue,
             index = index + 1,
             startPositionMs = 0L,
+            number = number?.plus(1),
         )
     }
 }

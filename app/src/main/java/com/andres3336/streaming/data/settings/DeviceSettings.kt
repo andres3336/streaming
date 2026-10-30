@@ -18,7 +18,6 @@ data class DeviceSettings(
     val wifiOnly: Boolean? = null,
     val maxBitrateKbps: Int? = null,
     val textScale: Float? = null,
-    val uiScale: Float? = null,
     val navigation: String? = null,
     val playerBar: String? = null,
     val playerButtons: List<String>? = null,
@@ -42,7 +41,6 @@ data class DeviceSettings(
             wifiOnly == null &&
             maxBitrateKbps == null &&
             textScale == null &&
-            uiScale == null &&
             navigation == null &&
             playerBar == null &&
             playerButtons == null &&
@@ -65,7 +63,6 @@ data class DeviceSettings(
         wifiOnly?.let { put("wifiOnly", it) }
         maxBitrateKbps?.let { put("maxBitrateKbps", it) }
         textScale?.let { put("textScale", it) }
-        uiScale?.let { put("uiScale", it) }
         navigation?.let { put("navigation", it) }
         playerBar?.let { put("playerBar", it) }
         playerButtons?.let { list ->
@@ -92,7 +89,6 @@ data class DeviceSettings(
             wifiOnly = json.booleanOrNull("wifiOnly"),
             maxBitrateKbps = json.intOrNull("maxBitrateKbps"),
             textScale = json.floatOrNull("textScale"),
-            uiScale = json.floatOrNull("uiScale"),
             navigation = json.stringOrNull("navigation"),
             playerBar = json.stringOrNull("playerBar"),
             playerButtons = json.stringListOrNull("playerButtons"),

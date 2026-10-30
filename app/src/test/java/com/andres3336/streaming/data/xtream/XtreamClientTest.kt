@@ -80,7 +80,6 @@ class XtreamClientTest {
         assertTrue(streams is XtreamResult.Success)
         val stream = (streams as XtreamResult.Success).value.single()
         assertEquals("Canal", stream.name)
-        assertEquals("canal.tv", stream.epgChannelId)
     }
 
     @Test
@@ -90,7 +89,6 @@ class XtreamClientTest {
             name = "Canal",
             logo = null,
             categoryId = "1",
-            epgChannelId = null,
         )
 
         assertEquals(
@@ -105,7 +103,7 @@ class XtreamClientTest {
 
     @Test
     fun convertsAStreamToAChannelWithAStableKey() {
-        val stream = XtreamLiveStream("10", "Canal", "logo.png", "1", epgChannelId = null)
+        val stream = XtreamLiveStream("10", "Canal", "logo.png", "1")
 
         val channel = client.liveChannel(stream, "Deportes", providerLabel = "Xtream")
 

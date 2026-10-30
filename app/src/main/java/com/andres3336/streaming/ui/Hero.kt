@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -102,10 +103,12 @@ fun HeroBlock(
     height: Int = 268,
     titleSize: TextUnit = TextSizes.Display,
 ) {
+    // The hero grows with the text scale so a bigger type never clips its meta.
+    val fontScale = LocalDensity.current.fontScale
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(height.dp),
+            .height((height * fontScale).dp),
     ) {
         Box(
             modifier = Modifier

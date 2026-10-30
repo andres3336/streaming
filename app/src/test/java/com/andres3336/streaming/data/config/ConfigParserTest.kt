@@ -78,8 +78,6 @@ class ConfigParserTest {
         assertTrue(config.cache.clearOnStart)
         assertFalse(config.live.startLastChannel)
         assertFalse(config.live.zapping)
-        assertEquals("https://example.com/epg.xml", config.epg.url)
-        assertEquals(24, config.epg.refreshHours)
         assertTrue(config.diagnostics.showStats)
         assertEquals("debug", config.diagnostics.logLevel)
         assertEquals("light", config.ui.theme)
@@ -88,7 +86,6 @@ class ConfigParserTest {
         assertEquals(listOf("live", "movies", "series"), config.ui.sections)
         assertFalse(config.ui.showChannelNumbers)
         assertFalse(config.ui.showLogos)
-        assertTrue(config.ui.showNowNext)
         assertTrue(config.forceUpdate)
     }
 
@@ -199,7 +196,6 @@ class ConfigParserTest {
               "player": {"qualityCap": "4k", "aspectMode": "wide", "maxBufferMs": 1000},
               "network": {"maxBitrateKbps": -1},
               "cache": {"sizeMb": 999},
-              "epg": {"refreshHours": 0},
               "diagnostics": {"logLevel": "trace"},
               "ui": {"accentColor": "red", "fontScale": 3.0, "theme": "neon"}
             }
@@ -212,7 +208,6 @@ class ConfigParserTest {
         assertTrue(errors.any { it.contains("maxBufferMs") })
         assertTrue(errors.any { it.contains("maxBitrateKbps") })
         assertTrue(errors.any { it.contains("sizeMb") })
-        assertTrue(errors.any { it.contains("refreshHours") })
         assertTrue(errors.any { it.contains("logLevel") })
         assertTrue(errors.any { it.contains("accentColor") })
         assertTrue(errors.any { it.contains("fontScale") })
@@ -252,8 +247,6 @@ class ConfigParserTest {
 
         assertTrue(config.live.startLastChannel)
         assertTrue(config.live.zapping)
-        assertNull(config.epg.url)
-        assertEquals(12, config.epg.refreshHours)
         assertFalse(config.diagnostics.showStats)
         assertEquals("warn", config.diagnostics.logLevel)
 
@@ -263,7 +256,6 @@ class ConfigParserTest {
         assertEquals(listOf("live"), config.ui.sections)
         assertTrue(config.ui.showChannelNumbers)
         assertTrue(config.ui.showLogos)
-        assertFalse(config.ui.showNowNext)
     }
 
     @Test
@@ -278,6 +270,5 @@ class ConfigParserTest {
 
         val config = (ConfigParser.parse(json) as ConfigResult.Valid).config
 
-        assertEquals("https://example.com/epg.xml", config.epg.url)
     }
 }

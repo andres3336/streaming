@@ -18,7 +18,6 @@ class XtreamCatalogTest {
                         name = "Canal",
                         logo = "https://example.com/logo.png",
                         categoryId = "1",
-                        epgChannelId = "canal.tv",
                     ),
                 ),
             ),

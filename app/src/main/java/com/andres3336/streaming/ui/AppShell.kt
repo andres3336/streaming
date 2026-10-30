@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,6 +24,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -35,7 +35,6 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -52,82 +51,45 @@ data class NavDestination(
     val label: String,
 )
 
-/** One keycap instruction in the bottom-right hint strip. */
-data class Hint(
-    val key: String,
-    val label: String,
-)
-
 /**
- * App-wide TV shell: a horizontal navigation bar on top, the screen title, the
- * content and a keycap hint strip.
+ * App-wide TV shell: a horizontal navigation bar on top, then the content.
  *
  * The shell is flat: solid fills, 1 dp borders, no transparency and no motion.
  * A top bar is used instead of a side rail because it is the row the D-pad reaches
  * first with Up, which makes the sections reliably navigable with a remote.
+ *
+ * The bar is the only place a section is named: no second title row, no bottom
+ * hint strip. Both used to repeat information and cost vertical space.
  */
 @Composable
 fun AppShell(
     section: String,
     destinations: List<NavDestination>,
-    title: String,
     onSelect: (String) -> Unit,
-    subtitle: String? = null,
-    showTitle: Boolean = true,
     onHome: (() -> Unit)? = null,
-    chips: @Composable RowScope.() -> Unit = {},
-    hints: List<Hint> = emptyList(),
+    navFocusRequester: FocusRequester? = null,
+    onNavFocused: (Boolean) -> Unit = {},
     content: @Composable () -> Unit,
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(StreamColors.Background)
-            .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 10.dp),
+            .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
     ) {
         TopNavBar(
             section = section,
             destinations = destinations,
             onSelect = onSelect,
             onHome = onHome,
-            chips = chips,
+            navFocusRequester = navFocusRequester,
+            onNavFocused = onNavFocused,
         )
 
-        if (showTitle && title.isNotBlank()) {
-            Spacer(Modifier.height(10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.Bottom,
-            ) {
-                Text(
-                    text = title,
-                    color = StreamColors.TextPrimary,
-                    fontSize = 26.sp,
-                    fontWeight = FontWeight.Black,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                if (!subtitle.isNullOrBlank()) {
-                    Spacer(Modifier.width(10.dp))
-                    Text(
-                        text = subtitle,
-                        color = StreamColors.TextMuted,
-                        fontSize = 11.sp,
-                        maxLines = 1,
-                        modifier = Modifier.padding(bottom = 4.dp),
-                    )
-                }
-            }
-        }
         Spacer(Modifier.height(10.dp))
 
         Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
             content()
-        }
-
-        if (hints.isNotEmpty()) {
-            Spacer(Modifier.height(6.dp))
-            HintBar(hints)
         }
     }
 }
@@ -138,12 +100,18 @@ private fun TopNavBar(
     destinations: List<NavDestination>,
     onSelect: (String) -> Unit,
     onHome: (() -> Unit)?,
-    chips: @Composable RowScope.() -> Unit,
+    navFocusRequester: FocusRequester?,
+    onNavFocused: (Boolean) -> Unit,
 ) {
+    val selectedId = destinations.firstOrNull { it.id == section }?.id
+        ?: destinations.firstOrNull()?.id
     Row(
-        modifier = Modifier.fillMaxWidth().height(44.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(40.dp)
+            .onFocusChanged { onNavFocused(it.hasFocus) },
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
     ) {
         HomeTile(onClick = onHome)
         Spacer(Modifier.width(4.dp))
@@ -152,10 +120,10 @@ private fun TopNavBar(
                 destination = destination,
                 selected = section == destination.id,
                 onClick = { onSelect(destination.id) },
+                focusRequester = navFocusRequester?.takeIf { destination.id == selectedId },
             )
         }
         Spacer(Modifier.weight(1f))
-        chips()
         Spacer(Modifier.width(10.dp))
         Clock()
     }
@@ -175,16 +143,31 @@ private fun HomeTile(onClick: (() -> Unit)?) {
             focusedContentColor = StreamColors.OnAccent,
         ),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f, pressedScale = 1f),
-        modifier = Modifier.size(40.dp),
+        modifier = Modifier.size(36.dp),
     ) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(
-                text = "S",
-                color = StreamColors.OnAccent,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Black,
-            )
+            AppMark(size = 18.dp)
         }
+    }
+}
+
+/**
+ * The app mark in palette colors: the launcher icon's play triangle without its
+ * own blue, so the shell keeps a single accent.
+ */
+@Composable
+fun AppMark(
+    color: Color = StreamColors.OnAccent,
+    size: Dp = 22.dp,
+) {
+    Canvas(modifier = Modifier.size(size)) {
+        val path = Path().apply {
+            moveTo(this@Canvas.size.width * 0.2f, this@Canvas.size.height * 0.12f)
+            lineTo(this@Canvas.size.width * 0.88f, this@Canvas.size.height * 0.5f)
+            lineTo(this@Canvas.size.width * 0.2f, this@Canvas.size.height * 0.88f)
+            close()
+        }
+        drawPath(path, color)
     }
 }
 
@@ -193,6 +176,7 @@ private fun TopNavItem(
     destination: NavDestination,
     selected: Boolean,
     onClick: () -> Unit,
+    focusRequester: FocusRequester? = null,
 ) {
     val shape = RoundedCornerShape(10.dp)
     var focused by remember { mutableStateOf(false) }
@@ -210,7 +194,10 @@ private fun TopNavItem(
     Surface(
         onClick = onClick,
         modifier = Modifier
-            .height(36.dp)
+            .height(32.dp)
+            .then(
+                if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier,
+            )
             .border(
                 width = 1.dp,
                 color = if (focused) StreamColors.AccentBright else Color.Transparent,
@@ -227,11 +214,11 @@ private fun TopNavItem(
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f, pressedScale = 1f),
     ) {
         Row(
-            modifier = Modifier.fillMaxHeight().padding(horizontal = 9.dp),
+            modifier = Modifier.fillMaxHeight().padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            NavGlyph(id = destination.id, color = content, size = 15.dp)
-            Spacer(Modifier.width(6.dp))
+            NavGlyph(id = destination.id, color = content, size = 14.dp)
+            Spacer(Modifier.width(5.dp))
             Text(
                 text = destination.label,
                 fontSize = 11.sp,
@@ -370,29 +357,6 @@ private fun NavGlyph(id: String, color: Color, size: Dp = 16.dp) {
                 )
             }
 
-            "continue" -> {
-                drawCircle(
-                    color = color,
-                    radius = w * 0.36f,
-                    center = Offset(w * 0.5f, h * 0.5f),
-                    style = stroke,
-                )
-                drawLine(
-                    color = color,
-                    start = Offset(w * 0.5f, h * 0.3f),
-                    end = Offset(w * 0.5f, h * 0.52f),
-                    strokeWidth = stroke.width,
-                    cap = StrokeCap.Round,
-                )
-                drawLine(
-                    color = color,
-                    start = Offset(w * 0.5f, h * 0.52f),
-                    end = Offset(w * 0.66f, h * 0.62f),
-                    strokeWidth = stroke.width,
-                    cap = StrokeCap.Round,
-                )
-            }
-
             else -> {
                 listOf(0.3f, 0.55f, 0.8f).forEachIndexed { index, y ->
                     drawLine(
@@ -432,18 +396,20 @@ private fun Clock() {
         }
     }
 
-    Column(horizontalAlignment = Alignment.End) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
         Text(
             text = "%02d:%02d".format(hour, minute),
             color = StreamColors.TextPrimary,
-            fontSize = 20.sp,
+            fontSize = 16.sp,
             fontWeight = FontWeight.Black,
         )
         if (day.isNotEmpty()) {
+            Spacer(Modifier.width(8.dp))
             Text(
                 text = day,
                 color = StreamColors.TextMuted,
-                fontSize = 9.sp,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
                 maxLines = 1,
             )
         }
@@ -460,46 +426,6 @@ private fun dayLabel(calendar: Calendar): String {
     val weekday = dayNames[calendar.get(Calendar.DAY_OF_WEEK) - 1]
     val month = monthNames[calendar.get(Calendar.MONTH)]
     return "$weekday ${calendar.get(Calendar.DAY_OF_MONTH)} $month"
-}
-
-/** Bottom-right keycap instructions, the remote affordance the app was missing. */
-@Composable
-private fun HintBar(hints: List<Hint>) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        hints.forEachIndexed { index, hint ->
-            if (index > 0) Spacer(Modifier.width(14.dp))
-            Keycap(text = hint.key)
-            Spacer(Modifier.width(6.dp))
-            Text(
-                text = hint.label,
-                color = StreamColors.TextMuted,
-                fontSize = 11.sp,
-                maxLines = 1,
-            )
-        }
-    }
-}
-
-@Composable
-private fun Keycap(text: String) {
-    Box(
-        modifier = Modifier
-            .background(StreamColors.SurfaceRaised, RoundedCornerShape(5.dp))
-            .border(1.dp, StreamColors.Border, RoundedCornerShape(5.dp))
-            .padding(horizontal = 7.dp, vertical = 2.dp),
-    ) {
-        Text(
-            text = text,
-            color = StreamColors.TextSecondary,
-            fontSize = 10.sp,
-            fontWeight = FontWeight.Bold,
-            maxLines = 1,
-        )
-    }
 }
 
 /** Small pill used for the header source and section switches. */
@@ -542,7 +468,7 @@ fun QuickChip(
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f, pressedScale = 1f),
     ) {
         Box(
-            modifier = Modifier.fillMaxHeight().padding(horizontal = 12.dp),
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
             contentAlignment = Alignment.Center,
         ) {
             Text(

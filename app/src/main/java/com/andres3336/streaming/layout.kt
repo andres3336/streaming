@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,10 +45,9 @@ import com.andres3336.streaming.ui.AppShell
 import com.andres3336.streaming.ui.CategoryEntry
 import com.andres3336.streaming.ui.CategoryPanel
 import com.andres3336.streaming.ui.Dimens
-import com.andres3336.streaming.ui.Hint
+import com.andres3336.streaming.ui.ModalCard
 import com.andres3336.streaming.ui.NavDestination
 import com.andres3336.streaming.ui.PillButton
-import com.andres3336.streaming.ui.QuickChip
 import com.andres3336.streaming.ui.StreamColors
 import com.andres3336.streaming.player.VideoCache
 import kotlinx.coroutines.delay
@@ -161,14 +160,23 @@ internal fun ReadyScreen(
     val context = LocalContext.current
     // Debug builds can open a section directly: `am start -e section movies`.
     val launchSection = remember {
-        context.findActivity()?.intent?.getStringExtra("section")?.takeIf { it.isNotBlank() }
+        context.findActivity()?.intent?.getStringExtra("section")
+            ?.takeIf { it.isNotBlank() }
+            ?.let { if (it == "live" || it == "channels") "tv" else it }
     }
     var section by remember { mutableStateOf(launchSection ?: "home") }
+    var targetCategory by remember { mutableStateOf<String?>(null) }
     var exitConfirm by remember { mutableStateOf(false) }
+    var navFocused by remember { mutableStateOf(false) }
+    val navFocus = remember { FocusRequester() }
     val activity = context.findActivity()
 
     BackHandler(enabled = selected != null) { onClose() }
-    BackHandler(enabled = selected == null) {
+    // Back first returns focus to the top bar; only from there does it offer to exit.
+    BackHandler(enabled = selected == null && !navFocused) {
+        runCatching { navFocus.requestFocus() }
+    }
+    BackHandler(enabled = selected == null && navFocused) {
         if (exitConfirm) {
             exitConfirm = false
         } else {
@@ -205,35 +213,22 @@ internal fun ReadyScreen(
     }
 
     val xtream = config.sources.xtream
-    val showLive = config.sources.m3uUrl != null && "live" in config.ui.sections
-    val showChannels = xtream != null && "channels" in config.ui.sections
+    val showTv = (config.sources.m3uUrl != null || xtream != null) &&
+        ("tv" in config.ui.sections ||
+            "live" in config.ui.sections ||
+            "channels" in config.ui.sections)
     val showMovies = xtream != null && "movies" in config.ui.sections
     val showSeries = xtream != null && "series" in config.ui.sections
-    val showContinue = playbackEntries.isNotEmpty()
-    val showSearch = showLive || showChannels || showMovies || showSeries
+    val showSearch = showTv || showMovies || showSeries
     // Inicio is the landing section; it always exists.
     val firstSection = "home"
     val activeSection = when {
         section == "home" -> "home"
-        section == "live" && !showLive -> firstSection
-        section == "channels" && !showChannels -> firstSection
+        section == "tv" && !showTv -> firstSection
         section == "movies" && !showMovies -> firstSection
         section == "series" && !showSeries -> firstSection
-        section == "continue" && !showContinue -> firstSection
         section == "search" && !showSearch -> firstSection
         else -> section
-    }
-
-    val sectionTitle = when (activeSection) {
-        "home" -> ""
-        "live" -> "En vivo"
-        "channels" -> "Canales"
-        "movies" -> "Películas"
-        "series" -> "Series"
-        "continue" -> "Continuar viendo"
-        "search" -> "Buscar"
-        "settings" -> "Ajustes"
-        else -> "Streaming"
     }
 
     val content: @Composable () -> Unit = {
@@ -257,6 +252,7 @@ internal fun ReadyScreen(
                         onUpdateConfig = onRefreshConfig,
                         favorites = liveState.favorites,
                         onToggleFavoriteKey = onToggleFavoriteKey,
+                        initialCategoryId = targetCategory,
                         onPlay = { onSelect(PlaybackRequest(it)) },
                     )
                 }
@@ -271,15 +267,12 @@ internal fun ReadyScreen(
                         onUpdateConfig = onRefreshConfig,
                         favorites = liveState.favorites,
                         onToggleFavoriteKey = onToggleFavoriteKey,
+                        initialCategoryId = targetCategory,
                         onPlay = onSelect,
+                        playbackEntries = playbackEntries,
                     )
                 }
             }
-
-            "continue" -> ContinueWatchingScreen(
-                entries = playbackEntries,
-                onSelect = onSelect,
-            )
 
             "settings" -> SettingsScreen(
                 config = config,
@@ -291,30 +284,18 @@ internal fun ReadyScreen(
                 onClearCache = { VideoCache.clear(context) },
             )
 
-            "live" -> {
+            "tv" -> {
                 val gistError = ready.gistError
-                if (gistError != null && ready.channels.isEmpty()) {
+                if (gistError != null && ready.channels.isEmpty() && xtream == null) {
                     SourceFailurePane(
                         message = gistError,
                         onRetry = onRefreshConfig,
                         onUpdateConfig = onRefreshConfig,
                     )
                 } else {
-                    GistLiveBrowse(
-                        channels = ready.channels,
-                        liveState = liveState,
-                        onToggleFavorite = onToggleFavorite,
-                        onSelect = onSelect,
-                        playerConfig = config.player,
-                        networkConfig = config.network,
-                    )
-                }
-            }
-
-            "channels" -> {
-                if (xtream != null) {
-                    XtreamLiveBrowse(
+                    TvBrowseScreen(
                         config = config,
+                        gistChannels = ready.channels,
                         refreshVersion = refreshVersion,
                         onUpdateConfig = onRefreshConfig,
                         liveState = liveState,
@@ -323,6 +304,7 @@ internal fun ReadyScreen(
                         xtreamCatalogCache = xtreamCatalogCache,
                         playerConfig = config.player,
                         networkConfig = config.network,
+                        initialCategoryId = targetCategory,
                     )
                 }
             }
@@ -335,97 +317,38 @@ internal fun ReadyScreen(
                 favorites = liveState.favorites,
                 onToggleFavoriteKey = onToggleFavoriteKey,
                 onPlay = onSelect,
+                onOpenCategory = { target, categoryId ->
+                    targetCategory = categoryId
+                    section = target
+                },
             )
 
-            else -> GistLiveBrowse(
-                channels = ready.channels,
-                liveState = liveState,
-                onToggleFavorite = onToggleFavorite,
-                onSelect = onSelect,
-                playerConfig = config.player,
-                networkConfig = config.network,
-            )
+            else -> CenteredMessage("Sección no disponible")
         }
     }
 
     val destinations = buildList {
         add(NavDestination("home", "Inicio"))
-        if (showLive || showChannels) add(NavDestination("tv", "TV"))
+        if (showTv) add(NavDestination("tv", "TV"))
         if (showMovies) add(NavDestination("movies", "Películas"))
         if (showSeries) add(NavDestination("series", "Series"))
-        if (showContinue) add(NavDestination("continue", "Continuar"))
         if (showSearch) add(NavDestination("search", "Buscar"))
         add(NavDestination("settings", "Ajustes"))
     }
 
-    val navSection = if (activeSection == "live" || activeSection == "channels") {
-        "tv"
-    } else {
-        activeSection
-    }
     AppShell(
-        section = navSection,
+        section = activeSection,
         destinations = destinations,
-        title = sectionTitle,
-        showTitle = activeSection !in setOf("home", "live", "channels"),
-        onHome = { section = "home" },
+        onHome = {
+            targetCategory = null
+            section = "home"
+        },
         onSelect = { id ->
-            section = if (id == "tv") {
-                if (showLive) "live" else "channels"
-            } else {
-                id
-            }
+            targetCategory = null
+            section = id
         },
-        hints = when (activeSection) {
-            "home", "movies", "series" -> emptyList()
-
-            "live", "channels" -> listOf(
-                Hint("OK", "Ver"),
-                Hint("◀ ▶", "Grupo"),
-                Hint("Hold OK", "Favorito"),
-            )
-
-            "continue" -> listOf(
-                Hint("OK", "Abrir"),
-                Hint("◀", "Categorías"),
-                Hint("Hold OK", "Favorito"),
-            )
-
-            else -> listOf(Hint("OK", "Seleccionar"), Hint("Back", "Volver"))
-        },
-        chips = {
-            when (activeSection) {
-                "movies", "series", "continue" -> {
-                    if (showMovies) {
-                        QuickChip(
-                            label = "Películas",
-                            selected = activeSection == "movies",
-                        ) { section = "movies" }
-                    }
-                    if (showSeries) {
-                        QuickChip(
-                            label = "Series",
-                            selected = activeSection == "series",
-                        ) { section = "series" }
-                    }
-                }
-
-                "live", "channels" -> {
-                    if (showLive) {
-                        QuickChip(
-                            label = "En vivo",
-                            selected = activeSection == "live",
-                        ) { section = "live" }
-                    }
-                    if (showChannels) {
-                        QuickChip(
-                            label = "Canales",
-                            selected = activeSection == "channels",
-                        ) { section = "channels" }
-                    }
-                }
-            }
-        },
+        navFocusRequester = navFocus,
+        onNavFocused = { navFocused = it },
         content = { content() },
     )
 
@@ -447,50 +370,31 @@ internal fun ExitConfirmOverlay(
 ) {
     val cancelFocus = remember { FocusRequester() }
 
-    LaunchedEffect(Unit) {
-        delay(150)
-        runCatching { cancelFocus.requestFocus() }
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(StreamColors.Scrim)
-            .padding(48.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        Column(
-            modifier = Modifier
-                .width(520.dp)
-                .background(StreamColors.Surface, RoundedCornerShape(12.dp))
-                .padding(28.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = "¿Salir de Streaming?",
-                color = Color.White,
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-            )
-            Spacer(Modifier.height(10.dp))
-            Text(
-                text = "Se cerrará la aplicación.",
-                color = StreamColors.TextSecondary,
-                fontSize = 17.sp,
-                textAlign = TextAlign.Center,
-            )
-            Spacer(Modifier.height(24.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Button(
-                    onClick = onCancel,
-                    modifier = Modifier.focusRequester(cancelFocus),
-                ) {
-                    Text("Cancelar", fontSize = 18.sp)
-                }
-                Button(onClick = onExit) {
-                    Text("Salir", fontSize = 18.sp)
-                }
+    ModalCard(onDismiss = onCancel, initialFocus = cancelFocus) {
+        Text(
+            text = "¿Salir de Streaming?",
+            color = Color.White,
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(Modifier.height(10.dp))
+        Text(
+            text = "Se cerrará la aplicación.",
+            color = StreamColors.TextSecondary,
+            fontSize = 17.sp,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(Modifier.height(24.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Button(
+                onClick = onCancel,
+                modifier = Modifier.focusRequester(cancelFocus),
+            ) {
+                Text("Cancelar", fontSize = 18.sp)
+            }
+            Button(onClick = onExit) {
+                Text("Salir", fontSize = 18.sp)
             }
         }
     }
@@ -547,14 +451,14 @@ internal fun BrowseShell(
     Row(modifier = Modifier.fillMaxSize()) {
         Box(
             modifier = if (preview != null) {
-                Modifier.width(184.dp).fillMaxHeight()
+                Modifier.width(168.dp).fillMaxHeight()
             } else {
                 Modifier.weight(Dimens.CategoryWidthFraction).fillMaxHeight()
             },
         ) {
             rail()
         }
-        Spacer(Modifier.width(14.dp))
+        Spacer(Modifier.width(10.dp))
         Box(
             modifier = if (preview != null) {
                 Modifier.weight(1f).fillMaxHeight()
@@ -565,10 +469,33 @@ internal fun BrowseShell(
             content()
         }
         if (preview != null) {
-            Spacer(Modifier.width(14.dp))
-            Box(modifier = Modifier.width(296.dp).fillMaxHeight()) {
+            Spacer(Modifier.width(10.dp))
+            Box(modifier = Modifier.width(272.dp).fillMaxHeight()) {
                 preview()
             }
+        }
+    }
+}
+
+@Composable
+internal fun CinematicBrowse(
+    rail: @Composable () -> Unit,
+    details: @Composable ColumnScope.() -> Unit,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Row(Modifier.fillMaxSize()) {
+        Box(Modifier.width(180.dp).fillMaxHeight()) {
+            rail()
+        }
+        Spacer(Modifier.width(10.dp))
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .padding(horizontal = 4.dp),
+        ) {
+            details()
+            content()
         }
     }
 }

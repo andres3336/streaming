@@ -6,13 +6,25 @@ Target: Google TV / Android TV 11, 32-bit ARM, limited storage.
 
 ## Current status
 
-Version 0.16.1. Flat monochrome dark UI with one slate-blue accent (`#485584`),
+Version 0.20.3. Flat monochrome dark UI with one slate-blue accent (`#485584`),
 solid fills and 1 px borders. The shell is a horizontal top navigation bar with
-icon and label items, a clock and keycap hints. **Inicio** is the landing screen;
-**TV** combines `En vivo` and `Canales`; Películas and Series use a category rail,
-hero-on-focus and a four-column poster grid. Ajustes is a card list. The player
-uses one icon-only top bar that hides after a second of playback and returns on
-any key.
+icon and label items, a clock and date on one line, and no duplicate screen title
+or bottom hint strip. **Inicio** is the landing screen and starts with the
+**Continuar viendo** row, then the hero. **TV** is one section: `_Mis canales` (the
+curated M3U list) is pinned on top of the Xtream categories, with a live preview
+pane. There is no EPG. Películas and Series show a compact header for the focused
+title (meta and two-line synopsis) above a seven-column 2:3 poster grid; language
+variants (`SU-`, `CA-`, `ES-`) are grouped into one poster and picked before
+playing. Series details show the episode list and an autoplaying preview side by
+side, and remember the last played episode. **Buscar** is a master search grouped
+by type, cached on disk between runs. Ajustes is a list of one-row cards. Text scale
+only changes type, never layout. The player bar sits at the bottom of the screen:
+title, a selectable seek bar whose Left/Right steps grow 5 → 10 → 30 → 60 s, and one
+row with the settings icons split around the transport (`prev`, `‹`, play/pause,
+`›`, `next`), so play/pause is always centred; `prev`/`next` change episode or
+channel and the seek buttons are VOD-only. Live TV zaps with D-pad Up/Down and
+series episodes change with CH+/CH−.
+Back returns to the top bar before it offers to exit.
 
 ## Project map
 
@@ -20,6 +32,7 @@ any key.
 CONTEXT.md     technical map for agents: files, screens, player, rules
 HISTORY.md     append-only log of decisions and changes
 AGENTS.md      agent working rules
+.opencode/     on-demand skills and the read-only reviewer subagent
 app/           Android app
 config/        config schema, sample and validator docs
 scripts/       build, deploy, logcat, screenshot and check scripts
@@ -55,14 +68,14 @@ No Android Studio is required.
 
 Included:
 
-- curated M3U live list from a private/secret gist (`En vivo`)
-- Xtream live (`Canales`), movies and series
+- curated M3U live list from a private/secret gist (`_Mis canales`)
+- Xtream live categories, movies and series
 - remote config through a secret-gist JSON file
-- live preview pane with EPG, hero-on-focus for movies and series
+- cinematic stage with poster grid for movies and series, live preview pane
 - universal fuzzy search, movie/series metadata detail
 - subtitles: embedded, local SRT and OpenSubtitles
 - ExoPlayer, stream stats, quality/buffer/speed, aspect modes, VOD cache
-- Spanish-only interface, text/UI scale, navigation layouts
+- Spanish-only interface, text scale, navigation layouts
 
 Excluded:
 

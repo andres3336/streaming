@@ -49,7 +49,6 @@ class ConfigV3Test {
         assertEquals("rail", config.ui.navigation)
         assertEquals("compact", config.ui.playerBar)
         assertEquals(listOf("info", "quality"), config.ui.playerButtons)
-        assertEquals(1.1f, config.ui.uiScale)
         assertEquals("key", config.subtitles.apiKey)
         assertFalse(config.subtitles.autoDownload)
     }

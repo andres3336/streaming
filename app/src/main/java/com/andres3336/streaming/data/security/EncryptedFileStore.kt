@@ -27,7 +27,7 @@ class EncryptedFileStore(
     private val appContext = context.applicationContext
     private val file = File(appContext.filesDir, fileName)
 
-    fun read(): String? = runCatching {
+    fun readBytes(): ByteArray? = runCatching {
         if (!file.exists()) return null
 
         DataInputStream(file.inputStream().buffered()).use { input ->
@@ -39,15 +39,17 @@ class EncryptedFileStore(
 
             val cipher = Cipher.getInstance(TRANSFORMATION)
             cipher.init(Cipher.DECRYPT_MODE, secretKey(), GCMParameterSpec(128, iv))
-            String(cipher.doFinal(encrypted), Charsets.UTF_8)
+            cipher.doFinal(encrypted)
         }
     }.getOrNull()
 
-    suspend fun write(text: String) = withContext(Dispatchers.IO) {
+    fun read(): String? = readBytes()?.toString(Charsets.UTF_8)
+
+    suspend fun writeBytes(bytes: ByteArray) = withContext(Dispatchers.IO) {
         runCatching {
             val cipher = Cipher.getInstance(TRANSFORMATION)
             cipher.init(Cipher.ENCRYPT_MODE, secretKey())
-            val encrypted = cipher.doFinal(text.toByteArray(Charsets.UTF_8))
+            val encrypted = cipher.doFinal(bytes)
 
             val temp = File(file.parentFile, "${file.name}.tmp")
             DataOutputStream(temp.outputStream().buffered()).use { output ->
@@ -62,6 +64,8 @@ class EncryptedFileStore(
             }
         }
     }
+
+    suspend fun write(text: String) = writeBytes(text.toByteArray(Charsets.UTF_8))
 
     fun delete() {
         file.delete()

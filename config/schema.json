@@ -2,7 +2,10 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Streaming config v3",
   "type": "object",
-  "required": ["version", "sources"],
+  "required": [
+    "version",
+    "sources"
+  ],
   "additionalProperties": false,
   "properties": {
     "version": {
@@ -15,7 +18,11 @@
       "description": "En vivo uses m3uUrl; Canales uses xtream. liveMode is legacy.",
       "properties": {
         "liveMode": {
-          "enum": ["gist", "xtream", "merge"]
+          "enum": [
+            "gist",
+            "xtream",
+            "merge"
+          ]
         },
         "m3uUrl": {
           "type": "string",
@@ -23,7 +30,11 @@
         },
         "xtream": {
           "type": "object",
-          "required": ["baseUrl", "username", "password"],
+          "required": [
+            "baseUrl",
+            "username",
+            "password"
+          ],
           "additionalProperties": false,
           "properties": {
             "baseUrl": {
@@ -50,8 +61,16 @@
         }
       },
       "anyOf": [
-        { "required": ["m3uUrl"] },
-        { "required": ["xtream"] }
+        {
+          "required": [
+            "m3uUrl"
+          ]
+        },
+        {
+          "required": [
+            "xtream"
+          ]
+        }
       ]
     },
     "network": {
@@ -59,7 +78,9 @@
       "additionalProperties": false,
       "properties": {
         "wifiOnly": {
-          "type": "boolean"
+          "type": "boolean",
+          "deprecated": true,
+          "description": "Ignorado: una TV no usa datos móviles; la app no bloquea la reproducción."
         },
         "maxBitrateKbps": {
           "type": "integer",
@@ -125,16 +146,34 @@
           "type": "boolean"
         },
         "qualityCap": {
-          "enum": ["auto", "1080p", "720p", "480p", "360p"]
+          "enum": [
+            "auto",
+            "1080p",
+            "720p",
+            "480p",
+            "360p"
+          ]
         },
         "qualityPreference": {
-          "enum": ["auto", "1080p", "720p", "480p", "360p"]
+          "enum": [
+            "auto",
+            "1080p",
+            "720p",
+            "480p",
+            "360p"
+          ]
         },
         "liveLowLatency": {
           "type": "boolean"
         },
         "aspectMode": {
-          "enum": ["fit", "fill", "stretch", "zoom", "original"]
+          "enum": [
+            "fit",
+            "fill",
+            "stretch",
+            "zoom",
+            "original"
+          ]
         },
         "audioOnly": {
           "type": "boolean"
@@ -154,7 +193,11 @@
           "type": "boolean"
         },
         "sizeMb": {
-          "enum": [100, 250, 500]
+          "enum": [
+            100,
+            250,
+            500
+          ]
         },
         "clearOnStart": {
           "type": "boolean"
@@ -178,7 +221,10 @@
       "additionalProperties": false,
       "properties": {
         "url": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "pattern": "^https?://"
         },
         "refreshHours": {
@@ -186,26 +232,48 @@
           "minimum": 1,
           "maximum": 168
         }
-      }
+      },
+      "deprecated": true,
+      "description": "Ignorado desde 0.18.0: la app ya no descarga ni muestra XMLTV. Se mantiene para que los gists existentes validen."
     },
     "epgUrl": {
-      "type": ["string", "null"],
-      "pattern": "^https?://"
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^https?://",
+      "deprecated": true,
+      "description": "Ignorado desde 0.18.0. Usa sources en su lugar."
     },
     "subtitles": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "enabled": { "type": "boolean" },
-        "apiKey": { "type": "string" },
-        "username": { "type": "string" },
-        "password": { "type": "string" },
+        "enabled": {
+          "type": "boolean"
+        },
+        "apiKey": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
         "languages": {
           "type": "array",
           "minItems": 1,
-          "items": { "enum": ["es", "en"] }
+          "items": {
+            "enum": [
+              "es",
+              "en"
+            ]
+          }
         },
-        "autoDownload": { "type": "boolean" }
+        "autoDownload": {
+          "type": "boolean"
+        }
       }
     },
     "diagnostics": {
@@ -216,7 +284,12 @@
           "type": "boolean"
         },
         "logLevel": {
-          "enum": ["debug", "info", "warn", "error"]
+          "enum": [
+            "debug",
+            "info",
+            "warn",
+            "error"
+          ]
         }
       }
     },
@@ -228,11 +301,20 @@
           "type": "array",
           "minItems": 1,
           "items": {
-            "enum": ["live", "channels", "movies", "series"]
+            "enum": [
+              "live",
+              "channels",
+              "movies",
+              "series"
+            ]
           }
         },
         "theme": {
-          "enum": ["dark", "light", "system"]
+          "enum": [
+            "dark",
+            "light",
+            "system"
+          ]
         },
         "accentColor": {
           "type": "string",
@@ -246,18 +328,33 @@
         "uiScale": {
           "type": "number",
           "minimum": 0.8,
-          "maximum": 1.5
+          "maximum": 1.5,
+          "deprecated": true,
+          "description": "Ignorado desde 0.18.0: la densidad es fija y solo ui.fontScale cambia el tamaño del texto."
         },
         "navigation": {
-          "enum": ["top", "rail"]
+          "enum": [
+            "top",
+            "rail"
+          ]
         },
         "playerBar": {
-          "enum": ["full", "compact"]
+          "enum": [
+            "full",
+            "compact"
+          ]
         },
         "playerButtons": {
           "type": "array",
           "items": {
-            "enum": ["info", "aspect", "tracks", "quality", "speed", "external"]
+            "enum": [
+              "info",
+              "aspect",
+              "tracks",
+              "quality",
+              "speed",
+              "external"
+            ]
           }
         },
         "showChannelNumbers": {
@@ -267,7 +364,9 @@
           "type": "boolean"
         },
         "showNowNext": {
-          "type": "boolean"
+          "type": "boolean",
+          "deprecated": true,
+          "description": "Ignorado desde 0.18.0: la app no muestra EPG."
         }
       }
     },

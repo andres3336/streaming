@@ -176,16 +176,8 @@ object ConfigParser {
             zapping = liveJson?.optBoolean("zapping", true) ?: true,
         )
 
-        val epgJson = root.objectOrNull("epg")
-        val legacyEpgUrl = root.stringOrNull("epgUrl")
-        val epgUrl = epgJson?.stringOrNull("url") ?: legacyEpgUrl
-        val epg = EpgConfig(
-            url = epgUrl,
-            refreshHours = epgJson?.optInt("refreshHours", 12) ?: 12,
-        )
-        if (epgUrl != null && !isHttpUrl(epgUrl)) errors += "epg.url inválida"
-        if (epg.refreshHours !in 1..168) errors += "epg.refreshHours fuera de rango"
-
+        // `epg` and the legacy `epgUrl` keys are accepted and ignored: the published
+        // gist still carries them, but the app no longer consumes XMLTV.
         val diagnosticsJson = root.objectOrNull("diagnostics")
         val diagnostics = DiagnosticsConfig(
             showStats = diagnosticsJson?.optBoolean("showStats", false) ?: false,
@@ -240,8 +232,6 @@ object ConfigParser {
 
         val fontScale = uiJson?.optDouble("fontScale", 1.0)?.toFloat() ?: 1.0f
         if (fontScale !in 0.8f..1.5f) errors += "ui.fontScale fuera de rango"
-        val uiScale = uiJson?.optDouble("uiScale", 1.0)?.toFloat() ?: 1.0f
-        if (uiScale !in 0.8f..1.5f) errors += "ui.uiScale fuera de rango"
 
         val theme = uiJson?.optString("theme", "dark")?.lowercase()?.takeIf(String::isNotEmpty)
             ?: "dark"
@@ -268,13 +258,11 @@ object ConfigParser {
             theme = theme,
             accentColor = accentColor,
             fontScale = fontScale,
-            uiScale = uiScale,
             navigation = navigation,
             playerBar = playerBar,
             playerButtons = buttons,
             showChannelNumbers = uiJson?.optBoolean("showChannelNumbers", true) ?: true,
             showLogos = uiJson?.optBoolean("showLogos", true) ?: true,
-            showNowNext = uiJson?.optBoolean("showNowNext", false) ?: false,
         )
 
         if (errors.isNotEmpty()) return ConfigResult.Invalid(errors)
@@ -291,7 +279,6 @@ object ConfigParser {
                 network = network,
                 cache = cache,
                 live = live,
-                epg = epg,
                 diagnostics = diagnostics,
                 subtitles = subtitles,
                 ui = ui,

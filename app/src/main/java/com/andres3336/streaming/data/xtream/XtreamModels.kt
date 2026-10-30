@@ -15,7 +15,6 @@ data class XtreamLiveStream(
     val name: String,
     val logo: String?,
     val categoryId: String,
-    val epgChannelId: String?,
     val language: String? = null,
 )
 

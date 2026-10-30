@@ -57,8 +57,8 @@ object StreamColors {
     val BadgeScrim = SurfaceRaised
 
     /**
-     * Modal backdrop over playing video. This is the only non-opaque color in the
-     * theme: a fully solid layer would hide the stream the dialog is about.
+     * Modal backdrop over playing video. The only non-opaque colour in the theme: a
+     * fully solid layer would hide the stream the dialog is about.
      */
     val Scrim = Color(0xE60B0C0E)
     val SelectedNav = Accent
@@ -70,23 +70,23 @@ object StreamColors {
  * immediate, so anything that used to scale now keeps [CardScale] at 1.
  */
 object Dimens {
-    val ScreenPadding = 20.dp
+    val ScreenPadding = 16.dp
     val RailWidth = 64.dp
     val RailCorner = 32.dp
     val RailPadding = 6.dp
-    val RailItemCorner = 12.dp
-    val RailIcon = 30.dp
-    val RailIconCorner = 8.dp
-    val RailGap = 6.dp
-    val TopBarHeight = 56.dp
-    val SectionGap = 16.dp
-    val PanelCorner = 12.dp
-    val PanelPadding = 12.dp
-    val CardCorner = 12.dp
-    val CardInnerCorner = 8.dp
-    val GridGapH = 12.dp
-    val GridGapV = 14.dp
-    val GridPadding = 6.dp
+    val RailItemCorner = 10.dp
+    val RailIcon = 26.dp
+    val RailIconCorner = 6.dp
+    val RailGap = 5.dp
+    val TopBarHeight = 40.dp
+    val SectionGap = 12.dp
+    val PanelCorner = 10.dp
+    val PanelPadding = 10.dp
+    val CardCorner = 8.dp
+    val CardInnerCorner = 6.dp
+    val GridGapH = 8.dp
+    val GridGapV = 10.dp
+    val GridPadding = 4.dp
     val CardScale = 1f
     val FavoriteBorder = 2.dp
     val RailBorder = 1.dp
@@ -100,8 +100,8 @@ object TextSizes {
     val ScreenTitle = 30.sp
     val SectionTitle = 20.sp
     val RowTitle = 18.sp
-    val Body = 15.sp
-    val Meta = 14.sp
-    val Small = 12.sp
+    val Body = 16.sp
+    val Meta = 12.sp
+    val Small = 11.sp
     val Tiny = 10.sp
 }

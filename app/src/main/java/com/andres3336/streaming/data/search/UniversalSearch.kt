@@ -1,27 +1,46 @@
 package com.andres3336.streaming.data.search
 
-import com.andres3336.streaming.data.Channel
-import com.andres3336.streaming.data.xtream.XtreamMovie
-import com.andres3336.streaming.data.xtream.XtreamSeries
 import java.text.Normalizer
 import java.util.Locale
 import kotlin.math.abs
 
 enum class SearchKind(val label: String) {
-    LIVE("En vivo"),
-    CHANNELS("Canales"),
+    TV("TV"),
     MOVIE("Películas"),
     SERIES("Series"),
+    CATEGORY("Categorías"),
 }
 
+/**
+ * One row in the search catalogue.
+ *
+ * Deliberately lean: it carries only the identity and the few fields needed to open
+ * the result later. The full movie/series metadata is fetched by id on the detail
+ * screen, so 40k+ entries stay inside the TV's memory budget.
+ */
 data class SearchItem(
     val id: String,
     val title: String,
     val subtitle: String,
     val kind: SearchKind,
-    val channel: Channel? = null,
-    val movie: XtreamMovie? = null,
-    val series: XtreamSeries? = null,
+    val image: String? = null,
+    // Live
+    val streamUrl: String? = null,
+    val streamGroup: String? = null,
+    val streamTvgId: String? = null,
+    val streamLanguage: String? = null,
+    // Movies
+    val movieId: String? = null,
+    val movieExtension: String? = null,
+    val movieCategoryId: String? = null,
+    // Series
+    val seriesId: String? = null,
+    val seriesCategoryId: String? = null,
+    // Categories
+    /** Set on [SearchKind.CATEGORY] items: which section the category belongs to. */
+    val categoryId: String? = null,
+    /** `tv`, `movies` or `series`. */
+    val categorySection: String? = null,
 )
 
 data class SearchResult(
@@ -30,7 +49,7 @@ data class SearchResult(
 )
 
 /**
- * Client-side fuzzy search for live channels, movies and series.
+ * Client-side fuzzy search for live channels, movies, series and their categories.
  *
  * Accents and ñ are folded to their base letters, so `nino` matches `niño` and
  * vice versa. The index keeps only normalized strings and scans them on a
@@ -45,7 +64,9 @@ class SearchIndex(items: List<SearchItem>) {
         val subtitle: String,
     )
 
-    private val searchEntries: List<Entry> = items.map { item ->
+    // Provider catalogues repeat entries: a duplicate id would crash the LazyColumn
+    // with "Key ... was already used".
+    private val searchEntries: List<Entry> = items.distinctBy { it.id }.map { item ->
         Entry(
             item = item,
             title = SearchText.normalize(item.title),

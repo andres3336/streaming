@@ -61,9 +61,6 @@ object ConfigMerger {
             fontScale = local.textScale
                 ?.takeIf { it in 0.8f..1.5f }
                 ?: config.ui.fontScale,
-            uiScale = local.uiScale
-                ?.takeIf { it in 0.8f..1.5f }
-                ?: config.ui.uiScale,
             navigation = local.navigation
                 ?.takeIf { it in SettingsOptions.NAVIGATION_MODES }
                 ?: config.ui.navigation,

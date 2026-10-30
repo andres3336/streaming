@@ -272,3 +272,173 @@ Append-only. Newest entries at the bottom.
   `CONTEXT.md`. Kept `ingest/` as local, gitignored reference material.
 - Added `CONTEXT.md` as the agent technical map and `scripts/check.sh` for tests plus
   debug APK. Rewrote `README.md` and `AGENTS.md` around the new small project map.
+- Moved agent guidance from always-on prompts into on-demand skills under
+  `.opencode/skills/`: `tv-ui`, `player`, `sources-config` and `tv-device` (the adb
+  target, deploy/log/screenshot commands and key events). Added
+  `.opencode/agents/reviewer.md`, a read-only subagent for D-pad reachability, UI
+  rules, player invariants, Spanish strings and leaked secrets. `CONTEXT.md` keeps
+  the map and points at the skills instead of duplicating them.
+- Player: the letterbox area is now pure black on every layer (player root, the
+  `PlayerView` and the window background), so streams that do not fill the screen no
+  longer show the dark navy window colour. On live TV D-pad Up/Down now zap as well,
+  because many remotes have no CH+/CH−; the bar is one row, so Up/Down keeps no focus
+  job there, Left/Right/Center still reveal it, and the new channel name flashes for
+  a second. CH+/CH− and MEDIA_NEXT/PREVIOUS keep working.
+- Shell: the top-left tile shows the app mark instead of the letter `S`, the clock and
+  date share one row at the same size, the duplicated screen title row is gone, and
+  the bottom keycap strip with `OK Seleccionar`/`Back Volver`/`Hold OK Favorito` is
+  removed. The Películas/Series chips were duplicates of the nav, so only the
+  En vivo/Canales switch remains. Same layout at 0.9–1.2 UI scale.
+- Inicio: `Continuar viendo` is now the first row, like a history shelf; the separate
+  `Continuar` section, its nav entry and the resume hero are gone. The hero order is
+  now Película → En vivo → empty. Removed the `Mantén OK: favorito` rail footers from
+  Películas and Series.
+- Buscar: one master search grouped by En vivo, Canales, Películas, Series and
+  Categorías, each with a header and count; the type filter chips are gone. Groups are
+  ordered by their best match (ties keep the usual order) and show eight rows each.
+  Xtream categories are indexed too and open their section with the category already
+  selected. The index cache key was bumped.
+- Ajustes: every setting is one fixed-height row with the label on the left and the
+  control on the right; the duplicated current-value line is gone. Sí/No keeps two
+  chips, longer lists (buffer, aspect, quality, text scale, cache…) open a dropdown
+  modal pre-focused on the current value, and every action (cache, sources, log,
+  config, reset) uses the same one-row card with an inline status.
+- `¿Salir de Streaming?` is now a real modal window (`ui/Modal.kt`): the D-pad can no
+  longer wander into the app behind it and Back closes the dialog instead of the app.
+  Initial focus is retried until the dialog window is attached.
+- Version 0.17.0 (versionCode 20). Debug APK verified on the TV: grouped search and
+  category jump, Ajustes dropdown, live zapping with the bar shown and hidden, black
+  pillarboxes measured at `#000000`, and the exit dialog trapping focus.
+- TV is one section again. `GistLiveBrowse` and `XtreamLiveBrowse` were replaced by
+  `TvBrowseScreen`: the curated M3U list is the `_Mis canales` category pinned on top
+  of the Xtream categories, with Favoritos/Recientes and the M3U groups inside it.
+  The `En vivo`/`Canales` chips, the duplicated rail and the two browse paths are
+  gone; `ui.sections` still accepts `live`/`channels` and both open `tv`, as does
+  `-e section live|channels`.
+- Removed the EPG completely: deleted `data/epg` (models, repository, XMLTV parser,
+  encrypted cache) and its tests, plus `EpgConfig`, `CacheIdentity.epg`,
+  `LocalEpgGuide`, `ui.showNowNext` and `MediaItem.hasEpg`. The preview pane and the
+  channel row no longer reserve a programme column; the pane shows the stream, logo,
+  name and `group · source` with `OK · Ver`. `epg`, `epgUrl` and `ui.showNowNext` stay
+  accepted and ignored in the parser and schema so published gists keep validating.
+- Xtream channels are now keyed by `xtream:<stream id>` instead of
+  `epg_channel_id`; providers reuse that id across SD/HD variants, which made one
+  favourite toggle several rows. Removed `epgChannelId` from the model and cache.
+- Fixed text scaling. `uiScale` multiplied the whole density, so raising it inflated
+  paddings and cards while the type only grew with everything else, and titles ended
+  up as `Harr`. Density is now the device's (fixed 960x540 dp canvas) and only
+  `fontScale` changes type, 0.9/1.0/1.15/1.3/1.45; the UI-scale setting is gone.
+  Hero and grid card heights follow `fontScale` so nothing clips.
+- TV density pass: 5-column poster grid with two-line titles, smaller paddings and
+  gaps, 40 dp top bar, 44 dp settings rows, 32 dp nav items, compact channel rows.
+  The favourite star moved to the left of the channel number as a small indicator
+  with no focus stop; long-press OK toggles it. The TV rail is 168 dp and the preview
+  272 dp.
+- Version 0.18.0 (versionCode 21). Verified on the TV: one TV rail with `_Mis canales`
+  and Xtream categories, category jump from Buscar, star long-press, no EPG column,
+  5-column grid and 145 % text without clipped titles.
+- Películas and Series now use a cinematic stage like OwnTV's: the focused title's
+  backdrop fills the content area under one flat scrim (`StreamColors.BackdropScrim`),
+  its title/meta/synopsis and `Reproducir`/`Ficha` (or `Ver serie`/`Favorito`) sit on
+  top, and the poster grid starts underneath. `ui/Cinematic.kt` holds the stage and the
+  details block; `CinematicBrowse` in `layout.kt` pairs it with the category rail.
+  Xtream backdrops are often missing or dead links, so the poster is shown as a
+  portrait panel on the right (details constrained to 62 %) instead of being stretched
+  across the stage; a real backdrop still fills it. `HeroBlock` remains Inicio-only.
+- The poster grid is 2:3 portrait cards, 7 columns, rating badge top-left, favourite
+  star top-right (only when set) and a two-line title; the language badge and the
+  year/genre subtitle were dropped. Long-press OK still toggles favourites and the
+  accent border marks both focus and favourites.
+- Version 0.19.0 (versionCode 22). Verified on the TV: backdrop and details follow
+  focus, poster fallback panel, 7-column density, 100 % and 145 % text, movies and
+  series, category switching with the stage in place.
+- Películas/Series: removed the backdrop artwork and the `Reproducir`/`Ficha` and
+  `Ver serie`/`Favorito` buttons from the header. They were one more focus stop
+  before the grid and forced the stage to resize as focus moved. The header is now a
+  compact fixed-height block (title, meta, two-line synopsis) above the grid; every
+  line reserves its height, so moving left/right no longer shifts the grid up or down
+  or reflows the synopsis. Dropped `BackdropScrim` and the cinematic image fallback.
+  Version 0.19.1 (versionCode 23).
+- Navigation: Back now moves focus to the top bar; only from the bar does it offer to
+  exit. `AppShell` exposes the nav `FocusRequester` and reports whether the bar owns
+  focus. The poster grid keeps its `LazyGridState` in the screen, so closing a
+  `Ficha` returns to the poster that was open instead of the first one; the
+  `focusedMovie`/`focusedSeries` state was declared after an early return and was
+  being discarded while the detail was shown.
+- Películas/Series: language variants are grouped into one card by
+  `data/media/TitleVariants.kt` (`SU-`→SUB, `CA-`→CAM, `ES-`/`Esp`/`Cas`→ESP,
+  `Sub `/`LA-`/`EN-` mapped too, `VO` for untagged). `MovieDetail` and `SeriesDetail`
+  show `SUB`/`CAM`/`ESP` chips to pick the version before playing; the grid and the
+  header use the clean base title.
+- Series: `SeriesDetail` is two columns. Left: header, variants, meta, plot, seasons
+  and episodes with a watched progress line; right: an autoplaying 16:9 preview of
+  the focused episode plus `T2E5 · title` and `Visto hasta`. The last played episode
+  is pre-focused and choosing any episode resumes at its stored position.
+  CH+/CH− move the list selection; in the player CH+/CH− and Up/Down change episode.
+- Player: the chrome is two rows shown together — title and settings icons on top, a
+  progress line with elapsed/duration and `-10`/play-pause/`+10`/next below. Back
+  hides the bar when a button has focus and closes playback from the video. Live
+  titles read `CH5 - Peppa - TV` from the list number; zapping keeps it. Up/Down zap
+  while the bar is not focused and move between rows when it is.
+- Buscar: the catalogue is now a lean index (ids and display fields instead of full
+  VOD objects) persisted in an encrypted gzipped file (`SearchCatalogStore`), keyed by
+  source hash and rebuilt after 24 h or a config change; a cold start no longer
+  downloads the 48k catalogue. The field autofocuses and declares the IME search
+  action, which should make the TV microphone target it. Movies/series results open
+  their detail through the lean id and fetch the full metadata there.
+- The movie preview shows `Cargando vista previa…` until the first frame renders and
+  `Vista previa no disponible` when the source fails, instead of a silent black pane.
+- Version 0.20.0 (versionCode 24). Verified on the TV: Back → grid → nav → exit,
+  return-to-poster, grouped variants and chips, series two-column preview + CH keys,
+  two-row player chrome, `CH1 - TD+ - TV`, 48,602-entry catalogue persisted (2 MB) and
+  reloaded without network.
+- Player: the seek bar is selectable. Focus it and Left/Right jump 10 s per press
+  instead of pressing OK dozens of times. The chrome is now three rows shown together
+  (settings, seek bar, play/pause + next); the transport controls moved to the left so
+  Up from play/pause lands on the seek bar. Back still hides the bar.
+- Movies gained the same `Favorito` chip the series detail already had, so both
+  details are uniform.
+- Search crash fixed: providers return duplicate ids and the results LazyColumn
+  crashed with `Key "series:2008047" was already used`. `SearchIndex` now de-duplicates
+  by id (and the persisted catalogue is saved de-duplicated).
+- Ajustes: removed the `Solo WiFi/Ethernet` setting and the playback block behind it
+  (a TV is on the home network); bandwidth presets are now Sin límite / 200 / 100 /
+  50 Mbps; rows size to their content so the pills never overflow the card; the
+  selected option is marked with `✓`; the `OK para elegir · Back para volver` footer
+  and the `OK · Ver` / `OK · Reproducir` badges were removed.
+- Version 0.20.1 (versionCode 25). Verified on the TV: seek bar scrubbing, movie
+  favourite chip, search results without the duplicate-key crash, 50/100/200/unlimited
+  bitrate dropdown, content-sized settings rows.
+- Player bar moved to the bottom of the screen (32 dp margins) and play/pause
+  centred: the settings icons split evenly into a left and a right cluster around a
+  centred transport group, so `Info/Aspecto/Calidad` sit on the left and
+  `Velocidad/Subs/Externo` on the right (whatever a config enables). The transport
+  row lost its left alignment, which is what made play/pause look stranded under the
+  seek bar. VOD gained `-10 s`/`+10 s` buttons around play/pause that reuse the bar's
+  10 s seek; live keeps only play/pause and next. The next button is mirrored with an
+  inert 42 dp spacer on the left of the group, so play/pause stays on the exact
+  screen centre instead of drifting half a button. `PlayerTopBar` is now `PlayerBar`.
+- Live zapping: Up/Down now zap while the bar has focus too. The bar has no second
+  focusable row on live (the seek row is inert without `canSeek`), so the old guard
+  only made the first press dismiss the bar.
+- Captions still render through Media3's bottom `SubtitleView` and are covered while
+  the bar is visible.
+- Version 0.20.2 (versionCode 26). Verified on the TV: bottom bar with play/pause at
+  screen centre, `-10 s` moving 3:46 → 3:39, Up from the transport reaching the seek
+  bar and Down returning, left cluster focus + icon, live channel showing the bar
+  without seek steps, Back hiding then closing the player.
+- Transport row reworked to `prev · ‹ · play/pause · › · next`: `prev`/`next` are two
+  filled triangles that jump a whole episode (series queue) or channel (live), the
+  single arrows are outline chevrons, and the circular ±10 s ring icons are gone.
+  A missing neighbour keeps its 42 dp slot as a dimmed, non-focusable glyph instead
+  of the invisible mirror spacer, so the row is even and play/pause stays on the
+  exact centre at the first/last episode too. `canNext` on VOD is now series-only, so
+  a movie can no longer show a dead next button.
+- Seek ladder: the focused seek bar's Left/Right and the chevrons share one counter
+  that jumps 5 s, 10 s, 30 s, then 60 s per press, keeps the step when the direction
+  flips and resets to 5 s after 1.5 s idle. No more twenty taps to cross a film.
+- Version 0.20.3 (versionCode 27). Verified on the TV: series row
+  `« ‹ ⏸ › »` with a dimmed `«` on episode 1, `⏩` switching T1E2 → T1E3, `⏪` back
+  to T1E2, paused ladder 2:32 → 4:17 (5+10+30+60) and +5 s after an idle pause, live
+  row `« ▶ »` with `«` zapping to the previous channel, play/pause on x=640 in every
+  case.

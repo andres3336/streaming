@@ -11,8 +11,8 @@ class UniversalSearchTest {
         listOf(
             SearchItem("1", "Niño rico", "", SearchKind.MOVIE),
             SearchItem("2", "Películas de acción", "", SearchKind.MOVIE),
-            SearchItem("3", "Canal Deportes", "Deportes", SearchKind.LIVE),
-            SearchItem("4", "Fútbol en vivo", "", SearchKind.CHANNELS),
+            SearchItem("3", "Canal Deportes", "Deportes", SearchKind.TV),
+            SearchItem("4", "Fútbol en vivo", "", SearchKind.TV),
         ),
     )
 
@@ -32,7 +32,7 @@ class UniversalSearchTest {
 
     @Test
     fun filtersByKind() {
-        val live = index.search("deportes", SearchKind.LIVE)
+        val live = index.search("deportes", SearchKind.TV)
         assertEquals(listOf("3"), live.map { it.item.id })
         assertTrue(index.search("deportes", SearchKind.MOVIE).isEmpty())
     }
@@ -50,5 +50,26 @@ class UniversalSearchTest {
     @Test
     fun keepsResultsStableForBlankQuery() {
         assertTrue(index.search("").isEmpty())
+    }
+
+    @Test
+    fun findsCategoriesWithTheirSection() {
+        val categorized = SearchIndex(
+            listOf(
+                SearchItem(
+                    id = "category:movies:10",
+                    title = "Harry Potter",
+                    subtitle = "",
+                    kind = SearchKind.CATEGORY,
+                    categoryId = "10",
+                    categorySection = "movies",
+                ),
+            ),
+        )
+
+        val hit = categorized.search("harry").single()
+        assertEquals(SearchKind.CATEGORY, hit.item.kind)
+        assertEquals("10", hit.item.categoryId)
+        assertEquals("movies", hit.item.categorySection)
     }
 }

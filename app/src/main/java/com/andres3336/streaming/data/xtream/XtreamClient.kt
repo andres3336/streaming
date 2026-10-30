@@ -69,7 +69,6 @@ class XtreamClient(
                 name = json.optString("name").ifBlank { "Sin título" },
                 logo = json.optString("stream_icon").takeIf(String::isNotBlank),
                 categoryId = json.optString("category_id"),
-                epgChannelId = json.optString("epg_channel_id").takeIf(String::isNotBlank),
                 language = json.firstString("lang", "language", "audio_language", "audio_lang"),
             )
         }
@@ -233,7 +232,9 @@ class XtreamClient(
         url = liveUrl(stream),
         group = categoryName,
         logo = stream.logo,
-        tvgId = stream.epgChannelId?.takeIf(String::isNotBlank) ?: "xtream:${stream.id}",
+        // Per-stream id: providers reuse epg_channel_id across SD/HD variants,
+        // which used to make one favourite toggle several rows.
+        tvgId = "xtream:${stream.id}",
         language = stream.language,
         isVod = false,
         fallbackUrl = liveFallbackUrl(stream),

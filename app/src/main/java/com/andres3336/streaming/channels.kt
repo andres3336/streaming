@@ -2,7 +2,6 @@ package com.andres3336.streaming
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,10 +33,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.style.TextAlign
@@ -53,8 +49,6 @@ import com.andres3336.streaming.data.cache.XtreamCatalogCache
 import com.andres3336.streaming.data.config.AppConfig
 import com.andres3336.streaming.data.config.NetworkConfig
 import com.andres3336.streaming.data.config.PlayerConfig
-import com.andres3336.streaming.data.epg.EpgGuide
-import com.andres3336.streaming.data.epg.EpgNowNext
 import com.andres3336.streaming.data.live.LiveState
 import com.andres3336.streaming.data.live.liveKey
 import com.andres3336.streaming.data.playback.PlaybackRequest
@@ -63,7 +57,6 @@ import com.andres3336.streaming.data.xtream.XtreamClient
 import com.andres3336.streaming.data.xtream.XtreamResult
 import com.andres3336.streaming.ui.LivePreviewPane
 import com.andres3336.streaming.ui.LocalLiveFocus
-import com.andres3336.streaming.ui.ProgressLine
 import com.andres3336.streaming.ui.QuickChip
 import com.andres3336.streaming.ui.StreamColors
 import coil.compose.AsyncImage
@@ -76,124 +69,18 @@ internal data class LiveRailEntry(
     val label: String,
 )
 
+/** Pinned category for the curated gist list; it sorts on top of Xtream. */
+private const val GIST_CATEGORY = "__gist"
+private const val GIST_LABEL = "_Mis canales"
+
+/**
+ * One TV browser for both live sources. The curated M3U list is the `_Mis canales`
+ * category pinned on top of the Xtream categories, so there are no source sub-tabs.
+ */
 @Composable
-internal fun GistLiveBrowse(
-    channels: List<Channel>,
-    liveState: LiveState,
-    onToggleFavorite: (Channel) -> Unit,
-    onSelect: (PlaybackRequest) -> Unit,
-    playerConfig: PlayerConfig,
-    networkConfig: NetworkConfig,
-) {
-    var selected by remember { mutableStateOf("all") }
-    var focused by remember { mutableStateOf<Channel?>(null) }
-    val epgGuide = LocalEpgGuide.current
-    var nowMs by remember { mutableStateOf(System.currentTimeMillis()) }
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(20_000)
-            nowMs = System.currentTimeMillis()
-        }
-    }
-    LaunchedEffect(channels) {
-        if (focused == null) {
-            focused = channels.firstOrNull { it.liveKey() == liveState.lastChannel }
-                ?: channels.firstOrNull()
-        }
-    }
-    val groups = remember(channels) {
-        channels.mapNotNull { it.group?.takeIf(String::isNotBlank) }.distinct()
-    }
-    val entries = remember(groups) {
-        listOf(
-            LiveRailEntry("all", "Todos"),
-            LiveRailEntry("favorites", "Favoritos"),
-            LiveRailEntry("recents", "Recientes"),
-        ) + groups.map { LiveRailEntry("group:$it", it) }
-    }
-
-    CompositionLocalProvider(LocalLiveFocus provides { focused = it }) {
-        BrowseShell(
-            rail = {
-                BrowseRail(
-                    items = entries,
-                    selected = entries.firstOrNull { it.id == selected },
-                    label = LiveRailEntry::label,
-                    onSelect = { selected = it.id },
-                )
-            },
-            preview = {
-                LivePreviewPane(
-                    channel = focused,
-                    nowNext = focused?.let { epgGuide?.nowNext(it, nowMs) },
-                    nowMs = nowMs,
-                    playerConfig = playerConfig,
-                    networkConfig = networkConfig,
-                )
-            },
-            content = {
-            when {
-                selected == "favorites" -> ChannelList(
-                    channels = channels,
-                    favorites = liveState.favorites,
-                    recents = liveState.recents,
-                    lastChannel = liveState.lastChannel,
-                    startLastChannel = true,
-                    onToggleFavorite = onToggleFavorite,
-                    onSelect = onSelect,
-                    section = LiveListSection.Favorites,
-                    title = "Favoritos",
-                )
-
-                selected == "recents" -> ChannelList(
-                    channels = channels,
-                    favorites = liveState.favorites,
-                    recents = liveState.recents,
-                    lastChannel = liveState.lastChannel,
-                    startLastChannel = true,
-                    onToggleFavorite = onToggleFavorite,
-                    onSelect = onSelect,
-                    section = LiveListSection.Recents,
-                    title = "Recientes",
-                )
-
-                selected.startsWith("group:") -> {
-                    val group = selected.removePrefix("group:")
-                    val list = remember(channels, group) {
-                        channels.filter { (it.group ?: "Sin grupo") == group }
-                    }
-                    ChannelList(
-                        channels = list,
-                        favorites = liveState.favorites,
-                        recents = liveState.recents,
-                        lastChannel = liveState.lastChannel,
-                        startLastChannel = true,
-                        onToggleFavorite = onToggleFavorite,
-                        onSelect = onSelect,
-                        section = LiveListSection.Flat,
-                        title = group,
-                    )
-                }
-
-                else -> ChannelList(
-                    channels = channels,
-                    favorites = liveState.favorites,
-                    recents = liveState.recents,
-                    lastChannel = liveState.lastChannel,
-                    startLastChannel = true,
-                    onToggleFavorite = onToggleFavorite,
-                    onSelect = onSelect,
-                    section = LiveListSection.All,
-                )
-                }
-            },
-        )
-    }
-}
-
-@Composable
-internal fun XtreamLiveBrowse(
+internal fun TvBrowseScreen(
     config: AppConfig,
+    gistChannels: List<Channel>,
     refreshVersion: Int,
     onUpdateConfig: () -> Unit,
     liveState: LiveState,
@@ -202,35 +89,21 @@ internal fun XtreamLiveBrowse(
     xtreamCatalogCache: XtreamCatalogCache,
     playerConfig: PlayerConfig,
     networkConfig: NetworkConfig,
+    initialCategoryId: String? = null,
 ) {
-    var focused by remember { mutableStateOf<Channel?>(null) }
-    val epgGuide = LocalEpgGuide.current
-    var nowMs by remember { mutableStateOf(System.currentTimeMillis()) }
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(20_000)
-            nowMs = System.currentTimeMillis()
-        }
-    }
     val xtream = config.sources.xtream
-    val sourceKey = CacheIdentity.xtream(config)
-    if (xtream == null || sourceKey == null) {
-        SourceFailurePane(
-            message = "La configuración no incluye Xtream.",
-            onRetry = {},
-            onUpdateConfig = onUpdateConfig,
-        )
-        return
-    }
-
+    val sourceKey = remember(config) { CacheIdentity.xtream(config) }
     val client = remember(xtream, config.player.userAgent) {
-        XtreamClient(xtream, userAgent = config.player.userAgent)
+        xtream?.let { XtreamClient(it, userAgent = config.player.userAgent) }
     }
     var catalog by remember(sourceKey) { mutableStateOf(XtreamCatalog()) }
-    var selectedKey by remember(sourceKey) { mutableStateOf("") }
+    var selectedKey by remember(sourceKey) {
+        mutableStateOf(if (gistChannels.isNotEmpty()) GIST_CATEGORY else "")
+    }
+    var focused by remember { mutableStateOf<Channel?>(null) }
     var hiddenCategoryIds by remember(sourceKey) { mutableStateOf<Set<String>>(emptySet()) }
     var showHidden by remember(sourceKey) { mutableStateOf(false) }
-    var loadingCategories by remember(sourceKey) { mutableStateOf(true) }
+    var loadingCategories by remember(sourceKey) { mutableStateOf(client != null) }
     var loadingStreams by remember(sourceKey) { mutableStateOf(false) }
     var error by remember(sourceKey) { mutableStateOf<String?>(null) }
     var usingCache by remember(sourceKey) { mutableStateOf(false) }
@@ -239,8 +112,15 @@ internal fun XtreamLiveBrowse(
     val minItems = config.sources.xtream?.minCategoryItems ?: 2
     val hideEmpty = config.sources.xtream?.hideEmptyCategories ?: true
 
+    LaunchedEffect(initialCategoryId) {
+        if (!initialCategoryId.isNullOrBlank()) selectedKey = initialCategoryId
+    }
+
     LaunchedEffect(sourceKey, refreshVersion, retry) {
-        val cached = withContext(Dispatchers.IO) { xtreamCatalogCache.load(sourceKey) }
+        val client = client ?: return@LaunchedEffect
+        val key = sourceKey ?: return@LaunchedEffect
+
+        val cached = withContext(Dispatchers.IO) { xtreamCatalogCache.load(key) }
         if (cached != null) {
             catalog = cached
             usingCache = true
@@ -260,7 +140,7 @@ internal fun XtreamLiveBrowse(
                 if (selectedKey.isBlank()) {
                     selectedKey = result.value.firstOrNull()?.id.orEmpty()
                 }
-                withContext(Dispatchers.IO) { xtreamCatalogCache.save(sourceKey, updated) }
+                withContext(Dispatchers.IO) { xtreamCatalogCache.save(key, updated) }
             }
 
             is XtreamResult.Failure -> {
@@ -271,7 +151,10 @@ internal fun XtreamLiveBrowse(
     }
 
     LaunchedEffect(selectedKey, refreshVersion, retry, sourceKey) {
-        val categoryId = selectedKey.takeIf { it.isNotBlank() } ?: return@LaunchedEffect
+        val client = client ?: return@LaunchedEffect
+        val key = sourceKey ?: return@LaunchedEffect
+        val categoryId = selectedKey.takeIf { it.isNotBlank() && it != GIST_CATEGORY }
+            ?: return@LaunchedEffect
         val cached = catalog.streams[categoryId]
         loadingStreams = cached == null
         if (cached != null) usingCache = true
@@ -286,7 +169,7 @@ internal fun XtreamLiveBrowse(
                 if (hideEmpty && minItems > 0 && usable.size < minItems) {
                     hiddenCategoryIds = hiddenCategoryIds + categoryId
                 }
-                withContext(Dispatchers.IO) { xtreamCatalogCache.save(sourceKey, updated) }
+                withContext(Dispatchers.IO) { xtreamCatalogCache.save(key, updated) }
             }
 
             is XtreamResult.Failure -> {
@@ -309,48 +192,58 @@ internal fun XtreamLiveBrowse(
             }
         }
     }
-    val railEntries = remember(visibleCategories) {
-        visibleCategories.map { LiveRailEntry(it.id, it.name) }
+
+    val railEntries = remember(gistChannels, visibleCategories) {
+        buildList {
+            if (gistChannels.isNotEmpty()) add(LiveRailEntry(GIST_CATEGORY, GIST_LABEL))
+            visibleCategories.forEach { add(LiveRailEntry(it.id, it.name)) }
+        }
     }
 
-    LaunchedEffect(railEntries, selectedKey, showHidden) {
+    LaunchedEffect(railEntries, selectedKey, loadingCategories) {
+        if (loadingCategories) return@LaunchedEffect
         if (railEntries.none { it.id == selectedKey }) {
             selectedKey = railEntries.firstOrNull()?.id.orEmpty()
         }
     }
 
-    val fallbackChannel = remember(catalog.streams, selectedKey, visibleCategories) {
-        catalog.streams[selectedKey]?.firstOrNull()?.let { stream ->
-            client.liveChannel(
-                stream = stream,
-                categoryName = visibleCategories.firstOrNull { it.id == selectedKey }?.name
-                    ?: "Xtream",
-                providerLabel = null,
-            )
+    // The preview belongs to the selected category, not to the previous one.
+    LaunchedEffect(selectedKey) { focused = null }
+
+    val isGist = selectedKey == GIST_CATEGORY
+    val category = catalog.categories.firstOrNull { it.id == selectedKey }
+    val streams = catalog.streams[selectedKey]
+    val fallbackChannel = remember(selectedKey, streams, category?.name, client) {
+        if (isGist) {
+            null
+        } else {
+            streams?.firstOrNull()?.let { stream ->
+                client?.liveChannel(
+                    stream = stream,
+                    categoryName = category?.name ?: "Xtream",
+                    providerLabel = null,
+                )
+            }
+        }
+    }
+    val previewChannel = focused ?: fallbackChannel
+    val previewSource = remember(previewChannel, gistChannels) {
+        when {
+            previewChannel == null -> null
+            gistChannels.any { it.url == previewChannel.url } -> "Gist"
+            else -> "Xtream"
         }
     }
 
     CompositionLocalProvider(LocalLiveFocus provides { focused = it }) {
-    when {
-        loadingCategories && catalog.categories.isEmpty() -> BrowseShell(
-            rail = {},
-            content = { CenteredMessage("Cargando canales…") },
-        )
-
-        error != null && catalog.categories.isEmpty() -> SourceFailurePane(
-            message = error!!,
-            onRetry = { retry++ },
-            onUpdateConfig = onUpdateConfig,
-        )
-
-        else -> BrowseShell(
+        BrowseShell(
             rail = {
                 BrowseRail(
                     items = railEntries,
                     selected = railEntries.firstOrNull { it.id == selectedKey },
                     label = LiveRailEntry::label,
                     onSelect = { selectedKey = it.id },
-                    footer = if (hiddenCategoryIds.isNotEmpty() || showHidden) {
+                    footer = if (hasHiddenCategories(hiddenCategoryIds, showHidden)) {
                         {
                             QuickChip(
                                 label = if (showHidden) {
@@ -369,67 +262,85 @@ internal fun XtreamLiveBrowse(
             },
             preview = {
                 LivePreviewPane(
-                    channel = focused ?: fallbackChannel,
-                    nowNext = (focused ?: fallbackChannel)?.let { epgGuide?.nowNext(it, nowMs) },
-                    nowMs = nowMs,
+                    channel = previewChannel,
                     playerConfig = playerConfig,
                     networkConfig = networkConfig,
+                    source = previewSource,
                 )
             },
             content = {
-                val category = catalog.categories.firstOrNull { it.id == selectedKey }
-                val streams = catalog.streams[selectedKey]
                 when {
-                    selectedKey.isBlank() -> CenteredMessage("No hay categorías")
+                    selectedKey.isBlank() && loadingCategories ->
+                        CenteredMessage("Cargando canales…")
+
+                    selectedKey.isBlank() && error != null -> SourceFailurePane(
+                        message = error!!,
+                        onRetry = { retry++ },
+                        onUpdateConfig = onUpdateConfig,
+                    )
+
+                    selectedKey.isBlank() -> CenteredMessage("No hay canales")
+
+                    isGist -> ChannelList(
+                        channels = gistChannels,
+                        favorites = liveState.favorites,
+                        recents = liveState.recents,
+                        lastChannel = liveState.lastChannel,
+                        startLastChannel = true,
+                        onToggleFavorite = onToggleFavorite,
+                        onSelect = onSelect,
+                        section = LiveListSection.All,
+                        showChannelNumbers = config.ui.showChannelNumbers,
+                    )
+
                     loadingStreams && streams == null -> CenteredMessage("Cargando canales…")
+
                     error != null && streams == null -> SourceFailurePane(
                         message = error!!,
                         onRetry = { retry++ },
                         onUpdateConfig = onUpdateConfig,
                     )
 
-                    else -> {
-                        val xtreamChannels = remember(streams, category?.name) {
-                            XtreamCategoryFilter.usableStreams(streams.orEmpty()).map { stream ->
-                                client.liveChannel(
-                                    stream = stream,
-                                    categoryName = category?.name ?: "Xtream",
-                                    providerLabel = null,
-                                )
-                            }
+                    else -> Column(modifier = Modifier.fillMaxSize()) {
+                        if (usingCache) {
+                            Text(
+                                text = "Lista en caché",
+                                color = StreamColors.Favorite,
+                                fontSize = 12.sp,
+                            )
+                            Spacer(Modifier.height(4.dp))
                         }
-
-                        Column(modifier = Modifier.fillMaxSize()) {
-                            if (usingCache) {
-                                Text(
-                                    text = "Lista en caché",
-                                    color = StreamColors.Favorite,
-                                    fontSize = 14.sp,
-                                )
-                                Spacer(Modifier.height(6.dp))
-                            }
-                            Box(modifier = Modifier.weight(1f)) {
-                                ChannelList(
-                                    channels = xtreamChannels,
-                                    favorites = liveState.favorites,
-                                    recents = liveState.recents,
-                                    lastChannel = liveState.lastChannel,
-                                    startLastChannel = true,
-                                    onToggleFavorite = onToggleFavorite,
-                                    onSelect = onSelect,
-                                    section = LiveListSection.Flat,
-                                    title = category?.name ?: "Canales",
-                                    useBaseNumbers = false,
-                                )
-                            }
-                        }
+                        ChannelList(
+                            channels = remember(streams, category?.name, client) {
+                                (streams.orEmpty())
+                                    .let(XtreamCategoryFilter::usableStreams)
+                                    .map { stream ->
+                                        client!!.liveChannel(
+                                            stream = stream,
+                                            categoryName = category?.name ?: "Xtream",
+                                            providerLabel = null,
+                                        )
+                                    }
+                            },
+                            favorites = liveState.favorites,
+                            recents = liveState.recents,
+                            lastChannel = liveState.lastChannel,
+                            startLastChannel = true,
+                            onToggleFavorite = onToggleFavorite,
+                            onSelect = onSelect,
+                            section = LiveListSection.Flat,
+                            showChannelNumbers = config.ui.showChannelNumbers,
+                            useBaseNumbers = false,
+                        )
                     }
                 }
             },
         )
     }
-    }
 }
+
+private fun hasHiddenCategories(hidden: Set<String>, showHidden: Boolean): Boolean =
+    hidden.isNotEmpty() || showHidden
 
 internal enum class LiveListSection { All, Favorites, Recents, Flat }
 
@@ -530,15 +441,6 @@ internal fun ChannelList(
         channels.mapNotNull { it.logo?.takeIf(String::isNotBlank) }.distinct().size > 1
     }
     val reportFocus = LocalLiveFocus.current
-    val epgGuide = LocalEpgGuide.current
-    var nowMs by remember { mutableStateOf(System.currentTimeMillis()) }
-    LaunchedEffect(epgGuide) {
-        if (epgGuide == null) return@LaunchedEffect
-        while (true) {
-            delay(30_000)
-            nowMs = System.currentTimeMillis()
-        }
-    }
     val focusKey = remember(lastChannel, startLastChannel, visible) {
         if (startLastChannel) {
             lastChannel?.takeIf { key -> visible.any { it.liveKey() == key } }
@@ -553,7 +455,6 @@ internal fun ChannelList(
     }
     val listState = rememberLazyListState()
     val focusRequester = remember { FocusRequester() }
-    val focusManager = LocalFocusManager.current
     var focusRequested by remember { mutableStateOf(false) }
 
     // Focus the last channel only once per visit.
@@ -575,11 +476,11 @@ internal fun ChannelList(
             Text(
                 text = "${visible.size} canales",
                 color = StreamColors.TextMuted,
-                fontSize = 12.sp,
+                fontSize = 11.sp,
                 maxLines = 1,
             )
         }
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(6.dp))
 
         if (visible.isEmpty()) {
             CenteredMessage("No hay canales")
@@ -587,17 +488,17 @@ internal fun ChannelList(
             LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 itemsIndexed(rows, key = { _, row -> row.key }) { index, row ->
                     when (row) {
                         is LiveListRow.Header -> Text(
                             text = row.title.uppercase(),
                             color = StreamColors.TextMuted,
-                            fontSize = 11.sp,
+                            fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
-                            letterSpacing = 1.2.sp,
-                            modifier = Modifier.padding(top = 10.dp, bottom = 4.dp, start = 4.dp),
+                            letterSpacing = 1.sp,
+                            modifier = Modifier.padding(top = 6.dp, bottom = 2.dp, start = 4.dp),
                         )
 
                         is LiveListRow.Item -> LiveChannelRow(
@@ -607,8 +508,6 @@ internal fun ChannelList(
                             showLogo = showLogos,
                             number = row.number,
                             showNumber = showChannelNumbers,
-                            epgNowNext = epgGuide?.nowNext(row.channel, nowMs),
-                            nowMs = nowMs,
                             focusModifier = if (index == focusIndex) {
                                 Modifier.focusRequester(focusRequester)
                             } else {
@@ -624,6 +523,7 @@ internal fun ChannelList(
                                         channel = row.channel,
                                         queue = visible,
                                         index = channelIndex.coerceAtLeast(0),
+                                        number = row.number,
                                     ),
                                 )
                             },
@@ -644,159 +544,107 @@ internal fun LiveChannelRow(
     showLogo: Boolean,
     number: Int,
     showNumber: Boolean,
-    epgNowNext: EpgNowNext?,
-    nowMs: Long,
     focusModifier: Modifier,
     onFocused: () -> Unit,
     onSelect: () -> Unit,
     onToggleFavorite: () -> Unit,
 ) {
-    val shape = RoundedCornerShape(10.dp)
+    val shape = RoundedCornerShape(8.dp)
     var focused by remember { mutableStateOf(false) }
     val borderColor = if (focused) StreamColors.AccentBright else Color.Transparent
 
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
+    Surface(
+        onClick = onSelect,
+        onLongClick = onToggleFavorite,
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(focusModifier)
+            .onFocusChanged {
+                focused = it.isFocused
+                if (it.isFocused) onFocused()
+            }
+            .border(1.dp, borderColor, shape),
+        shape = ClickableSurfaceDefaults.shape(shape = shape),
+        colors = ClickableSurfaceDefaults.colors(
+            containerColor = Color.Transparent,
+            contentColor = StreamColors.TextPrimary,
+            focusedContainerColor = StreamColors.AccentDeep,
+            focusedContentColor = StreamColors.TextPrimary,
+        ),
+        scale = ClickableSurfaceDefaults.scale(focusedScale = 1f, pressedScale = 1f),
     ) {
-        Surface(
-            onClick = onSelect,
+        Row(
             modifier = Modifier
-                .weight(1f)
-                .then(focusModifier)
-                .onFocusChanged {
-                    focused = it.isFocused
-                    if (it.isFocused) onFocused()
-                }
-                .border(1.dp, borderColor, shape),
-            shape = ClickableSurfaceDefaults.shape(shape = shape),
-            colors = ClickableSurfaceDefaults.colors(
-                containerColor = Color.Transparent,
-                contentColor = StreamColors.TextPrimary,
-                focusedContainerColor = StreamColors.AccentDeep,
-                focusedContentColor = StreamColors.TextPrimary,
-            ),
-            scale = ClickableSurfaceDefaults.scale(focusedScale = 1f, pressedScale = 1f),
+                .fillMaxWidth()
+                .padding(horizontal = 6.dp, vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
+            // Favourite marker: painted only when set, no focus stop and no column.
+            Text(
+                text = "\u2605",
+                color = if (favorite) StreamColors.Favorite else Color.Transparent,
+                fontSize = 13.sp,
+                modifier = Modifier.width(14.dp),
+            )
+            if (showNumber) {
+                Text(
+                    text = number.toString(),
+                    color = StreamColors.TextMuted,
+                    fontSize = 11.sp,
+                    textAlign = TextAlign.End,
+                    modifier = Modifier.width(24.dp),
+                )
+                Spacer(Modifier.width(6.dp))
+            }
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 7.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                    .size(width = 38.dp, height = 26.dp)
+                    .background(StreamColors.SurfaceSunken, RoundedCornerShape(5.dp)),
+                contentAlignment = Alignment.Center,
             ) {
-                if (showNumber) {
-                    Text(
-                        text = number.toString(),
-                        color = StreamColors.TextMuted,
-                        fontSize = 12.sp,
-                        textAlign = TextAlign.End,
-                        modifier = Modifier.width(30.dp),
+                if (showLogo) {
+                    AsyncImage(
+                        model = channel.logo,
+                        contentDescription = null,
+                        placeholder = painterResource(R.drawable.ic_channel_placeholder),
+                        error = painterResource(R.drawable.ic_channel_placeholder),
+                        fallback = painterResource(R.drawable.ic_channel_placeholder),
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.fillMaxSize().padding(2.dp),
                     )
-                    Spacer(Modifier.width(8.dp))
-                }
-                Box(
-                    modifier = Modifier
-                        .size(width = 46.dp, height = 32.dp)
-                        .background(StreamColors.SurfaceSunken, RoundedCornerShape(6.dp)),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    if (showLogo) {
-                        AsyncImage(
-                            model = channel.logo,
-                            contentDescription = null,
-                            placeholder = painterResource(R.drawable.ic_channel_placeholder),
-                            error = painterResource(R.drawable.ic_channel_placeholder),
-                            fallback = painterResource(R.drawable.ic_channel_placeholder),
-                            contentScale = ContentScale.Fit,
-                            modifier = Modifier.fillMaxSize().padding(3.dp),
-                        )
-                    } else {
-                        Text(
-                            text = channel.name.trim().take(1).uppercase(),
-                            color = StreamColors.AccentBright,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
-                }
-                Spacer(Modifier.width(10.dp))
-                Column(modifier = Modifier.weight(0.42f)) {
+                } else {
                     Text(
-                        text = channel.name,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
+                        text = channel.name.trim().take(1).uppercase(),
+                        color = StreamColors.AccentBright,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+            }
+            Spacer(Modifier.width(8.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = channel.name,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                val details = listOfNotNull(
+                    channel.group?.takeIf { showGroup && it.isNotBlank() },
+                    channel.provider?.takeIf(String::isNotBlank),
+                ).joinToString(" \u00b7 ")
+                if (details.isNotEmpty()) {
+                    Text(
+                        text = details,
+                        color = StreamColors.TextMuted,
+                        fontSize = 11.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.fillMaxWidth(),
                     )
-                    val details = listOfNotNull(
-                        channel.group?.takeIf { showGroup && it.isNotBlank() },
-                        channel.provider?.takeIf(String::isNotBlank),
-                    ).joinToString(" \u00b7 ")
-                    if (details.isNotEmpty()) {
-                        Text(
-                            text = details,
-                            color = StreamColors.TextMuted,
-                            fontSize = 11.sp,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                }
-                Spacer(Modifier.width(10.dp))
-                Column(modifier = Modifier.weight(0.58f)) {
-                    val current = epgNowNext?.current
-                    if (current != null) {
-                        val left = EpgGuide.formatTimeLeft(current.stopMs - nowMs)
-                        Text(
-                            text = current.title + if (left.isNotEmpty()) "  \u00b7  $left" else "",
-                            color = StreamColors.TextSecondary,
-                            fontSize = 12.sp,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                        Spacer(Modifier.height(4.dp))
-                        ProgressLine(
-                            fraction = (
-                                (nowMs - current.startMs).toFloat() /
-                                    (current.stopMs - current.startMs).coerceAtLeast(1L)
-                                ).coerceIn(0f, 1f),
-                            height = 2,
-                        )
-                    }
                 }
             }
         }
-        Spacer(Modifier.width(6.dp))
-        StarButton(favorite = favorite, onClick = onToggleFavorite)
-    }
-}
-
-@Composable
-internal fun StarButton(favorite: Boolean, onClick: () -> Unit) {
-    var focused by remember { mutableStateOf(false) }
-    Box(
-        modifier = Modifier
-            .size(36.dp)
-            .onFocusChanged { focused = it.isFocused }
-            .clickable(onClick = onClick)
-            .semantics {
-                contentDescription = if (favorite) {
-                    "Quitar de favoritos"
-                } else {
-                    "Añadir a favoritos"
-                }
-            },
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = if (favorite) "\u2605" else "\u2606",
-            color = when {
-                focused -> StreamColors.TextPrimary
-                favorite -> StreamColors.Favorite
-                else -> StreamColors.TextMuted
-            },
-            fontSize = 18.sp,
-        )
     }
 }

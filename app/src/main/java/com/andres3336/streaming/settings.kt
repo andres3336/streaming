@@ -5,16 +5,18 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,12 +27,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.tv.material3.Button
+import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.andres3336.streaming.data.config.AppConfig
@@ -40,6 +48,8 @@ import com.andres3336.streaming.data.diagnostics.ErrorLogStore
 import com.andres3336.streaming.data.settings.DeviceSettings
 import com.andres3336.streaming.data.settings.HomeLauncher
 import com.andres3336.streaming.data.settings.SettingsOptions
+import com.andres3336.streaming.ui.AppMark
+import com.andres3336.streaming.ui.ModalCard
 import com.andres3336.streaming.ui.QuickChip
 import com.andres3336.streaming.ui.StreamColors
 import com.andres3336.streaming.player.VideoCache
@@ -75,7 +85,7 @@ internal fun SettingsScreen(
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         item {
             Row(
@@ -89,15 +99,10 @@ internal fun SettingsScreen(
                 Box(
                     modifier = Modifier
                         .size(44.dp)
-                        .background(StreamColors.Accent, CircleShape),
+                        .background(StreamColors.Accent, RoundedCornerShape(12.dp)),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Text(
-                        text = "S",
-                        color = StreamColors.OnAccent,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Black,
-                    )
+                    AppMark(size = 22.dp)
                 }
                 Spacer(Modifier.width(12.dp))
                 Column {
@@ -226,15 +231,6 @@ internal fun SettingsScreen(
         }
         item {
             ChoiceRow(
-                label = "Escala de la interfaz",
-                current = config.ui.uiScale.toString(),
-                options = SettingsOptions.UI_SCALES.map {
-                    scaleLabel(it) to it.toString()
-                },
-            ) { value -> onSettingsChange(settings.copy(uiScale = value.toFloatOrNull())) }
-        }
-        item {
-            ChoiceRow(
                 label = "Barra del reproductor",
                 current = config.ui.playerBar,
                 options = listOf(
@@ -244,15 +240,8 @@ internal fun SettingsScreen(
             ) { value -> onSettingsChange(settings.copy(playerBar = value)) }
         }
         item {
-            Column {
-                Text(
-                    text = "Botones del reproductor",
-                    color = Color.White,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                )
-                Spacer(Modifier.height(6.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            SettingsRow(label = "Botones del reproductor") {
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     listOf(
                         "info" to "Info",
                         "aspect" to "Aspecto",
@@ -262,20 +251,18 @@ internal fun SettingsScreen(
                         "external" to "Externo",
                     ).forEach { (id, label) ->
                         val enabled = id in config.ui.playerButtons
-                        Button(onClick = {
-                            val updated = if (enabled) {
-                                config.ui.playerButtons - id
-                            } else {
-                                config.ui.playerButtons + id
-                            }
-                            onSettingsChange(settings.copy(playerButtons = updated))
-                        }) {
-                            Text(
-                                text = if (enabled) "✓ $label" else label,
-                                color = if (enabled) StreamColors.Accent else Color.White,
-                                fontSize = 14.sp,
-                            )
-                        }
+                        QuickChip(
+                            label = if (enabled) "✓ $label" else label,
+                            selected = enabled,
+                            onClick = {
+                                val updated = if (enabled) {
+                                    config.ui.playerButtons - id
+                                } else {
+                                    config.ui.playerButtons + id
+                                }
+                                onSettingsChange(settings.copy(playerButtons = updated))
+                            },
+                        )
                     }
                 }
             }
@@ -326,36 +313,18 @@ internal fun SettingsScreen(
             ) { value -> onSettingsChange(settings.copy(clearOnStart = value.toBoolean())) }
         }
         item {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
+            ActionRow(
+                label = "Borrar caché",
+                buttonLabel = if (cacheCleared) "Borrada" else "Borrar",
+                status = "Uso actual: ${cacheSizeMb ?: "…"} MB · solo películas y series",
             ) {
-                Button(onClick = {
-                    onClearCache()
-                    cacheCleared = true
-                    cacheSizeMb = 0L
-                }) {
-                    Text(
-                        text = if (cacheCleared) "Caché borrada" else "Borrar caché",
-                        fontSize = 17.sp,
-                    )
-                }
-                Text(
-                    text = "Uso actual: ${cacheSizeMb ?: "…"} MB · solo películas y series",
-                    color = StreamColors.TextMuted,
-                    fontSize = 14.sp,
-                )
+                onClearCache()
+                cacheCleared = true
+                cacheSizeMb = 0L
             }
         }
 
         item { SettingsHeader("Red") }
-        item {
-            ChoiceRow(
-                label = "Solo WiFi/Ethernet",
-                current = config.network.wifiOnly.toString(),
-                options = listOf("Sí" to "true", "No" to "false"),
-            ) { value -> onSettingsChange(settings.copy(wifiOnly = value.toBoolean())) }
-        }
         item {
             ChoiceRow(
                 label = "Ancho de banda máximo",
@@ -387,32 +356,17 @@ internal fun SettingsScreen(
         }
         item {
             Column {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+                ActionRow(
+                    label = "Comprobar fuentes",
+                    buttonLabel = if (checkingSources) "Comprobando…" else "Comprobar",
+                    status = "Comprueba la lista M3U y el acceso a Xtream.",
+                    enabled = !checkingSources,
                 ) {
-                    Button(
-                        onClick = {
-                            if (!checkingSources) {
-                                checkingSources = true
-                                scope.launch {
-                                    sourceHealth = onCheckSources()
-                                    checkingSources = false
-                                }
-                            }
-                        },
-                        enabled = !checkingSources,
-                    ) {
-                        Text(
-                            text = if (checkingSources) "Comprobando…" else "Comprobar fuentes",
-                            fontSize = 17.sp,
-                        )
+                    checkingSources = true
+                    scope.launch {
+                        sourceHealth = onCheckSources()
+                        checkingSources = false
                     }
-                    Text(
-                        text = "Comprueba la lista M3U y el acceso a Xtream.",
-                        color = StreamColors.TextMuted,
-                        fontSize = 14.sp,
-                    )
                 }
 
                 sourceHealth?.let { health ->
@@ -444,15 +398,18 @@ internal fun SettingsScreen(
         item { SettingsHeader("Diagnóstico") }
         item {
             Column {
-                Text(
-                    text = if (errorLog.isEmpty()) {
-                        "Sin errores registrados."
-                    } else {
-                        "Últimos errores:"
+                ActionRow(
+                    label = "Borrar registro",
+                    buttonLabel = "Borrar",
+                    status = when {
+                        errorLog.isEmpty() -> "Sin errores registrados"
+                        errorLog.size == 1 -> "1 error registrado"
+                        else -> "${errorLog.size} errores registrados"
                     },
-                    color = StreamColors.TextSecondary,
-                    fontSize = 15.sp,
-                )
+                ) {
+                    errorLogStore.clear()
+                    errorLog = emptyList()
+                }
                 errorLog.takeLast(5).reversed().forEach { entry ->
                     Text(
                         text = "${entry.channel} · ${entry.code} · ${entry.message}",
@@ -462,56 +419,29 @@ internal fun SettingsScreen(
                         modifier = Modifier.padding(top = 4.dp),
                     )
                 }
-                Spacer(Modifier.height(8.dp))
-                Button(onClick = {
-                    errorLogStore.clear()
-                    errorLog = emptyList()
-                }) {
-                    Text("Borrar registro", fontSize = 16.sp)
-                }
             }
         }
 
         item { SettingsHeader("Configuración") }
         item {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Button(
-                    onClick = onRefreshConfig,
-                    enabled = !refreshing,
-                ) {
-                    Text(
-                        text = if (refreshing) "Actualizando…" else "Actualizar configuración",
-                        fontSize = 17.sp,
-                    )
-                }
-                Text(
-                    text = "Se revisa al abrir y al volver a la app.",
-                    color = StreamColors.TextMuted,
-                    fontSize = 14.sp,
-                )
-            }
+            ActionRow(
+                label = "Actualizar configuración",
+                buttonLabel = if (refreshing) "Actualizando…" else "Actualizar",
+                status = "Se revisa al abrir y al volver a la app.",
+                enabled = !refreshing,
+                onClick = onRefreshConfig,
+            )
         }
 
         item {
-            Spacer(Modifier.height(8.dp))
-            Button(onClick = {
+            ActionRow(
+                label = "Restablecer ajustes",
+                buttonLabel = "Restablecer",
+                status = "Vuelve a los valores del gist.",
+            ) {
                 onSettingsChange(DeviceSettings())
                 cacheCleared = false
-            }) {
-                Text("Restablecer ajustes locales", fontSize = 17.sp)
             }
-        }
-        item {
-            Text(
-                text = "Los valores del gist se usan cuando no hay un ajuste local. " +
-                    "Los cambios se aplican al siguiente inicio de reproducción.",
-                color = StreamColors.TextMuted,
-                fontSize = 14.sp,
-                modifier = Modifier.padding(bottom = 24.dp),
-            )
         }
     }
 }
@@ -519,7 +449,7 @@ internal fun SettingsScreen(
 @Composable
 internal fun SettingsHeader(text: String) {
     Row(
-        modifier = Modifier.padding(top = 10.dp, bottom = 2.dp),
+        modifier = Modifier.padding(top = 6.dp, bottom = 1.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
@@ -546,37 +476,196 @@ internal fun ChoiceRow(
     options: List<Pair<String, String>>,
     onSelect: (String) -> Unit,
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(StreamColors.Surface, RoundedCornerShape(10.dp))
-            .border(1.dp, StreamColors.Border, RoundedCornerShape(10.dp)),
-    ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = label,
-                    color = StreamColors.TextPrimary,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.weight(1f),
-                )
-                options.firstOrNull { it.second == current }?.let { selected ->
-                    Text(
-                        text = selected.first,
-                        color = StreamColors.AccentBright,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
+    if (options.size <= 2) {
+        SettingsRow(label = label) {
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                options.forEach { (text, value) ->
+                    val selected = value == current
+                    QuickChip(
+                        label = if (selected) "\u2713 $text" else text,
+                        selected = selected,
+                        onClick = { onSelect(value) },
                     )
                 }
             }
-            Spacer(Modifier.height(8.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                options.forEach { (text, value) ->
-                    QuickChip(
-                        label = text,
-                        selected = value == current,
-                        onClick = { onSelect(value) },
+        }
+        return
+    }
+
+    var open by remember { mutableStateOf(false) }
+    val currentLabel = options.firstOrNull { it.second == current }?.first ?: current
+    SettingsRow(label = label, onClick = { open = true }) {
+        Text(
+            text = "$currentLabel  \u203a",
+            color = StreamColors.AccentBright,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+        )
+    }
+    if (open) {
+        ChoiceDropdown(
+            label = label,
+            options = options,
+            current = current,
+            onSelect = { value ->
+                open = false
+                onSelect(value)
+            },
+            onDismiss = { open = false },
+        )
+    }
+}
+
+/** Single-row action card: label and status on the left, button on the right. */
+@Composable
+internal fun ActionRow(
+    label: String,
+    buttonLabel: String,
+    status: String? = null,
+    enabled: Boolean = true,
+    onClick: () -> Unit,
+) {
+    SettingsRow(label = label) {
+        if (status != null) {
+            Text(
+                text = status,
+                color = StreamColors.TextMuted,
+                fontSize = 13.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(start = 12.dp, end = 12.dp),
+            )
+        }
+        Button(onClick = onClick, enabled = enabled) {
+            Text(buttonLabel, fontSize = 14.sp)
+        }
+    }
+}
+
+@Composable
+private fun SettingsRow(
+    label: String,
+    onClick: (() -> Unit)? = null,
+    trailing: @Composable RowScope.() -> Unit,
+) {
+    val shape = RoundedCornerShape(10.dp)
+    if (onClick == null) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 44.dp)
+                .background(StreamColors.Surface, shape)
+                .border(1.dp, StreamColors.Border, shape)
+                .padding(horizontal = 14.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            SettingsLabel(label)
+            trailing()
+        }
+    } else {
+        var focused by remember { mutableStateOf(false) }
+        Surface(
+            onClick = onClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 44.dp)
+                .border(
+                    width = 1.dp,
+                    color = if (focused) StreamColors.AccentBright else StreamColors.Border,
+                    shape = shape,
+                )
+                .onFocusChanged { focused = it.isFocused },
+            shape = ClickableSurfaceDefaults.shape(shape),
+            colors = ClickableSurfaceDefaults.colors(
+                containerColor = StreamColors.Surface,
+                contentColor = StreamColors.TextPrimary,
+                focusedContainerColor = StreamColors.SurfaceRaised,
+                focusedContentColor = StreamColors.TextPrimary,
+            ),
+            scale = ClickableSurfaceDefaults.scale(focusedScale = 1f, pressedScale = 1f),
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 14.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                SettingsLabel(label)
+                trailing()
+            }
+        }
+    }
+}
+
+@Composable
+private fun RowScope.SettingsLabel(label: String) {
+    Text(
+        text = label,
+        color = StreamColors.TextPrimary,
+        fontSize = 15.sp,
+        fontWeight = FontWeight.SemiBold,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = Modifier.weight(1f),
+    )
+}
+
+/** Modal list of every value for a setting; the current one is pre-focused. */
+@Composable
+private fun ChoiceDropdown(
+    label: String,
+    options: List<Pair<String, String>>,
+    current: String,
+    onSelect: (String) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val selectedFocus = remember { FocusRequester() }
+
+    ModalCard(onDismiss = onDismiss, initialFocus = selectedFocus) {
+        Text(
+            text = label,
+            color = StreamColors.TextPrimary,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(Modifier.height(12.dp))
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth().heightIn(max = 360.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            items(options, key = { it.second }) { (text, value) ->
+                val selected = value == current
+                val shape = RoundedCornerShape(8.dp)
+                var focused by remember { mutableStateOf(false) }
+                Surface(
+                    onClick = { onSelect(value) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .then(if (selected) Modifier.focusRequester(selectedFocus) else Modifier)
+                        .border(
+                            width = 1.dp,
+                            color = if (focused) StreamColors.AccentBright else Color.Transparent,
+                            shape = shape,
+                        )
+                        .onFocusChanged { focused = it.isFocused },
+                    shape = ClickableSurfaceDefaults.shape(shape),
+                    colors = ClickableSurfaceDefaults.colors(
+                        containerColor = if (selected) StreamColors.Accent else StreamColors.SurfaceRaised,
+                        contentColor = if (selected) StreamColors.OnAccent else StreamColors.TextPrimary,
+                        focusedContainerColor = if (selected) StreamColors.Accent else StreamColors.SurfaceRaised,
+                        focusedContentColor = if (selected) StreamColors.OnAccent else StreamColors.TextPrimary,
+                    ),
+                    scale = ClickableSurfaceDefaults.scale(focusedScale = 1f, pressedScale = 1f),
+                ) {
+                    Text(
+                        text = text,
+                        fontSize = 16.sp,
+                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 14.dp, vertical = 10.dp),
                     )
                 }
             }

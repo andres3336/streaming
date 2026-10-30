@@ -53,11 +53,6 @@ data class LiveConfig(
     val zapping: Boolean = true,
 )
 
-data class EpgConfig(
-    val url: String? = null,
-    val refreshHours: Int = 12,
-)
-
 data class DiagnosticsConfig(
     val showStats: Boolean = false,
     val logLevel: String = "warn",
@@ -73,11 +68,10 @@ data class SubtitlesConfig(
 )
 
 data class UiConfig(
-    val sections: List<String> = listOf("live"),
+    val sections: List<String> = listOf("tv"),
     val theme: String = "dark",
     val accentColor: String = "#3B82F6",
     val fontScale: Float = 1.0f,
-    val uiScale: Float = 1.0f,
     val navigation: String = "top",
     val playerBar: String = "full",
     val playerButtons: List<String> = listOf(
@@ -90,7 +84,6 @@ data class UiConfig(
     ),
     val showChannelNumbers: Boolean = true,
     val showLogos: Boolean = true,
-    val showNowNext: Boolean = false,
 )
 
 data class AppConfig(
@@ -100,7 +93,6 @@ data class AppConfig(
     val network: NetworkConfig = NetworkConfig(),
     val cache: CacheConfig = CacheConfig(),
     val live: LiveConfig = LiveConfig(),
-    val epg: EpgConfig = EpgConfig(),
     val diagnostics: DiagnosticsConfig = DiagnosticsConfig(),
     val subtitles: SubtitlesConfig = SubtitlesConfig(),
     val ui: UiConfig = UiConfig(),

@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -38,9 +37,6 @@ import com.andres3336.streaming.data.config.LiveMode
 import com.andres3336.streaming.data.config.SourceHealth
 import com.andres3336.streaming.data.config.SourceHealthChecker
 import com.andres3336.streaming.data.config.SourcesConfig
-import com.andres3336.streaming.data.epg.EpgCache
-import com.andres3336.streaming.data.epg.EpgGuide
-import com.andres3336.streaming.data.epg.EpgRepository
 import com.andres3336.streaming.data.live.LiveState
 import com.andres3336.streaming.data.live.LiveStateStore
 import com.andres3336.streaming.data.live.liveKey
@@ -61,8 +57,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import java.util.Locale
-
-internal val LocalEpgGuide = compositionLocalOf<EpgGuide?> { null }
 
 internal sealed interface AppState {
     data object Loading : AppState
@@ -97,8 +91,6 @@ internal fun StreamingApp() {
     val configCache = remember { ConfigCache(context) }
     val channelCache = remember { ChannelCache(context) }
     val xtreamCatalogCache = remember { XtreamCatalogCache(context) }
-    val epgCache = remember { EpgCache(context) }
-    val epgRepository = remember(client) { EpgRepository(client) }
     val settingsStore = remember { DeviceSettingsStore(context) }
     val playbackStore = remember { PlaybackStore(context) }
     val lastPlaybackStore = remember { LastPlaybackStore(context) }
@@ -116,7 +108,6 @@ internal fun StreamingApp() {
     var lastPlayback by remember { mutableStateOf<LastPlayback?>(null) }
     var lastPlaybackLoaded by remember { mutableStateOf(false) }
     var liveState by remember { mutableStateOf(LiveState()) }
-    var epgGuide by remember { mutableStateOf<EpgGuide?>(null) }
     var playing by remember { mutableStateOf<PlaybackRequest?>(null) }
     var refreshTick by remember { mutableIntStateOf(0) }
     var refreshVersion by remember { mutableIntStateOf(0) }
@@ -314,21 +305,6 @@ internal fun StreamingApp() {
     }
 
     val effectiveConfig = centralConfig?.let { ConfigMerger.apply(it, deviceSettings) }
-    LaunchedEffect(
-        effectiveConfig?.epg?.url,
-        effectiveConfig?.epg?.refreshHours,
-        refreshTick,
-    ) {
-        val config = effectiveConfig ?: return@LaunchedEffect
-        val sourceKey = CacheIdentity.epg(config)
-        if (sourceKey == null) {
-            epgGuide = null
-            return@LaunchedEffect
-        }
-        epgGuide = withContext(Dispatchers.IO) {
-            epgRepository.load(config.epg, sourceKey, epgCache)
-        }
-    }
 
     var startCacheCleared by remember { mutableStateOf(false) }
     LaunchedEffect(effectiveConfig?.cache?.clearOnStart) {
@@ -361,12 +337,12 @@ internal fun StreamingApp() {
             val activeConfig = effectiveConfig ?: current.config
             val density = LocalDensity.current
             CompositionLocalProvider(
-                LocalEpgGuide provides epgGuide.takeIf { activeConfig.ui.showNowNext },
                 // The app owns its text scale: the TV's system font scale (1.4 on
                 // the test device) would otherwise inflate every screen and clip
-                // titles. `ui.fontScale` stays the single source of truth.
+                // titles. Density stays the device's, so dp layout is a fixed
+                // 960 x 540 canvas and `ui.fontScale` only changes the type.
                 LocalDensity provides Density(
-                    density = density.density * activeConfig.ui.uiScale,
+                    density = density.density,
                     fontScale = activeConfig.ui.fontScale,
                 ),
             ) {

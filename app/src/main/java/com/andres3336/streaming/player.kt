@@ -89,11 +89,10 @@ import com.andres3336.streaming.data.subtitles.SubtitleResult
 import com.andres3336.streaming.data.subtitles.SrtCodec
 import com.andres3336.streaming.data.settings.SettingsOptions
 import com.andres3336.streaming.ui.PlayerAction
-import com.andres3336.streaming.ui.PlayerTopBar
+import com.andres3336.streaming.ui.PlayerBar
 import com.andres3336.streaming.ui.StreamColors
 import com.andres3336.streaming.player.ExternalPlayer
 import com.andres3336.streaming.player.HlsFallback
-import com.andres3336.streaming.player.NetworkPolicy
 import com.andres3336.streaming.player.QualityOption
 import com.andres3336.streaming.player.QualitySelection
 import com.andres3336.streaming.player.StreamStatsFormat
@@ -125,13 +124,6 @@ internal fun PlaybackScreen(
     val channel = request.channel
     val context = LocalContext.current
     val capabilities = remember(channel) { channel.toMediaItem().capabilities }
-    val allowed = remember(networkConfig.wifiOnly) {
-        NetworkPolicy.isAllowed(context, networkConfig.wifiOnly)
-    }
-    if (!allowed) {
-        NetworkBlockedScreen()
-        return
-    }
 
     var retryToken by remember(channel) { mutableIntStateOf(0) }
     var autoRetries by remember(channel) { mutableIntStateOf(0) }
@@ -148,6 +140,10 @@ internal fun PlaybackScreen(
     var showSpeed by remember(channel) { mutableStateOf(false) }
     var showControls by remember(channel) { mutableStateOf(false) }
     var isPlaying by remember(channel) { mutableStateOf(false) }
+    var barPositionMs by remember(channel) { mutableStateOf(0L) }
+    var barDurationMs by remember(channel) { mutableStateOf(0L) }
+    val transportFocus = remember { FocusRequester() }
+    val seekFocus = remember { FocusRequester() }
     var chromeVisible by remember(channel) { mutableStateOf(true) }
     var chromeTick by remember(channel) { mutableIntStateOf(0) }
     var chromeFocused by remember(channel) { mutableStateOf(false) }
@@ -479,7 +475,9 @@ internal fun PlaybackScreen(
                 ?: queue.indexOfFirst { it.url == channel.url }
             val base = currentIndex.takeIf { it >= 0 } ?: 0
             val next = ((base + delta) % queue.size + queue.size) % queue.size
-            onNext(PlaybackRequest(queue[next], queue, next))
+            val currentNumber = request.number ?: (base + 1)
+            val nextNumber = ((currentNumber - 1 + delta) % queue.size + queue.size) % queue.size + 1
+            onNext(PlaybackRequest(queue[next], queue, next, number = nextNumber))
         }
     }
 
@@ -524,6 +522,15 @@ internal fun PlaybackScreen(
         }
     }
 
+    // Elapsed/duration for the transport row, only while the chrome is visible.
+    LaunchedEffect(chromeVisible) {
+        while (chromeVisible) {
+            barPositionMs = player.currentPosition.coerceAtLeast(0L)
+            barDurationMs = player.duration.let { if (it > 0L) it else 0L }
+            delay(500)
+        }
+    }
+
     BackHandler(
         enabled = showTracks || showStats || showQuality || showSpeed || showSubtitleSearch || showControls,
     ) {
@@ -534,6 +541,14 @@ internal fun PlaybackScreen(
             showQuality -> showQuality = false
             showSpeed -> showSpeed = false
             showControls -> showControls = false
+        }
+    }
+
+    BackHandler(enabled = chromeFocused && !overlaysOpen) {
+        chromeVisible = false
+        scope.launch {
+            delay(40)
+            runCatching { videoFocus.requestFocus() }
         }
     }
 
@@ -561,13 +576,48 @@ internal fun PlaybackScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            // Black, not the app background: it is the colour of the letterbox bars
+            // around any stream that does not fill the screen.
+            .background(Color.Black)
             .onPreviewKeyEvent { event ->
                 if (event.type != KeyEventType.KeyDown || overlaysOpen) {
                     return@onPreviewKeyEvent false
                 }
                 val keyCode = event.nativeKeyEvent.keyCode
-                val isDpad = keyCode == AndroidKeyEvent.KEYCODE_DPAD_UP ||
-                    keyCode == AndroidKeyEvent.KEYCODE_DPAD_DOWN ||
+                val isDpadUpDown = keyCode == AndroidKeyEvent.KEYCODE_DPAD_UP ||
+                    keyCode == AndroidKeyEvent.KEYCODE_DPAD_DOWN
+                // Remotes without CH+/CH- zap live channels with Up/Down. On live the
+                // bar has no second focusable row (its seek row is inert), so Up/Down
+                // zap even while the bar has focus; Left/Right still walk its icons.
+                // On VOD the same keys move between the seek and transport rows, and
+                // Left/Right/Center reveal the bar and focus play/pause. The bar
+                // flashes for a second after each zap because the new channel restarts
+                // the chrome timer, which doubles as the channel-name feedback.
+                if (isDpadUpDown &&
+                    !channel.isVod &&
+                    liveConfig.zapping &&
+                    request.queue.size > 1
+                ) {
+                    zap(if (keyCode == AndroidKeyEvent.KEYCODE_DPAD_UP) 1 else -1)
+                    return@onPreviewKeyEvent true
+                }
+                // Series queues: CH+/CH- and Up/Down change episode.
+                val isEpisodeQueue = channel.isVod &&
+                    channel.seriesTitle != null &&
+                    request.queue.size > 1
+                val isEpisodeKey = isDpadUpDown ||
+                    keyCode == AndroidKeyEvent.KEYCODE_CHANNEL_UP ||
+                    keyCode == AndroidKeyEvent.KEYCODE_CHANNEL_DOWN
+                if (isEpisodeQueue && isEpisodeKey && !chromeFocused) {
+                    val forward = keyCode == AndroidKeyEvent.KEYCODE_DPAD_UP ||
+                        keyCode == AndroidKeyEvent.KEYCODE_CHANNEL_UP
+                    val nextIndex = request.index + if (forward) 1 else -1
+                    if (nextIndex in request.queue.indices) {
+                        onNext(PlaybackRequest(request.queue[nextIndex], request.queue, nextIndex))
+                    }
+                    return@onPreviewKeyEvent true
+                }
+                val isDpad = isDpadUpDown ||
                     keyCode == AndroidKeyEvent.KEYCODE_DPAD_LEFT ||
                     keyCode == AndroidKeyEvent.KEYCODE_DPAD_RIGHT ||
                     keyCode == AndroidKeyEvent.KEYCODE_DPAD_CENTER ||
@@ -577,7 +627,7 @@ internal fun PlaybackScreen(
                     chromeTick += 1
                     scope.launch {
                         delay(60)
-                        runCatching { chromeFocus.requestFocus() }
+                        runCatching { transportFocus.requestFocus() }
                     }
                     return@onPreviewKeyEvent true
                 }
@@ -707,8 +757,34 @@ internal fun PlaybackScreen(
             }
         }
 
-        PlayerTopBar(
-            title = channel.name,
+        val barTitle = if (!channel.isVod) {
+            val number = request.number ?: (request.index + 1).takeIf { it > 0 }
+            val group = channel.group?.takeIf { it.isNotBlank() } ?: "TV"
+            if (number != null) "CH$number - ${channel.name} - $group" else "${channel.name} - $group"
+        } else {
+            channel.name
+        }
+
+        // Item arrows: neighbouring episode on VOD series, neighbouring channel on
+        // live. zap() wraps around the queue, so live always has both neighbours.
+        val itemQueue = if (channel.isVod) {
+            channel.seriesTitle != null && request.queue.size > 1
+        } else {
+            liveConfig.zapping && request.queue.size > 1
+        }
+        val canPrevItem = if (channel.isVod) {
+            itemQueue && request.index in 1..request.queue.lastIndex
+        } else {
+            itemQueue
+        }
+        val canNextItem = if (channel.isVod) {
+            itemQueue && request.index in 0 until request.queue.lastIndex
+        } else {
+            itemQueue
+        }
+
+        PlayerBar(
+            title = barTitle,
             actions = actions,
             visible = chromeVisible,
             onAction = { action ->
@@ -753,9 +829,43 @@ internal fun PlaybackScreen(
             firstActionFocus = chromeFocus,
             aspectFocus = aspectButtonFocus,
             onFocusChanged = { chromeFocused = it },
+            isPlaying = isPlaying,
+            positionMs = barPositionMs,
+            durationMs = barDurationMs,
+            canSeek = channel.isVod,
+            showItemArrows = itemQueue,
+            canPrev = canPrevItem,
+            canNext = canNextItem,
+            onPlayPause = {
+                if (player.isPlaying) player.pause() else player.play()
+            },
+            onSeekBy = { delta ->
+                val limit = if (player.duration > 0L) player.duration else Long.MAX_VALUE
+                player.seekTo((player.currentPosition + delta).coerceIn(0L, limit))
+                barPositionMs = player.currentPosition.coerceAtLeast(0L)
+            },
+            onPrevItem = {
+                if (channel.isVod) {
+                    val prevIndex = request.index - 1
+                    if (channel.seriesTitle != null && prevIndex in request.queue.indices) {
+                        onNext(PlaybackRequest(request.queue[prevIndex], request.queue, prevIndex))
+                    }
+                } else {
+                    zap(-1)
+                }
+            },
+            onNextItem = {
+                if (channel.isVod) {
+                    if (channel.seriesTitle != null) request.nextRequest()?.let(onNext)
+                } else {
+                    zap(1)
+                }
+            },
+            transportFocus = transportFocus,
+            seekFocus = seekFocus,
             modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(start = 32.dp, top = 32.dp, end = 32.dp),
+                .align(Alignment.BottomCenter)
+                .padding(start = 32.dp, end = 32.dp, bottom = 32.dp),
         )
 
         val error = errorMessage
@@ -1174,33 +1284,6 @@ internal fun applyAspect(view: PlayerView, mode: String) {
         else -> {
             frame?.setAspectRatio(0f)
             view.resizeMode = aspectResizeMode(mode)
-        }
-    }
-}
-
-@Composable
-internal fun NetworkBlockedScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(StreamColors.Background)
-            .padding(48.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = "Solo WiFi/Ethernet",
-                color = Color.White,
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-            )
-            Spacer(Modifier.height(12.dp))
-            Text(
-                text = "Desactiva \"Solo WiFi/Ethernet\" en Ajustes o conecta el TV a la red local.",
-                color = StreamColors.TextSecondary,
-                fontSize = 18.sp,
-                textAlign = TextAlign.Center,
-            )
         }
     }
 }

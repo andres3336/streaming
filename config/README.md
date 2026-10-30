@@ -17,10 +17,10 @@ bundled demo playlist so the APK is still installable.
 
 ## v3 sources
 
-`En vivo` and `Canales` are independent tabs:
+Both live sources share one **TV** section:
 
-- `sources.m3uUrl` feeds **En vivo** (the curated gist playlist).
-- `sources.xtream` feeds **Canales**, Películas and Series.
+- `sources.m3uUrl` feeds **_Mis canales**, the curated gist playlist pinned on top.
+- `sources.xtream` feeds the Xtream live categories, Películas and Series.
 - `sources.liveMode` is legacy; it is accepted from v1/v2 configs but no longer
   merges the two sources. `merge` maps to both separate tabs.
 
@@ -74,7 +74,8 @@ app defaults < gist config < local device settings
 Ajustes writes only the changed keys: buffer, pre-buffer, quality, aspect, cache size,
 clear-on-start, WiFi-only, max bitrate, text/UI scale, navigation rail, player bar,
 visible player buttons, subtitle auto-download, category filtering, and boot/wake
-auto-start. Sources, credentials, EPG and force-update stay central-only.
+auto-start. Sources, credentials and force-update stay central-only. The `epg`,
+`epgUrl` and `ui.showNowNext` keys are accepted and ignored since 0.18.0.
 
 Validation rules are implemented in `ConfigParser.kt` and mirrored by `schema.json`.
 Never commit the real config URL, Xtream credentials, the OpenSubtitles key, or a
