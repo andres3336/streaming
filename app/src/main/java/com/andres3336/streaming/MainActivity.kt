@@ -5541,33 +5541,35 @@ private fun PlayerControlsOverlay(
     ) {
         Column(
             modifier = Modifier
-                .width(420.dp)
+                .width(380.dp)
                 .background(StreamColors.Surface, RoundedCornerShape(12.dp))
-                .padding(24.dp),
+                .border(1.dp, StreamColors.Border, RoundedCornerShape(12.dp))
+                .padding(18.dp),
         ) {
             Text(
                 text = "Controles",
-                color = Color.White,
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
+                color = StreamColors.TextPrimary,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Black,
             )
             Spacer(Modifier.height(12.dp))
             actions.forEachIndexed { index, (label, action) ->
-                Button(
-                    onClick = action,
+                PillButton(
+                    label = label,
                     modifier = Modifier
                         .fillMaxWidth()
                         .then(
                             if (index == 0) Modifier.focusRequester(firstFocus) else Modifier,
                         ),
-                ) {
-                    Text(label, fontSize = 17.sp)
-                }
+                    onClick = action,
+                )
                 Spacer(Modifier.height(8.dp))
             }
-            Button(onClick = onClose, modifier = Modifier.fillMaxWidth()) {
-                Text("Cerrar", fontSize = 17.sp)
-            }
+            PillButton(
+                label = "Cerrar",
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onClose,
+            )
         }
     }
 }

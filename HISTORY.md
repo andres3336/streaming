@@ -238,6 +238,8 @@ Append-only. Newest entries at the bottom.
   headers and episode rows.
 - The app now owns its text scale (`ui.fontScale`) instead of multiplying the TV's
   system font scale, which is 1.4 on the test device and was clipping every title.
+- Restyled the player chrome and the Controles panel to the same flat pills; player
+  behaviour is unchanged.
 - Verified on the TV at 1280x720: home hero and rows, live list plus preview and EPG,
   movie/series hero-on-focus, movie detail preview, series episodes and Ajustes.
   129 unit tests passing. Version 0.16.0.
