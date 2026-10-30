@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -65,14 +66,16 @@ fun <T> PosterGrid(
     favorite: (T) -> Boolean = { false },
     onClick: (T) -> Unit,
     onToggleFavorite: ((T) -> Unit)? = null,
+    onFocusItem: ((T) -> Unit)? = null,
     emptyMessage: String = "No hay elementos",
     focusFirst: Boolean = true,
     gridFocusRequester: FocusRequester? = null,
     leftFocusRequester: FocusRequester? = null,
+    modifier: Modifier = Modifier,
 ) {
     if (items.isEmpty()) {
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
             Text(
@@ -99,7 +102,7 @@ fun <T> PosterGrid(
     LazyVerticalGrid(
         state = state,
         columns = GridCells.Fixed(4),
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(Dimens.GridPadding),
         horizontalArrangement = Arrangement.spacedBy(Dimens.GridGapH),
         verticalArrangement = Arrangement.spacedBy(Dimens.GridGapV),
@@ -125,6 +128,7 @@ fun <T> PosterGrid(
                 modifier = focusModifier.then(leftModifier),
                 onClick = { onClick(item) },
                 onLongClick = onToggleFavorite?.let { toggle -> { toggle(item) } },
+                onFocus = onFocusItem?.let { report -> { report(item) } },
             )
         }
     }
@@ -141,9 +145,16 @@ private fun PosterCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     onLongClick: (() -> Unit)?,
+    onFocus: (() -> Unit)? = null,
 ) {
     val shape = RoundedCornerShape(Dimens.CardCorner)
-    val favoriteColor = if (favorite) StreamColors.Favorite else Color.Transparent
+    var focused by remember { mutableStateOf(false) }
+    val borderColor = when {
+        focused -> StreamColors.AccentBright
+        favorite -> StreamColors.Favorite
+        else -> Color.Transparent
+    }
+    val borderWidth = if (focused) 2.dp else Dimens.FavoriteBorder
     val ratingText = ratingLabel(rating)
     val languageText = language?.takeIf { it.isNotBlank() }
 
@@ -152,7 +163,11 @@ private fun PosterCard(
         onLongClick = onLongClick,
         modifier = modifier
             .fillMaxWidth()
-            .border(Dimens.FavoriteBorder, favoriteColor, shape),
+            .border(borderWidth, borderColor, shape)
+            .onFocusChanged {
+                focused = it.isFocused
+                if (it.isFocused) onFocus?.invoke()
+            },
         shape = ClickableSurfaceDefaults.shape(shape = shape),
         colors = ClickableSurfaceDefaults.colors(
             containerColor = StreamColors.Panel,
@@ -160,10 +175,7 @@ private fun PosterCard(
             focusedContainerColor = StreamColors.CardHover,
             focusedContentColor = StreamColors.TextPrimary,
         ),
-        scale = ClickableSurfaceDefaults.scale(
-            focusedScale = Dimens.CardScale,
-            pressedScale = 0.98f,
-        ),
+        scale = ClickableSurfaceDefaults.scale(focusedScale = 1f, pressedScale = 1f),
     ) {
         Column(
             modifier = Modifier

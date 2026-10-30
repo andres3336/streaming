@@ -72,7 +72,7 @@ fun CategoryPanel(
             Text(
                 text = title.uppercase(),
                 color = StreamColors.TextMuted,
-                fontSize = 11.sp,
+                fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
                 modifier = Modifier.weight(1f),
@@ -123,10 +123,10 @@ private fun CategoryRow(
     selectedFocusRequester: FocusRequester?,
     rightFocusRequester: FocusRequester?,
 ) {
-    val shape = RoundedCornerShape(9.dp)
+    val shape = RoundedCornerShape(8.dp)
     var focused by remember { mutableStateOf(false) }
     val ring = when {
-        focused -> StreamColors.Accent
+        focused -> StreamColors.AccentBright
         else -> Color.Transparent
     }
 
@@ -147,35 +147,31 @@ private fun CategoryRow(
                 }
             }
             .onFocusChanged { focused = it.isFocused }
-            .border(2.dp, ring, shape),
+            .border(1.dp, ring, shape),
         shape = ClickableSurfaceDefaults.shape(shape = shape),
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = if (selected) StreamColors.SelectedRow else Color.Transparent,
-            contentColor = if (selected) StreamColors.TextPrimary else StreamColors.TextSecondary,
-            focusedContainerColor = StreamColors.CardHover,
-            focusedContentColor = StreamColors.TextPrimary,
+            containerColor = if (selected) StreamColors.Accent else Color.Transparent,
+            contentColor = if (selected) StreamColors.OnAccent else StreamColors.TextSecondary,
+            focusedContainerColor = if (selected) {
+                StreamColors.Accent
+            } else {
+                StreamColors.SurfaceRaised
+            },
+            focusedContentColor = if (selected) {
+                StreamColors.OnAccent
+            } else {
+                StreamColors.TextPrimary
+            },
         ),
-        scale = ClickableSurfaceDefaults.scale(
-            focusedScale = 1.02f,
-            pressedScale = 0.98f,
-        ),
+        scale = ClickableSurfaceDefaults.scale(focusedScale = 1f, pressedScale = 1f),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 10.dp, vertical = 10.dp),
+                .padding(horizontal = 10.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Box(
-                modifier = Modifier
-                    .width(3.dp)
-                    .height(20.dp)
-                    .background(
-                        color = if (selected) StreamColors.Accent else Color.Transparent,
-                        shape = RoundedCornerShape(2.dp),
-                    ),
-            )
-            Spacer(Modifier.width(9.dp))
+            Spacer(Modifier.width(2.dp))
             if (entry.favorite) {
                 Text(
                     text = "★",
@@ -186,7 +182,7 @@ private fun CategoryRow(
             }
             Text(
                 text = entry.label,
-                fontSize = 14.sp,
+                fontSize = 13.sp,
                 fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,

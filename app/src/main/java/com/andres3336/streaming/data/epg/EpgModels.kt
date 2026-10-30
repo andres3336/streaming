@@ -105,6 +105,15 @@ data class EpgGuide(
             return if (rest == 0L) "$hours h" else "$hours h ${rest.toString().padStart(2, '0')} min"
         }
 
+        /** Wall clock for programme start/stop times, e.g. `05:20`. */
+        fun formatClock(milliseconds: Long): String {
+            val calendar = java.util.Calendar.getInstance().apply { timeInMillis = milliseconds }
+            return "%02d:%02d".format(
+                calendar.get(java.util.Calendar.HOUR_OF_DAY),
+                calendar.get(java.util.Calendar.MINUTE),
+            )
+        }
+
         fun fromJson(json: JSONObject): EpgGuide {
             val channels = mutableMapOf<String, List<String>>()
             val channelsJson = json.optJSONObject("channels") ?: JSONObject()
