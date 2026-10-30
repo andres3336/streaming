@@ -213,3 +213,7 @@ Append-only. Newest entries at the bottom.
   long-press favorite, gold stroke persistence after force-stop, detail toggle,
   Favoritos, Continue grid, search filters, settings and player chips.
   129 unit tests passing. Version 0.15.0.
+- Removed `todo-v1.md` and retired `tasks/` as agent context: it is now a frozen
+  archive with a single README marker. `AGENTS.md` points at `README.md`,
+  `DECISIONS.md` and `HISTORY.md` instead, and the README task-tracking section was
+  rewritten. No spec file was moved or deleted.

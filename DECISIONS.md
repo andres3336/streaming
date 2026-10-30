@@ -1,7 +1,7 @@
 # Decisions
 
-Short record of product and architecture decisions. The task board in `tasks/` is the
-implementation plan.
+Short record of product and architecture decisions. `HISTORY.md` is the running log;
+`tasks/` is a frozen archive of old specs and is not read as context.
 
 ## Identity
 

@@ -21,17 +21,16 @@ app keeps the boot receiver and offers an opt-in HOME alias as the fallback.
 ## Task tracking
 
 ```text
-todo-v1.md      the only source of truth for what is next and what is done
 HISTORY.md      append-only log of decisions and status changes
-tasks/          one Markdown spec per task, linked from todo-v1.md
+DECISIONS.md    product and architecture decisions
+tasks/          frozen archive of old specs, never read as context
 archive/        frozen material (old Kandown board), never used at build time
 ```
 
 Rules:
 
-- Keep at most three items in `Now`.
-- Move items between sections; do not copy them.
-- Never remove or rewrite `Done` entries.
+- `HISTORY.md` is the only running record; append to it, never rewrite it.
+- `tasks/` is kept for history only. Do not read it as context or use it for status.
 - Git history plus `HISTORY.md` is the version log.
 
 Tags:

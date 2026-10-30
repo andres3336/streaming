@@ -1,3 +1,6 @@
-Before task work, read `todo-v1.md` and `HISTORY.md`. `todo-v1.md` is the only source of
-truth for task status; `HISTORY.md` is append-only. After task work, update both and
-commit the result.
+Before task work, read `README.md` (status and scope) and `HISTORY.md` (the append-only
+log of decisions and progress). Append to `HISTORY.md` after task work and commit the
+result.
+
+`tasks/` is a frozen archive of old specs. Never read it as context, never use it for
+status, and never add to it — open a file only when the user names that exact file.
