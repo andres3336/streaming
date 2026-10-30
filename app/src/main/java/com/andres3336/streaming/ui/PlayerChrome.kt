@@ -115,7 +115,7 @@ fun PlayerBar(
     if (!visible) return
     val seekStep: (Int) -> Unit = { direction ->
         val now = System.nanoTime() / 1_000_000L
-        if (now - lastSeekAtMs > SEEK_LADDER_TIMEOUT_MS) seekStepIndex = 0
+        if (now - lastSeekAtMs >= SEEK_LADDER_TIMEOUT_MS) seekStepIndex = 0
         val step = SEEK_STEPS_MS[seekStepIndex.coerceIn(SEEK_STEPS_MS.indices)]
         lastSeekAtMs = now
         seekStepIndex = (seekStepIndex + 1).coerceAtMost(SEEK_STEPS_MS.lastIndex)
@@ -202,8 +202,8 @@ fun PlayerBar(
                     PlayerActionButton(
                         action = action,
                         focusRequester = when {
-                            action == firstAction -> firstActionFocus
                             action == PlayerAction.ASPECT -> aspectFocus
+                            action == firstAction -> firstActionFocus
                             else -> null
                         },
                         onClick = { onAction(action) },
@@ -301,8 +301,8 @@ fun PlayerBar(
                     PlayerActionButton(
                         action = action,
                         focusRequester = when {
-                            action == firstAction -> firstActionFocus
                             action == PlayerAction.ASPECT -> aspectFocus
+                            action == firstAction -> firstActionFocus
                             else -> null
                         },
                         onClick = { onAction(action) },

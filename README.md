@@ -6,7 +6,7 @@ Target: Google TV / Android TV 11, 32-bit ARM, limited storage.
 
 ## Current status
 
-Version 0.20.3. Flat monochrome dark UI with one slate-blue accent (`#485584`),
+Version 0.20.4. Flat monochrome dark UI with one slate-blue accent (`#485584`),
 solid fills and 1 px borders. The shell is a horizontal top navigation bar with
 icon and label items, a clock and date on one line, and no duplicate screen title
 or bottom hint strip. **Inicio** is the landing screen and starts with the

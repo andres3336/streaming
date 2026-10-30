@@ -442,3 +442,14 @@ Append-only. Newest entries at the bottom.
   to T1E2, paused ladder 2:32 → 4:17 (5+10+30+60) and +5 s after an idle pause, live
   row `« ▶ »` with `«` zapping to the previous channel, play/pause on x=640 in every
   case.
+- Player fixes after the transport rework. `chromeFocused` is no longer keyed on
+  the channel, so zapping or changing episode from the bar no longer resets it while
+  the button keeps focus; the bar stays up and Back keeps hiding it instead of
+  closing playback. On the first/last episode Up/Down are no longer swallowed by the
+  episode guard when there is no neighbour, so they reveal the bar. `MEDIA_NEXT`
+  clamps to the real duration instead of `C.TIME_UNSET`, so the 30 s jump no longer
+  goes negative before the item is prepared. Back cancels the `Siguiente episodio`
+  countdown instead of exiting playback, and the aspect button keeps its own focus
+  requester when it is the first action (it was shadowed by `firstAction`, so focus
+  fell back to the video after changing aspect). The seek ladder resets at exactly
+  1.5 s. Version 0.20.4 (versionCode 28).

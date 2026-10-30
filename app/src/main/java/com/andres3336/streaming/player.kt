@@ -146,7 +146,10 @@ internal fun PlaybackScreen(
     val seekFocus = remember { FocusRequester() }
     var chromeVisible by remember(channel) { mutableStateOf(true) }
     var chromeTick by remember(channel) { mutableIntStateOf(0) }
-    var chromeFocused by remember(channel) { mutableStateOf(false) }
+    // Not keyed on the channel: a zap or episode change keeps the focused bar
+    // button alive, so resetting this flag would let the bar auto-hide and turn
+    // Back into "close playback" while a control still has focus.
+    var chromeFocused by remember { mutableStateOf(false) }
     var qualityOptions by remember(channel) { mutableStateOf<List<QualityOption>>(emptyList()) }
     var speed by remember(channel) { mutableStateOf(1f) }
     var aspectMode by remember(playerConfig.aspectMode) { mutableStateOf(playerConfig.aspectMode) }
@@ -532,9 +535,11 @@ internal fun PlaybackScreen(
     }
 
     BackHandler(
-        enabled = showTracks || showStats || showQuality || showSpeed || showSubtitleSearch || showControls,
+        enabled = showTracks || showStats || showQuality || showSpeed || showSubtitleSearch ||
+            showControls || showNext,
     ) {
         when {
+            showNext -> showNext = false
             showStats -> showStats = false
             showSubtitleSearch -> showSubtitleSearch = false
             showTracks -> showTracks = false
@@ -612,10 +617,12 @@ internal fun PlaybackScreen(
                     val forward = keyCode == AndroidKeyEvent.KEYCODE_DPAD_UP ||
                         keyCode == AndroidKeyEvent.KEYCODE_CHANNEL_UP
                     val nextIndex = request.index + if (forward) 1 else -1
+                    // At the ends let the key fall through, so Up/Down still reveal
+                    // the bar instead of being swallowed by a no-op.
                     if (nextIndex in request.queue.indices) {
                         onNext(PlaybackRequest(request.queue[nextIndex], request.queue, nextIndex))
+                        return@onPreviewKeyEvent true
                     }
-                    return@onPreviewKeyEvent true
                 }
                 val isDpad = isDpadUpDown ||
                     keyCode == AndroidKeyEvent.KEYCODE_DPAD_LEFT ||
@@ -665,7 +672,8 @@ internal fun PlaybackScreen(
 
                     AndroidKeyEvent.KEYCODE_MEDIA_NEXT -> {
                         if (channel.isVod) {
-                            player.seekTo((player.currentPosition + 30_000L).coerceAtMost(player.duration))
+                            val limit = if (player.duration > 0L) player.duration else Long.MAX_VALUE
+                            player.seekTo((player.currentPosition + 30_000L).coerceAtMost(limit))
                             true
                         } else if (liveConfig.zapping) {
                             zap(1)
