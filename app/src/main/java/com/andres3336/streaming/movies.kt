@@ -33,6 +33,7 @@ import com.andres3336.streaming.data.media.FavoriteKeys
 import com.andres3336.streaming.data.media.LanguageTag
 import com.andres3336.streaming.data.media.TitleVariants
 import com.andres3336.streaming.data.xtream.XtreamCategory
+import com.andres3336.streaming.data.xtream.XtreamCategoryFilter
 import com.andres3336.streaming.data.xtream.XtreamClient
 import com.andres3336.streaming.data.xtream.XtreamMovie
 import com.andres3336.streaming.data.xtream.XtreamResult
@@ -83,12 +84,14 @@ internal fun XtreamMoviesScreen(
         error = null
         when (val result = client.vodCategories()) {
             is XtreamResult.Success -> {
-                categories = result.value
+                categories = result.value.filter {
+                    XtreamCategoryFilter.isVisibleCategory(it, emptySet(), xtream.hideCategories)
+                }
                 if (selectedId.isNullOrBlank() ||
                     (selectedId != FAVORITES_CATEGORY &&
-                        result.value.none { it.id == selectedId })
+                        categories.none { it.id == selectedId })
                 ) {
-                    selectedId = result.value.firstOrNull()?.id
+                    selectedId = categories.firstOrNull()?.id
                 }
                 loadingCategories = false
             }
@@ -301,8 +304,11 @@ internal fun MovieDetail(
     onToggleFavorite: () -> Unit = {},
     variants: List<XtreamMovie> = listOf(movie),
 ) {
-    var selected by remember(movie.id, variants) {
-        mutableStateOf(variants.firstOrNull { it.id == movie.id } ?: variants.firstOrNull() ?: movie)
+    val orderedVariants = remember(variants) {
+        variants.sortedBy { TitleVariants.priority(TitleVariants.parse(it.name).tag) }
+    }
+    var selected by remember(movie.id, orderedVariants) {
+        mutableStateOf(orderedVariants.firstOrNull() ?: movie)
     }
     var info by remember(selected.id) { mutableStateOf<XtreamMovie?>(null) }
     var loading by remember(selected.id) { mutableStateOf(true) }
@@ -333,7 +339,6 @@ internal fun MovieDetail(
         Channel(
             name = TitleVariants.parse(current.name).baseTitle,
             url = client.movieUrl(current.copy(extension = selected.extension)),
-            group = "Películas",
             logo = current.logo ?: selected.logo,
             tvgId = current.id,
             language = LanguageTag.normalize(current.language ?: selected.language),
@@ -373,7 +378,7 @@ internal fun MovieDetail(
                 Column(modifier = Modifier.weight(0.45f)) {
                     if (variants.size > 1) {
                         Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                            variants.forEach { variant ->
+                            orderedVariants.forEach { variant ->
                                 QuickChip(
                                     label = TitleVariants.parse(variant.name).tag,
                                     selected = variant.id == selected.id,

@@ -26,7 +26,6 @@ data class SearchItem(
     val image: String? = null,
     // Live
     val streamUrl: String? = null,
-    val streamGroup: String? = null,
     val streamTvgId: String? = null,
     val streamLanguage: String? = null,
     // Movies

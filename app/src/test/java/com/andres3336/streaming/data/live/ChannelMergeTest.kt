@@ -8,10 +8,10 @@ class ChannelMergeTest {
 
     @Test
     fun curatedListWinsAndDuplicatesAreDropped() {
-        val gist = listOf(Channel("Canal Sur", "gist-1", group = "TV"))
+        val gist = listOf(Channel("Canal Sur", "gist-1"))
         val xtream = listOf(
-            Channel("canal sur", "xtream-1", group = "Andalucía", provider = "Xtream"),
-            Channel("Cine", "xtream-2", group = "Películas", provider = "Xtream"),
+            Channel("canal sur", "xtream-1", provider = "Xtream"),
+            Channel("Cine", "xtream-2", provider = "Xtream"),
         )
 
         val merged = mergeLiveChannels(gist, xtream)

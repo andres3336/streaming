@@ -435,6 +435,7 @@ fun QuickChip(
     selected: Boolean = false,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = 12.sp,
+    onFocusChanged: (Boolean) -> Unit = {},
     onClick: () -> Unit,
 ) {
     val shape = RoundedCornerShape(50)
@@ -457,7 +458,10 @@ fun QuickChip(
                 },
                 shape = shape,
             )
-            .onFocusChanged { focused = it.isFocused },
+            .onFocusChanged {
+                focused = it.isFocused
+                onFocusChanged(it.isFocused)
+            },
         shape = ClickableSurfaceDefaults.shape(shape = shape),
         colors = ClickableSurfaceDefaults.colors(
             containerColor = container,

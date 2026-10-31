@@ -53,6 +53,7 @@ import com.andres3336.streaming.data.media.TitleVariants
 import com.andres3336.streaming.data.playback.PlaybackEntry
 import com.andres3336.streaming.data.playback.PlaybackRequest
 import com.andres3336.streaming.data.xtream.XtreamCategory
+import com.andres3336.streaming.data.xtream.XtreamCategoryFilter
 import com.andres3336.streaming.data.xtream.XtreamClient
 import com.andres3336.streaming.data.xtream.XtreamEpisode
 import com.andres3336.streaming.data.xtream.XtreamResult
@@ -106,12 +107,14 @@ internal fun XtreamSeriesScreen(
         error = null
         when (val result = client.seriesCategories()) {
             is XtreamResult.Success -> {
-                categories = result.value
+                categories = result.value.filter {
+                    XtreamCategoryFilter.isVisibleCategory(it, emptySet(), xtream.hideCategories)
+                }
                 if (selectedId.isNullOrBlank() ||
                     (selectedId != FAVORITES_CATEGORY &&
-                        result.value.none { it.id == selectedId })
+                        categories.none { it.id == selectedId })
                 ) {
-                    selectedId = result.value.firstOrNull()?.id
+                    selectedId = categories.firstOrNull()?.id
                 }
                 loadingCategories = false
             }
@@ -300,8 +303,11 @@ internal fun SeriesDetail(
     variants: List<XtreamSeries> = listOf(series),
     playbackEntries: List<PlaybackEntry> = emptyList(),
 ) {
-    var selected by remember(series.id, variants) {
-        mutableStateOf(variants.firstOrNull { it.id == series.id } ?: variants.firstOrNull() ?: series)
+    val orderedVariants = remember(variants) {
+        variants.sortedBy { TitleVariants.priority(TitleVariants.parse(it.name).tag) }
+    }
+    var selected by remember(series.id, orderedVariants) {
+        mutableStateOf(orderedVariants.firstOrNull() ?: series)
     }
     var info by remember(selected.id) { mutableStateOf<XtreamSeriesInfo?>(null) }
     var loading by remember { mutableStateOf(true) }
@@ -339,7 +345,6 @@ internal fun SeriesDetail(
         Channel(
             name = "${TitleVariants.parse(selected.name).baseTitle} T${episode.season}E${episode.episode} · ${episode.title}",
             url = client.episodeUrl(episode),
-            group = "Series",
             logo = selected.cover,
             tvgId = episode.id,
             isVod = true,
@@ -412,7 +417,7 @@ internal fun SeriesDetail(
         if (variants.size > 1) {
             Spacer(Modifier.height(6.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                variants.forEach { variant ->
+                orderedVariants.forEach { variant ->
                     QuickChip(
                         label = TitleVariants.parse(variant.name).tag,
                         selected = variant.id == selected.id,

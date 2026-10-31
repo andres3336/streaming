@@ -19,7 +19,8 @@ class ConfigV3Test {
                   "username": "user",
                   "password": "pass",
                   "minCategoryItems": 3,
-                  "hideEmptyCategories": false
+                  "hideEmptyCategories": false,
+                  "hideCategories": ["XXX", " 24/7 ", "", "XXX"]
                 }
               },
               "player": {"preBufferMs": 2000, "qualityPreference": "720p", "liveLowLatency": true},
@@ -43,6 +44,7 @@ class ConfigV3Test {
         assertEquals(listOf("live", "channels", "movies", "series"), config.ui.sections)
         assertEquals(3, config.sources.xtream?.minCategoryItems)
         assertFalse(config.sources.xtream?.hideEmptyCategories ?: true)
+        assertEquals(listOf("XXX", "24/7"), config.sources.xtream?.hideCategories)
         assertEquals(2000, config.player.preBufferMs)
         assertEquals("720p", config.player.qualityPreference)
         assertTrue(config.player.liveLowLatency)

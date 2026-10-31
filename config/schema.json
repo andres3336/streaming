@@ -56,6 +56,16 @@
             },
             "hideEmptyCategories": {
               "type": "boolean"
+            },
+            "hideCategories": {
+              "type": "array",
+              "maxItems": 100,
+              "description": "Nombres o fragmentos de categorías que se ocultan en vivo, películas y series. Comparación por subcadena sin mayúsculas, tildes, emojis ni puntuación.",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              }
             }
           }
         }
@@ -302,6 +312,7 @@
           "minItems": 1,
           "items": {
             "enum": [
+              "tv",
               "live",
               "channels",
               "movies",

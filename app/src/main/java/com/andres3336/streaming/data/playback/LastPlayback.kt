@@ -13,14 +13,12 @@ data class LastPlayback(
     val url: String,
     val name: String,
     val logo: String? = null,
-    val group: String? = null,
     val updatedAt: Long = System.currentTimeMillis(),
 ) {
 
     fun toChannel(): Channel = Channel(
         name = name,
         url = url,
-        group = group,
         logo = logo,
         tvgId = key.takeIf { !it.startsWith("http", ignoreCase = true) },
         isVod = !isLive,
@@ -32,7 +30,6 @@ data class LastPlayback(
         put("url", url)
         put("name", name)
         logo?.let { put("logo", it) }
-        group?.let { put("group", it) }
         put("updatedAt", updatedAt)
     }
 
@@ -43,7 +40,6 @@ data class LastPlayback(
             url = channel.url,
             name = channel.name,
             logo = channel.logo,
-            group = channel.group,
         )
 
         fun fromJson(json: JSONObject): LastPlayback? {
@@ -55,7 +51,6 @@ data class LastPlayback(
                 url = url,
                 name = name,
                 logo = json.optString("logo").takeIf(String::isNotBlank),
-                group = json.optString("group").takeIf(String::isNotBlank),
                 updatedAt = json.optLong("updatedAt", System.currentTimeMillis()),
             )
         }

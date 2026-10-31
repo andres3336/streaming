@@ -48,7 +48,7 @@ Reusable UI: `ui/AppShell.kt` (top nav/AppMark, Back focus), `ui/Modal.kt`,
 ## Data flow
 
 `StreamingApp` in `core.kt` owns config, encrypted caches, device settings, playback
-state, live favorites/recents and the last-playback record. It builds the effective
+state, live favorites and the last-playback record. It builds the effective
 config, applies the text scale, then calls `ReadyScreen` in `layout.kt`.
 
 `ReadyScreen` owns section navigation and passes callbacks to section composables.
@@ -62,17 +62,19 @@ the same section. A pending config refresh is deferred while playback is open.
   ahora, Películas, Series.
 - `TV` — `TvBrowseScreen` (`channels.kt`): one section and one rail. `_Mis canales`
   is the curated gist list pinned on top, followed by the Xtream categories; there
-  are no source sub-tabs. The curated list groups Favoritos, Recientes and its M3U
-  groups; Xtream categories are flat and numbered. Rail + list + fixed preview pane
-  (video, logo, name, group · source, `OK · Ver`). No EPG and no inline search.
-  Channel rows are `[★] [n] [logo] name / group`; the star is a passive indicator
-  and long-press OK toggles it.
+  are no source sub-tabs. The curated list is flat with Favoritos on top; Xtream
+  categories are flat and numbered, and the remote config can hide categories by
+  name. Rail + list + fixed preview pane (video, logo, name, source, `OK · Ver`).
+  No EPG and no inline search. Channel rows are `[★] [n] [logo] name`; the star is
+  a passive indicator and long-press OK toggles it.
 - `Películas` — `XtreamMoviesScreen` (`movies.kt`): rail, a compact fixed-height
   header for the focused title (title, meta, two-line synopsis) and the 7-column
   2:3 poster grid. One card per title: language variants (`SU-`, `CA-`, `ES-`, …) are
   grouped by `TitleVariants` and chosen in `MovieDetail` with `SUB`/`CAM`/`ESP`
-  chips. `MovieDetail` uses the preview as the play target (`OK`), keeps only
-  `Volver` in its header, and relies on long-press in the grid for favorites.
+  chips. The detail opens on the Spanish variant (`ESP`, then `LAT`) and orders the
+  chips Spanish first, SUB next and ENG last. `MovieDetail` uses the preview as the
+  play target (`OK`), keeps only `Volver` in its header, and relies on long-press in
+  the grid for favorites.
 - `Series` — `XtreamSeriesScreen` (`series.kt`): same header, variant grouping and
   poster grid. `SeriesDetail` is two columns: seasons/episodes on the left (with
   watched progress and the last played episode pre-focused) and an autoplaying 16:9
@@ -83,15 +85,18 @@ the same section. A pending config refresh is deferred while playback is open.
   Películas, Series and their categories. Results are grouped by type with
   a header and count per group (best-scoring group first), eight rows per group.
   Selecting a category opens its section with that category already selected.
-  The catalogue is lean (ids + display fields, no full VOD objects) and persists in
-  an encrypted gzipped file (`SearchCatalogStore`), so a cold start does not download
-  it again. The field autofocuses and exposes the IME search/microphone action.
+  Remote-filtered categories, their live channels and their movies/series are not
+  indexed. The catalogue is lean (ids + display fields, no full VOD objects) and
+  persists in an encrypted gzipped file (`SearchCatalogStore`), so a cold start does
+  not download it again. The field autofocuses and exposes the IME
+  search/microphone action.
 - `Ajustes` — `SettingsScreen` (`settings.kt`): identity card, Inicio,
   Reproducción, Interfaz, Subtítulos, Caché VOD, Red, Fuentes, Diagnóstico,
   Configuración. Every setting is one content-sized row: label left, control right,
-  the selected option marked with `✓`. Sí/No uses two chips; longer lists open a
-  dropdown. Ancho de banda offers Sin límite / 200 / 100 / 50 Mbps. There is no
-  WiFi-only setting: a TV is wired or on the home network.
+  the selected option marked with `✓`. The whole card takes the raised fill and the
+  accent border while a chip or action button inside it has focus. Sí/No uses two
+  chips; longer lists open a dropdown. Ancho de banda offers Sin límite / 200 / 100 /
+  50 Mbps. There is no WiFi-only setting: a TV is wired or on the home network.
 
 ## UI rules
 
@@ -138,7 +143,7 @@ the same section. A pending config refresh is deferred while playback is open.
   inert, so Up/Down zap (when `zapping` is on and the list has more than one
   channel) even while the bar has focus; on VOD they move between the seek and
   transport rows, and Left/Right/Center reveal/focus. Series queues use CH+/CH− and
-  Up/Down to change episode. Live titles read `CH5 - Peppa - TV`.
+  Up/Down to change episode. Live titles read `CH5 - Peppa`.
 - Captions render through Media3's default `SubtitleView` at the bottom, so the bar
   covers them while it is visible.
 - The embedded ExoPlayer controller is disabled; media keys still play/pause and
@@ -154,13 +159,19 @@ the same section. A pending config refresh is deferred while playback is open.
 
 - `_Mis canales`: curated private/secret-gist M3U feed, pinned on top of the TV rail.
 - Xtream: live categories (`Cultura`, `Deportes`, …), Películas and Series.
+- `sources.xtream.hideCategories` hides live/movie/series categories from the remote
+  config by normalized substring (case/accent/emoji-insensitive); central-only, with
+  no device override, and it also keeps them out of Buscar.
+- `group-title` and `#EXTGRP` are ignored: playlists do not need groups, and Xtream
+  category names are never copied onto channels.
 - There is no EPG. `epg`, `epgUrl` and `ui.showNowNext` are accepted and ignored so
   published gists keep validating; do not reintroduce XMLTV.
 - Config is one JSON secret/unlisted gist URL embedded at build time. It refreshes
   on cold start, resume, source failure and manual action; no periodic timer.
 - Last-known-good config and caches are encrypted with Android Keystore.
 - Do not show or log URLs, credentials or playlist tokens.
-- Back moves focus to the top bar; only from the bar does it offer to exit.
+- Back moves focus to the top bar; only from the bar does it offer to exit. The exit
+  card pre-focuses `Salir` in the accent fill; OK exits and Back cancels.
 - If a source breaks, offer `Actualizar configuración` and `Reintentar`; keep the
   previous config on failure.
 

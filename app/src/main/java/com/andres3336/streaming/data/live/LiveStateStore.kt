@@ -45,7 +45,6 @@ class LiveStateStore(context: Context) {
     suspend fun save(state: LiveState) = withContext(Dispatchers.IO) {
         runCatching {
             if (state.favorites.isEmpty() &&
-                state.recents.isEmpty() &&
                 state.lastChannel == null
             ) {
                 file.delete()

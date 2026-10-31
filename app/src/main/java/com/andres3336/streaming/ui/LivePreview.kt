@@ -133,7 +133,6 @@ fun LivePreviewPane(
         }
 
         val meta = listOfNotNull(
-            channel?.group?.takeIf(String::isNotBlank),
             source?.takeIf(String::isNotBlank),
         ).joinToString(" \u00b7 ")
         if (meta.isNotEmpty()) {

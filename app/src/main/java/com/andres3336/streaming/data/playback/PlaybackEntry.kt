@@ -7,7 +7,6 @@ data class PlaybackEntry(
     val url: String,
     val name: String,
     val logo: String? = null,
-    val group: String? = null,
     val positionMs: Long,
     val durationMs: Long,
     val updatedAt: Long = System.currentTimeMillis(),
@@ -21,7 +20,6 @@ data class PlaybackEntry(
     fun toChannel(): Channel = Channel(
         name = name,
         url = url,
-        group = group,
         logo = logo,
         isVod = true,
     )
@@ -30,7 +28,6 @@ data class PlaybackEntry(
         put("url", url)
         put("name", name)
         logo?.let { put("logo", it) }
-        group?.let { put("group", it) }
         put("positionMs", positionMs)
         put("durationMs", durationMs)
         put("updatedAt", updatedAt)
@@ -48,7 +45,6 @@ data class PlaybackEntry(
                 url = url,
                 name = name,
                 logo = json.optString("logo").takeIf(String::isNotBlank),
-                group = json.optString("group").takeIf(String::isNotBlank),
                 positionMs = position,
                 durationMs = duration,
                 updatedAt = json.optLong("updatedAt", System.currentTimeMillis()),
@@ -66,7 +62,6 @@ data class PlaybackEntry(
                 url = channel.url,
                 name = channel.name,
                 logo = channel.logo,
-                group = channel.group,
                 positionMs = positionMs,
                 durationMs = durationMs,
             )

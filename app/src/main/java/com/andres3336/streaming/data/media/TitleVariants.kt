@@ -19,6 +19,7 @@ object TitleVariants {
         "ca" to "CAM",
         "es" to "ESP",
         "esp" to "ESP",
+        "spa" to "ESP",
         "cas" to "ESP",
         "en" to "ENG",
         "eng" to "ENG",
@@ -52,6 +53,21 @@ object TitleVariants {
         val cleanYear = year?.trim()?.take(4)
             ?.takeIf { it.length == 4 && it.all(Char::isDigit) }
         return if (cleanYear != null) "$base|$cleanYear" else base
+    }
+
+    /**
+     * Display order for the variant chips: Spanish first (`ESP`, then `LAT`), SUB
+     * next, then the other variants, and English last. The first variant in this
+     * order is also the one the detail opens on.
+     */
+    fun priority(tag: String): Int = when (tag) {
+        "ESP" -> 0
+        "LAT" -> 1
+        "SUB" -> 2
+        "CAM" -> 3
+        "VO" -> 4
+        "ENG" -> 5
+        else -> 3
     }
 
     fun normalize(text: String): String = Normalizer

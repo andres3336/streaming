@@ -8,6 +8,7 @@ data class XtreamConfig(
     val password: String,
     val minCategoryItems: Int = 2,
     val hideEmptyCategories: Boolean = true,
+    val hideCategories: List<String> = emptyList(),
 )
 
 data class SourcesConfig(

@@ -21,7 +21,6 @@ class M3uParserTest {
         val channel = channels.single()
         assertEquals("Canal Uno", channel.name)
         assertEquals("https://example.com/uno.m3u8", channel.url)
-        assertEquals("Noticias", channel.group)
         assertEquals("https://x/logo.png", channel.logo)
         assertEquals("canal1", channel.tvgId)
     }
@@ -47,14 +46,18 @@ class M3uParserTest {
     }
 
     @Test
-    fun usesExtGrpWhenGroupTitleIsMissing() {
+    fun ignoresGroupTitleAndExtGrp() {
         val playlist = """
-            #EXTINF:-1,Canal
+            #EXTM3U
             #EXTGRP:Deportes
+            #EXTINF:-1 group-title="Noticias, deportes",Canal
             https://example.com/a.ts
         """.trimIndent()
 
-        assertEquals("Deportes", M3uParser.parse(playlist).single().group)
+        val channel = M3uParser.parse(playlist).single()
+
+        assertEquals("Canal", channel.name)
+        assertEquals("https://example.com/a.ts", channel.url)
     }
 
     @Test
@@ -89,12 +92,11 @@ class M3uParserTest {
     @Test
     fun commaInsideQuotedAttributeDoesNotSplitTheName() {
         val playlist = """
-            #EXTINF:-1 group-title="Noticias, deportes",Canal
+            #EXTINF:-1 tvg-name="Noticias, deportes",Canal
             https://example.com/a.ts
         """.trimIndent()
 
         val channel = M3uParser.parse(playlist).single()
-        assertEquals("Noticias, deportes", channel.group)
         assertEquals("Canal", channel.name)
     }
 
@@ -132,7 +134,6 @@ class M3uParserTest {
         """.trimIndent()
 
         val channel = M3uParser.parse(playlist).single()
-        assertNull(channel.group)
         assertNull(channel.logo)
         assertNull(channel.tvgId)
         assertNull(channel.userAgent)
@@ -150,20 +151,7 @@ class M3uParserTest {
         val channel = M3uParser.parse(text).single()
 
         assertEquals("canal1", channel.tvgId)
-        assertEquals("Canales", channel.group)
         assertEquals("https://example.com/logo.png", channel.logo)
-    }
-
-    @Test
-    fun acceptsExtgrpBeforeExtinf() {
-        val text = """
-            #EXTM3U
-            #EXTGRP:Canales
-            #EXTINF:-1,Canal 1
-            https://example.com/1.m3u8
-        """.trimIndent()
-
-        assertEquals("Canales", M3uParser.parse(text).single().group)
     }
 
     @Test
@@ -177,6 +165,6 @@ class M3uParserTest {
         val channel = M3uParser.parse(text).single()
 
         assertEquals("canal1", channel.tvgId)
-        assertEquals("Canales", channel.group)
+        assertEquals("Canal 1", channel.name)
     }
 }

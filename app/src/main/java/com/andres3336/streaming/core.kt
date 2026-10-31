@@ -571,7 +571,6 @@ internal fun yearOnly(value: String?): String? {
 internal fun XtreamMovie.toChannel(client: XtreamClient): Channel = Channel(
     name = name,
     url = client.movieUrl(this),
-    group = "Películas",
     logo = logo,
     tvgId = id,
     language = LanguageTag.normalize(language),

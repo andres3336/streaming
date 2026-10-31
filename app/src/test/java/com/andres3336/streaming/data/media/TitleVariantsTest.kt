@@ -26,6 +26,16 @@ class TitleVariantsTest {
         assertEquals("100 dias de engaño", TitleVariants.parse("Sub 100 dias de engaño").baseTitle)
         assertEquals("ESP", TitleVariants.parse("Cas- La lista terminal").tag)
         assertEquals("ESP", TitleVariants.parse("esp Jericho").tag)
+        assertEquals("ESP", TitleVariants.parse("SPA- Una película").tag)
+    }
+
+    @Test
+    fun ordersSpanishFirstAndSubEngLast() {
+        val tags = listOf("ENG", "SUB", "VO", "ESP", "CAM", "LAT")
+
+        val ordered = tags.sortedBy { TitleVariants.priority(it) }
+
+        assertEquals(listOf("ESP", "LAT", "SUB", "CAM", "VO", "ENG"), ordered)
     }
 
     @Test

@@ -75,7 +75,6 @@ class SearchCatalogStore(context: Context) {
         item.subtitle,
         item.image,
         item.streamUrl,
-        item.streamGroup,
         item.streamTvgId,
         item.streamLanguage,
         item.movieId,
@@ -89,7 +88,7 @@ class SearchCatalogStore(context: Context) {
 
     private fun decode(line: String): SearchItem? {
         val fields = line.split(SEPARATOR)
-        if (fields.size < 16) return null
+        if (fields.size < 15) return null
         val kind = runCatching { SearchKind.valueOf(fields[0]) }.getOrNull() ?: return null
         fun at(index: Int): String? = fields[index].let(::unescape).takeIf(String::isNotEmpty)
         return SearchItem(
@@ -99,16 +98,15 @@ class SearchCatalogStore(context: Context) {
             kind = kind,
             image = at(4),
             streamUrl = at(5),
-            streamGroup = at(6),
-            streamTvgId = at(7),
-            streamLanguage = at(8),
-            movieId = at(9),
-            movieExtension = at(10),
-            movieCategoryId = at(11),
-            seriesId = at(12),
-            seriesCategoryId = at(13),
-            categoryId = at(14),
-            categorySection = at(15),
+            streamTvgId = at(6),
+            streamLanguage = at(7),
+            movieId = at(8),
+            movieExtension = at(9),
+            movieCategoryId = at(10),
+            seriesId = at(11),
+            seriesCategoryId = at(12),
+            categoryId = at(13),
+            categorySection = at(14),
         )
     }
 
@@ -141,7 +139,7 @@ class SearchCatalogStore(context: Context) {
     }
 
     private companion object {
-        const val HEADER = "search-catalog-v1"
+        const val HEADER = "search-catalog-v2"
         const val SEPARATOR = "\t"
         const val MAX_AGE_MS = 24L * 60L * 60L * 1000L
     }

@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.tv.material3.Button
+import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.andres3336.streaming.data.Channel
@@ -368,9 +369,17 @@ internal fun ExitConfirmOverlay(
     onCancel: () -> Unit,
     onExit: () -> Unit,
 ) {
-    val cancelFocus = remember { FocusRequester() }
+    val exitFocus = remember { FocusRequester() }
+    val buttonColors = ButtonDefaults.colors(
+        containerColor = StreamColors.SurfaceRaised,
+        contentColor = StreamColors.TextPrimary,
+        focusedContainerColor = StreamColors.Accent,
+        focusedContentColor = StreamColors.OnAccent,
+        pressedContainerColor = StreamColors.AccentDeep,
+        pressedContentColor = StreamColors.OnAccent,
+    )
 
-    ModalCard(onDismiss = onCancel, initialFocus = cancelFocus) {
+    ModalCard(onDismiss = onCancel, initialFocus = exitFocus) {
         Text(
             text = "¿Salir de Streaming?",
             color = Color.White,
@@ -389,11 +398,15 @@ internal fun ExitConfirmOverlay(
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Button(
                 onClick = onCancel,
-                modifier = Modifier.focusRequester(cancelFocus),
+                colors = buttonColors,
             ) {
                 Text("Cancelar", fontSize = 18.sp)
             }
-            Button(onClick = onExit) {
+            Button(
+                onClick = onExit,
+                modifier = Modifier.focusRequester(exitFocus),
+                colors = buttonColors,
+            ) {
                 Text("Salir", fontSize = 18.sp)
             }
         }

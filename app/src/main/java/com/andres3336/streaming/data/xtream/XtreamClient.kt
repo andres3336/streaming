@@ -225,12 +225,10 @@ class XtreamClient(
 
     fun liveChannel(
         stream: XtreamLiveStream,
-        categoryName: String,
         providerLabel: String?,
     ): Channel = Channel(
         name = stream.name,
         url = liveUrl(stream),
-        group = categoryName,
         logo = stream.logo,
         // Per-stream id: providers reuse epg_channel_id across SD/HD variants,
         // which used to make one favourite toggle several rows.

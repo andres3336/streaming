@@ -11,7 +11,6 @@ class ChannelJsonTest {
         val channel = Channel(
             name = "Canal",
             url = "https://example.com/live.m3u8",
-            group = "TV",
             logo = "https://example.com/logo.png",
             tvgId = "canal-1",
             language = "Spanish",

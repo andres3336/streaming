@@ -7,7 +7,8 @@
       "username": "USUARIO",
       "password": "CONTRASENA",
       "minCategoryItems": 2,
-      "hideEmptyCategories": true
+      "hideEmptyCategories": true,
+      "hideCategories": ["XXX", "ADULT", "24/7", "PPV"]
     }
   },
   "network": {

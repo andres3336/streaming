@@ -111,6 +111,7 @@ internal fun TvBrowseScreen(
 
     val minItems = config.sources.xtream?.minCategoryItems ?: 2
     val hideEmpty = config.sources.xtream?.hideEmptyCategories ?: true
+    val hideCategories = config.sources.xtream?.hideCategories.orEmpty()
 
     LaunchedEffect(initialCategoryId) {
         if (!initialCategoryId.isNullOrBlank()) selectedKey = initialCategoryId
@@ -182,13 +183,16 @@ internal fun TvBrowseScreen(
     val visibleCategories = remember(
         catalog.categories,
         hiddenCategoryIds,
+        hideCategories,
         showHidden,
     ) {
-        if (showHidden) {
-            catalog.categories
-        } else {
-            catalog.categories.filter {
-                XtreamCategoryFilter.isVisibleCategory(it, hiddenCategoryIds)
+        catalog.categories.filter { category ->
+            if (XtreamCategoryFilter.isHiddenByConfig(category.name, hideCategories)) {
+                false
+            } else if (showHidden) {
+                true
+            } else {
+                XtreamCategoryFilter.isVisibleCategory(category, hiddenCategoryIds)
             }
         }
     }
@@ -211,16 +215,14 @@ internal fun TvBrowseScreen(
     LaunchedEffect(selectedKey) { focused = null }
 
     val isGist = selectedKey == GIST_CATEGORY
-    val category = catalog.categories.firstOrNull { it.id == selectedKey }
     val streams = catalog.streams[selectedKey]
-    val fallbackChannel = remember(selectedKey, streams, category?.name, client) {
+    val fallbackChannel = remember(selectedKey, streams, client) {
         if (isGist) {
             null
         } else {
             streams?.firstOrNull()?.let { stream ->
                 client?.liveChannel(
                     stream = stream,
-                    categoryName = category?.name ?: "Xtream",
                     providerLabel = null,
                 )
             }
@@ -284,7 +286,6 @@ internal fun TvBrowseScreen(
                     isGist -> ChannelList(
                         channels = gistChannels,
                         favorites = liveState.favorites,
-                        recents = liveState.recents,
                         lastChannel = liveState.lastChannel,
                         startLastChannel = true,
                         onToggleFavorite = onToggleFavorite,
@@ -311,19 +312,17 @@ internal fun TvBrowseScreen(
                             Spacer(Modifier.height(4.dp))
                         }
                         ChannelList(
-                            channels = remember(streams, category?.name, client) {
+                            channels = remember(streams, client) {
                                 (streams.orEmpty())
                                     .let(XtreamCategoryFilter::usableStreams)
                                     .map { stream ->
                                         client!!.liveChannel(
                                             stream = stream,
-                                            categoryName = category?.name ?: "Xtream",
                                             providerLabel = null,
                                         )
                                     }
                             },
                             favorites = liveState.favorites,
-                            recents = liveState.recents,
                             lastChannel = liveState.lastChannel,
                             startLastChannel = true,
                             onToggleFavorite = onToggleFavorite,
@@ -342,7 +341,7 @@ internal fun TvBrowseScreen(
 private fun hasHiddenCategories(hidden: Set<String>, showHidden: Boolean): Boolean =
     hidden.isNotEmpty() || showHidden
 
-internal enum class LiveListSection { All, Favorites, Recents, Flat }
+internal enum class LiveListSection { All, Flat }
 
 internal sealed interface LiveListRow {
     val key: String
@@ -356,7 +355,6 @@ internal sealed interface LiveListRow {
         override val key: String,
         val channel: Channel,
         val favorite: Boolean,
-        val showGroup: Boolean,
         val number: Int,
     ) : LiveListRow
 }
@@ -365,37 +363,28 @@ internal sealed interface LiveListRow {
 internal fun ChannelList(
     channels: List<Channel>,
     favorites: List<String>,
-    recents: List<String>,
     lastChannel: String?,
     startLastChannel: Boolean,
     onToggleFavorite: (Channel) -> Unit,
     onSelect: (PlaybackRequest) -> Unit,
     section: LiveListSection = LiveListSection.All,
-    title: String? = null,
     showChannelNumbers: Boolean = true,
     useBaseNumbers: Boolean = true,
 ) {
-    val visible = remember(channels, section, favorites, recents) {
-        when (section) {
-            LiveListSection.Favorites -> LiveState.resolve(favorites, channels)
-            LiveListSection.Recents -> LiveState.resolve(recents, channels)
-            else -> channels
-        }
-    }
+    val visible = channels
     val numberByKey = remember(channels) {
         channels.mapIndexed { index, channel -> channel.liveKey() to index + 1 }.toMap()
     }
     val favoriteKeys = remember(favorites) { favorites.toSet() }
-    val rows = remember(visible, section, title, numberByKey, favoriteKeys, useBaseNumbers) {
+    val rows = remember(visible, section, numberByKey, favoriteKeys, useBaseNumbers) {
         buildList {
-            fun addItems(list: List<Channel>, prefix: String, showGroup: Boolean) {
+            fun addItems(list: List<Channel>, prefix: String) {
                 list.forEachIndexed { index, channel ->
                     add(
                         LiveListRow.Item(
                             key = "$prefix-$index-${channel.liveKey()}",
                             channel = channel,
                             favorite = channel.liveKey() in favoriteKeys,
-                            showGroup = showGroup,
                             number = if (useBaseNumbers) {
                                 numberByKey[channel.liveKey()] ?: (index + 1)
                             } else {
@@ -406,35 +395,15 @@ internal fun ChannelList(
                 }
             }
 
-            when (section) {
-                LiveListSection.All -> {
-                    val favoriteChannels = LiveState.resolve(favorites, visible)
-                    if (favoriteChannels.isNotEmpty()) {
-                        add(LiveListRow.Header("h-favorites", "Favoritos"))
-                        addItems(favoriteChannels, "favorites", showGroup = true)
-                    }
-
-                    val recentChannels = LiveState.resolve(recents, visible)
-                        .filterNot { it.liveKey() in favoriteKeys }
-                    if (recentChannels.isNotEmpty()) {
-                        add(LiveListRow.Header("h-recents", "Recientes"))
-                        addItems(recentChannels, "recents", showGroup = true)
-                    }
-
-                    visible.groupBy { it.group ?: "Sin grupo" }.forEach { (group, groupChannels) ->
-                        add(LiveListRow.Header("h-group-$group", group))
-                        addItems(groupChannels, "group-$group", showGroup = false)
-                    }
-                }
-
-                LiveListSection.Favorites,
-                LiveListSection.Recents,
-                LiveListSection.Flat,
-                -> {
-                    title?.let { add(LiveListRow.Header("h-title", it)) }
-                    addItems(visible, section.name.lowercase(), showGroup = false)
+            if (section == LiveListSection.All) {
+                val favoriteChannels = LiveState.resolve(favorites, visible)
+                if (favoriteChannels.isNotEmpty()) {
+                    add(LiveListRow.Header("h-favorites", "Favoritos"))
+                    addItems(favoriteChannels, "favorites")
                 }
             }
+
+            addItems(visible, section.name.lowercase())
         }
     }
     val showLogos = remember(channels) {
@@ -504,7 +473,6 @@ internal fun ChannelList(
                         is LiveListRow.Item -> LiveChannelRow(
                             channel = row.channel,
                             favorite = row.favorite,
-                            showGroup = row.showGroup,
                             showLogo = showLogos,
                             number = row.number,
                             showNumber = showChannelNumbers,
@@ -540,7 +508,6 @@ internal fun ChannelList(
 internal fun LiveChannelRow(
     channel: Channel,
     favorite: Boolean,
-    showGroup: Boolean,
     showLogo: Boolean,
     number: Int,
     showNumber: Boolean,
@@ -631,10 +598,7 @@ internal fun LiveChannelRow(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                val details = listOfNotNull(
-                    channel.group?.takeIf { showGroup && it.isNotBlank() },
-                    channel.provider?.takeIf(String::isNotBlank),
-                ).joinToString(" \u00b7 ")
+                val details = channel.provider?.takeIf(String::isNotBlank).orEmpty()
                 if (details.isNotEmpty()) {
                     Text(
                         text = details,

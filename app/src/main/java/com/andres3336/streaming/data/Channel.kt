@@ -3,7 +3,6 @@ package com.andres3336.streaming.data
 data class Channel(
     val name: String,
     val url: String,
-    val group: String? = null,
     val logo: String? = null,
     val tvgId: String? = null,
     val language: String? = null,

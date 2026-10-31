@@ -42,7 +42,7 @@ it in the middle of an unrelated change.
 - On live TV the seek row is inert, so Up/Down zap (when `zapping` is on and the
   list has more than one channel) even while the bar has focus; on VOD they move
   between the seek and transport rows, and Left/Right/Center reveal/focus. Series
-  queues change episode with CH+/CH− and Up/Down. Live titles read `CH5 - Peppa - TV`.
+  queues change episode with CH+/CH− and Up/Down. Live titles read `CH5 - Peppa`.
 - Media3's default `SubtitleView` renders captions at the bottom, so the bar covers
   them while visible; that is accepted, do not move captions.
 - The embedded ExoPlayer controller stays disabled; the custom bar is the only chrome.

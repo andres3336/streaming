@@ -32,19 +32,12 @@ class LiveStateTest {
     }
 
     @Test
-    fun remembersRecentsWithoutDuplicatesAndCapsTheList() {
+    fun remembersTheLastChannel() {
         var state = LiveState()
-        repeat(RECENT_CHANNEL_LIMIT + 3) { index ->
-            state = state.remember("channel-$index")
-        }
+        state = state.remember("channel-1")
+        state = state.remember("channel-2")
 
-        assertEquals(RECENT_CHANNEL_LIMIT, state.recents.size)
-        assertEquals("channel-12", state.recents.first())
-        assertEquals("channel-12", state.lastChannel)
-
-        state = state.remember("channel-5")
-        assertEquals("channel-5", state.recents.first())
-        assertEquals(1, state.recents.count { it == "channel-5" })
+        assertEquals("channel-2", state.lastChannel)
     }
 
     @Test
@@ -68,7 +61,6 @@ class LiveStateTest {
     fun roundTripsJson() {
         val state = LiveState(
             favorites = listOf("id-1", "id-2"),
-            recents = listOf("id-2", "id-3"),
             lastChannel = "id-3",
         )
 
@@ -76,10 +68,10 @@ class LiveStateTest {
     }
 
     @Test
-    fun readsIncompleteJson() {
+    fun readsIncompleteJsonAndIgnoresLegacyRecents() {
         assertEquals(LiveState(), LiveState.fromJson(JSONObject("{}")))
         assertEquals(
-            LiveState(recents = listOf("a")),
+            LiveState(),
             LiveState.fromJson(JSONObject("""{"favorites":[],"recents":["a","a"," "]}""")),
         )
     }

@@ -3,9 +3,11 @@ package com.andres3336.streaming.data
 /**
  * Parser for the curated M3U playlist.
  *
- * Supports EXTINF attributes (double, single or unquoted values), EXTGRP before
- * or after EXTINF, EXTVLCOPT HTTP headers, a UTF-8 BOM, CRLF input, and skips
- * malformed entries that have no URL.
+ * Supports EXTINF attributes (double, single or unquoted values), EXTVLCOPT HTTP
+ * headers, a UTF-8 BOM, CRLF input, and skips malformed entries that have no URL.
+ *
+ * `group-title` and `#EXTGRP` are deliberately ignored: the app never groups live
+ * channels by playlist tags, so a playlist without them parses the same.
  */
 object M3uParser {
 
@@ -16,7 +18,6 @@ object M3uParser {
     fun parse(text: String): List<Channel> {
         val channels = mutableListOf<Channel>()
         var pending: PendingEntry? = null
-        var nextGroup: String? = null
 
         for (raw in text.removePrefix("\uFEFF").lineSequence()) {
             val line = raw.trim()
@@ -24,20 +25,7 @@ object M3uParser {
 
             when {
                 line.startsWith("#EXTINF:", ignoreCase = true) -> {
-                    pending = parseExtInf(line.substringAfter(':')).also { entry ->
-                        entry.group = entry.group ?: nextGroup
-                    }
-                    nextGroup = null
-                }
-
-                line.startsWith("#EXTGRP:", ignoreCase = true) -> {
-                    val group = line.substringAfter(':').trim().ifEmpty { null }
-                    val current = pending
-                    if (current != null) {
-                        current.group = group
-                    } else {
-                        nextGroup = group
-                    }
+                    pending = parseExtInf(line.substringAfter(':'))
                 }
 
                 line.startsWith("#EXTVLCOPT:", ignoreCase = true) -> {
@@ -69,7 +57,6 @@ object M3uParser {
 
         return PendingEntry(
             name = displayName.ifEmpty { values["tvg-name"].orEmpty() },
-            group = values["group-title"]?.trim()?.ifEmpty { null },
             logo = values["tvg-logo"]?.trim()?.ifEmpty { null },
             tvgId = values["tvg-id"]?.trim()?.ifEmpty { null },
             language = values["tvg-language"]?.trim()?.ifEmpty { null }
@@ -95,7 +82,6 @@ object M3uParser {
 
     private class PendingEntry(
         var name: String,
-        var group: String?,
         var logo: String?,
         var tvgId: String?,
         var language: String?,
@@ -117,7 +103,6 @@ object M3uParser {
         fun toChannel(url: String) = Channel(
             name = name.ifEmpty { "Sin nombre" },
             url = url,
-            group = group,
             logo = logo,
             tvgId = tvgId,
             language = language,

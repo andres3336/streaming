@@ -46,11 +46,15 @@ editing. They are the source of truth; this file only adds the working procedure
   artwork and no header buttons; every header line reserves its height so the grid
   never jumps when the focused item changes.
 - One poster per title: language variants are grouped with `TitleVariants` and
-  selected with SUB/CAM/ESP chips in the detail. Series detail is two columns
+  selected with SUB/CAM/ESP chips in the detail. Spanish (`ESP`, then `LAT`) is the
+  default and first chip; SUB comes next and ENG last. Series detail is two columns
   (episodes left, autoplaying 16:9 preview right).
-- Back moves focus to the top bar; only from the bar does it offer to exit.
+- Back moves focus to the top bar; only from the bar does it offer to exit. The exit
+  card pre-focuses `Salir` and OK exits; Back cancels.
 - Settings rows size to their content (min 44 dp) and mark the selected option with
-  `✓`; no WiFi-only setting and no key-hint footers anywhere.
+  `✓`. While a chip or action button inside a row has focus, the whole card takes the
+  raised fill and accent border. No WiFi-only setting and no key-hint footers
+  anywhere.
 - Keep rows, paddings and gaps small — this is a 1080p TV viewed from the couch, not
   a touch UI. Text scale must never resize layout, only type.
 - Favorite card stroke is the accent; the live-row star is a small left indicator

@@ -100,8 +100,9 @@ internal fun UniversalSearchScreen(
     val catalogStore = remember { SearchCatalogStore(context) }
     val cacheKey = remember(channels, config.sources, refreshVersion) {
         CacheIdentity.sha256(
-            "search-v3|${config.sources.m3uUrl}|${config.sources.xtream?.baseUrl}|" +
-                "${config.sources.xtream?.username}|$refreshVersion|${channels.size}",
+            "search-v4|${config.sources.m3uUrl}|${config.sources.xtream?.baseUrl}|" +
+                "${config.sources.xtream?.username}|$refreshVersion|${channels.size}|" +
+                config.sources.xtream?.hideCategories.orEmpty().joinToString(","),
         )
     }
 
@@ -127,11 +128,10 @@ internal fun UniversalSearchScreen(
             items += SearchItem(
                 id = "live:${channel.liveKey()}",
                 title = channel.name,
-                subtitle = channel.group.orEmpty(),
+                subtitle = "",
                 kind = SearchKind.TV,
                 image = channel.logo,
                 streamUrl = channel.url,
-                streamGroup = channel.group,
                 streamTvgId = channel.tvgId,
                 streamLanguage = channel.language,
             )
@@ -150,9 +150,15 @@ internal fun UniversalSearchScreen(
                     emptyList()
                 }
             }
-            val categoryNames = liveCategories.associate { it.id to it.name }
+            val hideCategories = config.sources.xtream?.hideCategories.orEmpty()
+            val hiddenCategoryIds = liveCategories
+                .filterNot {
+                    XtreamCategoryFilter.isVisibleCategory(it, emptySet(), hideCategories)
+                }
+                .map { it.id }
+                .toSet()
             liveCategories
-                .filterNot { XtreamCategoryFilter.isPlaceholderName(it.name) }
+                .filterNot { it.id in hiddenCategoryIds }
                 .forEach { category ->
                     items += categoryItem(category.id, category.name, "tv")
                 }
@@ -161,16 +167,15 @@ internal fun UniversalSearchScreen(
                 is XtreamResult.Success -> {
                     result.value
                         .filter(XtreamCategoryFilter::isUsable)
+                        .filterNot { it.categoryId in hiddenCategoryIds }
                         .forEach { stream ->
-                            val group = categoryNames[stream.categoryId] ?: "Xtream"
                             items += SearchItem(
                                 id = "xtream:${stream.id}",
                                 title = stream.name,
-                                subtitle = group,
+                                subtitle = "",
                                 kind = SearchKind.TV,
                                 image = stream.logo,
                                 streamUrl = client.liveUrl(stream),
-                                streamGroup = group,
                                 streamTvgId = "xtream:${stream.id}",
                                 streamLanguage = stream.language,
                             )
@@ -184,54 +189,76 @@ internal fun UniversalSearchScreen(
                 }
             }
 
-            when (val result = client.allVodStreams()) {
-                is XtreamResult.Success -> result.value.forEach { movie ->
-                    items += SearchItem(
-                        id = "movie:${movie.id}",
-                        title = movie.name,
-                        subtitle = listOfNotNull(movie.genre, movie.year).joinToString(" · "),
-                        kind = SearchKind.MOVIE,
-                        image = movie.logo,
-                        movieId = movie.id,
-                        movieExtension = movie.extension,
-                        movieCategoryId = movie.categoryId,
-                    )
+            val movieCategories = when (val result = client.vodCategories()) {
+                is XtreamResult.Success -> result.value
+                is XtreamResult.Failure -> {
+                    complete = false
+                    emptyList()
                 }
+            }
+            val hiddenMovieCategoryIds = movieCategories
+                .filterNot {
+                    XtreamCategoryFilter.isVisibleCategory(it, emptySet(), hideCategories)
+                }
+                .map { it.id }
+                .toSet()
+
+            when (val result = client.allVodStreams()) {
+                is XtreamResult.Success -> result.value
+                    .filterNot { it.categoryId in hiddenMovieCategoryIds }
+                    .forEach { movie ->
+                        items += SearchItem(
+                            id = "movie:${movie.id}",
+                            title = movie.name,
+                            subtitle = listOfNotNull(movie.genre, movie.year).joinToString(" · "),
+                            kind = SearchKind.MOVIE,
+                            image = movie.logo,
+                            movieId = movie.id,
+                            movieExtension = movie.extension,
+                            movieCategoryId = movie.categoryId,
+                        )
+                    }
 
                 is XtreamResult.Failure -> complete = false
             }
+            movieCategories
+                .filterNot { it.id in hiddenMovieCategoryIds }
+                .forEach { category -> items += categoryItem(category.id, category.name, "movies") }
+
+            val seriesCategories = when (val result = client.seriesCategories()) {
+                is XtreamResult.Success -> result.value
+                is XtreamResult.Failure -> {
+                    complete = false
+                    emptyList()
+                }
+            }
+            val hiddenSeriesCategoryIds = seriesCategories
+                .filterNot {
+                    XtreamCategoryFilter.isVisibleCategory(it, emptySet(), hideCategories)
+                }
+                .map { it.id }
+                .toSet()
 
             when (val result = client.allSeries()) {
-                is XtreamResult.Success -> result.value.forEach { series ->
-                    items += SearchItem(
-                        id = "series:${series.id}",
-                        title = series.name,
-                        subtitle = listOfNotNull(series.genre, series.year).joinToString(" · "),
-                        kind = SearchKind.SERIES,
-                        image = series.cover,
-                        seriesId = series.id,
-                        seriesCategoryId = series.categoryId,
-                    )
-                }
-
-                is XtreamResult.Failure -> complete = false
-            }
-
-            when (val result = client.vodCategories()) {
                 is XtreamResult.Success -> result.value
-                    .filterNot { XtreamCategoryFilter.isPlaceholderName(it.name) }
-                    .forEach { category -> items += categoryItem(category.id, category.name, "movies") }
+                    .filterNot { it.categoryId in hiddenSeriesCategoryIds }
+                    .forEach { series ->
+                        items += SearchItem(
+                            id = "series:${series.id}",
+                            title = series.name,
+                            subtitle = listOfNotNull(series.genre, series.year).joinToString(" · "),
+                            kind = SearchKind.SERIES,
+                            image = series.cover,
+                            seriesId = series.id,
+                            seriesCategoryId = series.categoryId,
+                        )
+                    }
 
                 is XtreamResult.Failure -> complete = false
             }
-
-            when (val result = client.seriesCategories()) {
-                is XtreamResult.Success -> result.value
-                    .filterNot { XtreamCategoryFilter.isPlaceholderName(it.name) }
-                    .forEach { category -> items += categoryItem(category.id, category.name, "series") }
-
-                is XtreamResult.Failure -> complete = false
-            }
+            seriesCategories
+                .filterNot { it.id in hiddenSeriesCategoryIds }
+                .forEach { category -> items += categoryItem(category.id, category.name, "series") }
 
             index = withContext(Dispatchers.Default) { SearchIndex(items) }
             SearchCatalogCache.put(cacheKey, items, complete = complete)
@@ -408,7 +435,6 @@ internal fun UniversalSearchScreen(
                                             Channel(
                                                 name = item.title,
                                                 url = streamUrl,
-                                                group = item.streamGroup,
                                                 logo = item.image,
                                                 tvgId = item.streamTvgId,
                                                 language = item.streamLanguage,

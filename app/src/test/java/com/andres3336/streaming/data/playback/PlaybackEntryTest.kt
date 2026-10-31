@@ -15,7 +15,6 @@ class PlaybackEntryTest {
             url = "https://example.com/movie.mp4",
             name = "Movie",
             logo = "https://example.com/poster.jpg",
-            group = "Películas",
             positionMs = 120_000,
             durationMs = 7_200_000,
             updatedAt = 1_000,
@@ -43,7 +42,6 @@ class PlaybackEntryTest {
         val channel = Channel(
             name = "Movie",
             url = "https://example.com/movie.mp4",
-            group = "Películas",
             logo = "https://example.com/poster.jpg",
             isVod = true,
         )
@@ -53,7 +51,6 @@ class PlaybackEntryTest {
         assertEquals(channel.url, entry.url)
         assertEquals(channel.name, entry.name)
         assertEquals(channel.logo, entry.logo)
-        assertEquals(channel.group, entry.group)
         assertEquals(30_000, entry.positionMs)
     }
 

@@ -24,6 +24,16 @@ class XtreamCategoryFilterTest {
     }
 
     @Test
+    fun hidesBlockWrappedSectionDividers() {
+        assertTrue(XtreamCategoryFilter.isDividerName("▆▆▆ＤＥＰＯＲＴＥＳ ▆▆▆"))
+        assertTrue(XtreamCategoryFilter.isDividerName("▆▆▆２４／７▆▆▆"))
+        assertTrue(XtreamCategoryFilter.isDividerName("▆▆▆ＰＰＶ　ＥＶＥＮＴＳ▆▆▆"))
+        assertFalse(XtreamCategoryFilter.isDividerName("📺 Entretenimiento"))
+        assertFalse(XtreamCategoryFilter.isDividerName("🏈 Deportes"))
+        assertFalse(XtreamCategoryFilter.isDividerName("-----España-----"))
+    }
+
+    @Test
     fun filtersDividerStreams() {
         val streams = listOf(stream("-----"), stream("Canal 1"), stream("•••"))
         val usable = XtreamCategoryFilter.usableStreams(streams)
@@ -34,10 +44,35 @@ class XtreamCategoryFilterTest {
     @Test
     fun hidesPlaceholderAndHiddenCategories() {
         val divider = XtreamCategory(id = "1", name = "-----")
+        val blockDivider = XtreamCategory(id = "3", name = "▆▆▆ＤＥＰＯＲＴＥＳ ▆▆▆")
         val real = XtreamCategory(id = "2", name = "Canales")
 
         assertFalse(XtreamCategoryFilter.isVisibleCategory(divider, emptySet()))
+        assertFalse(XtreamCategoryFilter.isVisibleCategory(blockDivider, emptySet()))
         assertFalse(XtreamCategoryFilter.isVisibleCategory(real, setOf("2")))
         assertTrue(XtreamCategoryFilter.isVisibleCategory(real, emptySet()))
+    }
+
+    @Test
+    fun remoteFilterIgnoresEmojiAccentsCaseAndPunctuation() {
+        assertTrue(XtreamCategoryFilter.isHiddenByConfig("🇨🇷 Costa Rica", listOf("Costa Rica")))
+        assertTrue(XtreamCategoryFilter.isHiddenByConfig("🔞 XXX Adult", listOf("xxx")))
+        assertTrue(XtreamCategoryFilter.isHiddenByConfig("📼 24 7 Cinema", listOf("24/7")))
+        assertTrue(XtreamCategoryFilter.isHiddenByConfig("▆▆▆２４／７▆▆▆", listOf("24/7")))
+        assertTrue(XtreamCategoryFilter.isHiddenByConfig("🏈 Deportes Premium", listOf("DEPORTES")))
+        assertFalse(XtreamCategoryFilter.isHiddenByConfig("🇵🇷 Puerto Rico", listOf("Costa Rica")))
+        assertFalse(XtreamCategoryFilter.isHiddenByConfig("🏈 Deportes", emptyList()))
+    }
+
+    @Test
+    fun remoteFilterDropsSymbolOnlyEntries() {
+        assertFalse(XtreamCategoryFilter.isHiddenByConfig("🏈 Deportes", listOf("▆", "  ")))
+        assertTrue(
+            XtreamCategoryFilter.isVisibleCategory(
+                XtreamCategory(id = "1", name = "🏈 Deportes"),
+                emptySet(),
+                listOf("▆"),
+            ),
+        )
     }
 }

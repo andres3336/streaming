@@ -31,6 +31,13 @@ Read the `Sources and config` and `Startup and cache` blocks in `CONTEXT.md` fir
   ignored; do not reintroduce XMLTV fetching or parsing.
 - Xtream channels are keyed by `xtream:<stream id>`, never by `epg_channel_id`:
   providers reuse that id across SD/HD variants.
+- `sources.xtream.hideCategories` hides live, movie and series categories from the
+  gist by normalized substring (NFKD, no case/accents/emoji/punctuation). It is
+  central-only: never move it to device settings. Hidden categories also leave
+  Buscar, and `Mostrar ocultas` only reveals empty ones.
+- `group-title` and `#EXTGRP` are ignored on purpose: channels carry no playlist
+  group, and Xtream category names are never copied onto them. Do not reintroduce
+  group parsing or group labels.
 - Last-known-good config and caches are encrypted with Android Keystore.
 - Do not show or log URLs, credentials or playlist tokens — not in UI, logcat,
   diagnostics, error text or test fixtures.
@@ -48,10 +55,18 @@ The validator prints Spanish guidance and never echoes the file contents. Edit
 `config/schema.json` and `config/README.md` together with any shape change, bump
 `version` in the sample, then republish the gist.
 
+Remote filters live under `sources.xtream.hideCategories`. Keep them as plain
+substrings, not regex: symbol-only entries are ignored, and a broad word can also
+hide a real category (`DEPORTES` matches both the divider and `🏈 Deportes`).
+
+`config/config.json` is the local gitignored mirror of the published gist. Use it to
+prepare and validate changes; never add it to git.
+
 ## Never commit
 
-`local.properties`, `config.local.json`, `secrets.properties`, `.env`, `*.jks`,
-`*.keystore`, `keystore.properties`, the gist URL and real credentials.
+`local.properties`, `config.local.json`, `config/config.json`, `secrets.properties`,
+`.env`, `*.jks`, `*.keystore`, `keystore.properties`, the gist URL and real
+credentials.
 
 ## Verify
 

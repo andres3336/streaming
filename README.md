@@ -6,13 +6,15 @@ Target: Google TV / Android TV 11, 32-bit ARM, limited storage.
 
 ## Current status
 
-Version 0.20.4. Flat monochrome dark UI with one slate-blue accent (`#485584`),
+Version 0.21.0. Flat monochrome dark UI with one slate-blue accent (`#485584`),
 solid fills and 1 px borders. The shell is a horizontal top navigation bar with
 icon and label items, a clock and date on one line, and no duplicate screen title
 or bottom hint strip. **Inicio** is the landing screen and starts with the
 **Continuar viendo** row, then the hero. **TV** is one section: `_Mis canales` (the
 curated M3U list) is pinned on top of the Xtream categories, with a live preview
-pane. There is no EPG. Películas and Series show a compact header for the focused
+pane. Both lists are flat (Favoritos on top of the curated list) and the remote
+config can hide live, movie and series categories by name without an app update.
+There is no EPG. Películas and Series show a compact header for the focused
 title (meta and two-line synopsis) above a seven-column 2:3 poster grid; language
 variants (`SU-`, `CA-`, `ES-`) are grouped into one poster and picked before
 playing. Series details show the episode list and an autoplaying preview side by

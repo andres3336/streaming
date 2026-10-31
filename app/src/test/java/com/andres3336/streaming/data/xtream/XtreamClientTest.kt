@@ -105,10 +105,9 @@ class XtreamClientTest {
     fun convertsAStreamToAChannelWithAStableKey() {
         val stream = XtreamLiveStream("10", "Canal", "logo.png", "1")
 
-        val channel = client.liveChannel(stream, "Deportes", providerLabel = "Xtream")
+        val channel = client.liveChannel(stream, providerLabel = "Xtream")
 
         assertEquals("Canal", channel.name)
-        assertEquals("Deportes", channel.group)
         assertEquals("xtream:10", channel.tvgId)
         assertEquals("Xtream", channel.provider)
         assertTrue(channel.fallbackUrl!!.endsWith(".ts"))

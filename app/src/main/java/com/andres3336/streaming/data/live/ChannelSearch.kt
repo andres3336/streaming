@@ -5,7 +5,7 @@ import java.text.Normalizer
 import java.util.Locale
 
 /**
- * Accent-insensitive channel search across the channel name and group.
+ * Accent-insensitive channel search by channel name.
  */
 object ChannelSearch {
 
@@ -21,13 +21,12 @@ object ChannelSearch {
         val needle = normalize(query)
         if (needle.isEmpty()) return true
 
-        return normalize(channel.name).contains(needle) ||
-            normalize(channel.group.orEmpty()).contains(needle)
+        return normalize(channel.name).contains(needle)
     }
 
     fun filter(channels: List<Channel>, query: String): List<Channel> {
         val needle = normalize(query)
         if (needle.isEmpty()) return channels
-        return channels.filter { normalize(it.name).contains(needle) || normalize(it.group.orEmpty()).contains(needle) }
+        return channels.filter { normalize(it.name).contains(needle) }
     }
 }

@@ -4,17 +4,14 @@ import com.andres3336.streaming.data.Channel
 import org.json.JSONArray
 import org.json.JSONObject
 
-const val RECENT_CHANNEL_LIMIT = 10
-
 /**
- * Per-device live TV state: favorites, recent channels and the last channel.
+ * Per-device live TV state: favorites and the last channel.
  *
  * Channels are stored by key (tvg-id when present, otherwise the URL) so the
  * state survives playlist refreshes and reordering.
  */
 data class LiveState(
     val favorites: List<String> = emptyList(),
-    val recents: List<String> = emptyList(),
     val lastChannel: String? = null,
 ) {
 
@@ -29,19 +26,14 @@ data class LiveState(
         }
     }
 
-    /** Records a channel as the most recent one and as the last channel. */
+    /** Records the last channel. */
     fun remember(key: String): LiveState {
         if (key.isBlank()) return this
-        return copy(
-            recents = (listOf(key) + recents.filterNot { it == key })
-                .take(RECENT_CHANNEL_LIMIT),
-            lastChannel = key,
-        )
+        return copy(lastChannel = key)
     }
 
     fun toJson(): JSONObject = JSONObject().apply {
         put("favorites", JSONArray(favorites))
-        put("recents", JSONArray(recents))
         lastChannel?.let { put("lastChannel", it) }
     }
 
@@ -58,19 +50,19 @@ data class LiveState(
         }
 
         fun fromJson(json: JSONObject): LiveState {
-            fun keys(name: String, limit: Int = Int.MAX_VALUE): List<String> {
-                val array = json.optJSONArray(name) ?: return emptyList()
-                return (0 until array.length())
+            val favoriteArray = json.optJSONArray("favorites")
+            val favorites = if (favoriteArray == null) {
+                emptyList()
+            } else {
+                (0 until favoriteArray.length())
                     .mapNotNull { index ->
-                        array.optString(index).takeIf(String::isNotBlank)
+                        favoriteArray.optString(index).takeIf(String::isNotBlank)
                     }
                     .distinct()
-                    .take(limit)
             }
 
             return LiveState(
-                favorites = keys("favorites"),
-                recents = keys("recents", RECENT_CHANNEL_LIMIT),
+                favorites = favorites,
                 lastChannel = json.optString("lastChannel").takeIf(String::isNotBlank),
             )
         }

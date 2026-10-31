@@ -13,7 +13,6 @@ class LastPlaybackTest {
         val channel = Channel(
             name = "Canal",
             url = "https://example.com/live.m3u8",
-            group = "TV",
             tvgId = "canal-1",
             isVod = false,
         )

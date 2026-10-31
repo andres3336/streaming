@@ -6,7 +6,6 @@ import org.json.JSONObject
 fun Channel.toJson(): JSONObject = JSONObject().apply {
     put("name", name)
     put("url", url)
-    group?.let { put("group", it) }
     logo?.let { put("logo", it) }
     tvgId?.let { put("tvgId", it) }
     language?.let { put("language", it) }
@@ -30,7 +29,6 @@ fun channelFromJson(json: JSONObject): Channel? {
     return Channel(
         name = name,
         url = url,
-        group = json.optString("group").takeIf(String::isNotBlank),
         logo = json.optString("logo").takeIf(String::isNotBlank),
         tvgId = json.optString("tvgId").takeIf(String::isNotBlank),
         language = json.optString("language").takeIf(String::isNotBlank),

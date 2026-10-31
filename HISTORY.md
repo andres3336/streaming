@@ -453,3 +453,32 @@ Append-only. Newest entries at the bottom.
   requester when it is the first action (it was shadowed by `firstAction`, so focus
   fell back to the video after changing aspect). The seek ladder resets at exactly
   1.5 s. Version 0.20.4 (versionCode 28).
+- Version 0.21.0 (versionCode 29). Remote category hygiene and a flatter live TV.
+  `sources.xtream.hideCategories` hides live, movie and series categories from the
+  gist without an app update. Matching is a normalized substring (NFKD, no case, no
+  accents, emoji and punctuation ignored), so `24/7` hides `📼 24 7 Cinema` and
+  `▆▆▆２４／７▆▆▆`, and `Costa Rica` hides `🇨🇷 Costa Rica`. Remote-hidden
+  categories never reach the rails or Buscar, and `Mostrar ocultas` only reveals
+  empty ones. Block-wrapped dividers (`▆▆▆ＤＥＰＯＲＴＥＳ▆▆▆`) are detected
+  automatically. `Recientes` is gone from `_Mis canales`: the curated list is flat
+  with Favoritos on top. `group-title` and `#EXTGRP` are ignored, `Channel.group` is
+  gone and Xtream category names are no longer copied onto channels, so rows, the
+  preview, home cards and search show no group and the live player title reads
+  `CH5 - Peppa`. The search catalogue format moved to `search-catalog-v2`, so the
+  old encrypted file is rebuilt once. `config/config.json` is the local gitignored
+  mirror of the published gist.
+- Verified 0.21.0 on the TV against the config mirror served over adb reverse: the
+  live rail went from 96 entries to 47, with no `XXX`, `24/7`, `PPV`, `LCDLF`,
+  `La Granja VIP` or block dividers. `_Mis canales` listed TD+ first with no `TV`
+  header and no `RECIENTES`; rows and the preview showed no group and the player bar
+  read `CH1 - TD+`. The final APK points back at the gist, so the filters stay
+  inactive until the gist is republished with `hideCategories`.
+- Settings focus pass. A settings card now takes the raised fill and accent border
+  while one of its chips or action buttons has focus, not only the chip itself; this
+  covers the two-chip choice rows and the player-buttons row. The exit card
+  pre-focuses `Salir` with the accent fill, so OK exits and Back cancels without
+  moving the D-pad.
+- Movie and series details now open on the Spanish variant and order the language
+  chips Spanish first (`ESP`, then `LAT`), SUB next and ENG last. `SPA-` is mapped to
+  `ESP` alongside the existing `ES-`/`ESP-`/`Cas-` prefixes. Verified on the TV:
+  `Velocidad y Deseo` opened with `ESP` selected ahead of `CAM` and `SUB`.

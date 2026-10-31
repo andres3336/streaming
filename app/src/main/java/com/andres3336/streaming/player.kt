@@ -767,8 +767,7 @@ internal fun PlaybackScreen(
 
         val barTitle = if (!channel.isVod) {
             val number = request.number ?: (request.index + 1).takeIf { it > 0 }
-            val group = channel.group?.takeIf { it.isNotBlank() } ?: "TV"
-            if (number != null) "CH$number - ${channel.name} - $group" else "${channel.name} - $group"
+            if (number != null) "CH$number - ${channel.name}" else channel.name
         } else {
             channel.name
         }

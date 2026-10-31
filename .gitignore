@@ -15,6 +15,7 @@ keystore.properties
 
 # Local config and secrets
 config.local.json
+config/config.json
 secrets.properties
 .env
 

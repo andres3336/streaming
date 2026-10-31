@@ -240,7 +240,11 @@ internal fun SettingsScreen(
             ) { value -> onSettingsChange(settings.copy(playerBar = value)) }
         }
         item {
-            SettingsRow(label = "Botones del reproductor") {
+            var focusedIndex by remember { mutableStateOf<Int?>(null) }
+            SettingsRow(
+                label = "Botones del reproductor",
+                highlighted = focusedIndex != null,
+            ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     listOf(
                         "info" to "Info",
@@ -249,11 +253,20 @@ internal fun SettingsScreen(
                         "quality" to "Calidad",
                         "speed" to "Velocidad",
                         "external" to "Externo",
-                    ).forEach { (id, label) ->
+                    ).forEachIndexed { index, (id, label) ->
                         val enabled = id in config.ui.playerButtons
                         QuickChip(
                             label = if (enabled) "✓ $label" else label,
                             selected = enabled,
+                            onFocusChanged = { focused ->
+                                focusedIndex = if (focused) {
+                                    index
+                                } else if (focusedIndex == index) {
+                                    null
+                                } else {
+                                    focusedIndex
+                                }
+                            },
                             onClick = {
                                 val updated = if (enabled) {
                                     config.ui.playerButtons - id
@@ -477,13 +490,23 @@ internal fun ChoiceRow(
     onSelect: (String) -> Unit,
 ) {
     if (options.size <= 2) {
-        SettingsRow(label = label) {
+        var focusedIndex by remember { mutableStateOf<Int?>(null) }
+        SettingsRow(label = label, highlighted = focusedIndex != null) {
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                options.forEach { (text, value) ->
+                options.forEachIndexed { index, (text, value) ->
                     val selected = value == current
                     QuickChip(
                         label = if (selected) "\u2713 $text" else text,
                         selected = selected,
+                        onFocusChanged = { focused ->
+                            focusedIndex = if (focused) {
+                                index
+                            } else if (focusedIndex == index) {
+                                null
+                            } else {
+                                focusedIndex
+                            }
+                        },
                         onClick = { onSelect(value) },
                     )
                 }
@@ -526,7 +549,8 @@ internal fun ActionRow(
     enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
-    SettingsRow(label = label) {
+    var focused by remember { mutableStateOf(false) }
+    SettingsRow(label = label, highlighted = focused) {
         if (status != null) {
             Text(
                 text = status,
@@ -537,7 +561,11 @@ internal fun ActionRow(
                 modifier = Modifier.padding(start = 12.dp, end = 12.dp),
             )
         }
-        Button(onClick = onClick, enabled = enabled) {
+        Button(
+            onClick = onClick,
+            enabled = enabled,
+            modifier = Modifier.onFocusChanged { focused = it.isFocused },
+        ) {
             Text(buttonLabel, fontSize = 14.sp)
         }
     }
@@ -547,6 +575,7 @@ internal fun ActionRow(
 private fun SettingsRow(
     label: String,
     onClick: (() -> Unit)? = null,
+    highlighted: Boolean = false,
     trailing: @Composable RowScope.() -> Unit,
 ) {
     val shape = RoundedCornerShape(10.dp)
@@ -555,8 +584,15 @@ private fun SettingsRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = 44.dp)
-                .background(StreamColors.Surface, shape)
-                .border(1.dp, StreamColors.Border, shape)
+                .background(
+                    if (highlighted) StreamColors.SurfaceRaised else StreamColors.Surface,
+                    shape,
+                )
+                .border(
+                    width = 1.dp,
+                    color = if (highlighted) StreamColors.AccentBright else StreamColors.Border,
+                    shape = shape,
+                )
                 .padding(horizontal = 14.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {

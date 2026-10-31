@@ -9,9 +9,9 @@ import org.junit.Test
 class ChannelSearchTest {
 
     private val channels = listOf(
-        Channel(name = "Canal Sur", url = "u1", group = "Andalucía"),
-        Channel(name = "Televisión Española", url = "u2", group = "Nacional"),
-        Channel(name = "Cine Acción", url = "u3", group = "Películas"),
+        Channel(name = "Canal Sur", url = "u1"),
+        Channel(name = "Televisión Española", url = "u2"),
+        Channel(name = "Cine Acción", url = "u3"),
     )
 
     @Test
@@ -27,9 +27,9 @@ class ChannelSearchTest {
     }
 
     @Test
-    fun matchesGroup() {
-        assertEquals(listOf("Cine Acción"), names("peliculas"))
-        assertEquals(listOf("Canal Sur"), names("andalucia"))
+    fun ignoresCategoryNames() {
+        assertTrue(ChannelSearch.filter(channels, "peliculas").isEmpty())
+        assertTrue(ChannelSearch.filter(channels, "andalucia").isEmpty())
     }
 
     @Test
@@ -40,7 +40,7 @@ class ChannelSearchTest {
     @Test
     fun matchesReportsIndividualChannels() {
         assertTrue(ChannelSearch.matches(channels[0], "sur"))
-        assertFalse(ChannelSearch.matches(channels[0], "nacional"))
+        assertFalse(ChannelSearch.matches(channels[0], "espanola"))
     }
 
     private fun names(query: String): List<String> =

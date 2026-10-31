@@ -18,7 +18,7 @@ object ConfigParser {
         "merge" to LiveMode.MERGE,
     )
 
-    private val allowedSections = setOf("live", "channels", "movies", "series")
+    private val allowedSections = setOf("tv", "live", "channels", "movies", "series")
     private val qualityCaps = setOf("auto", "1080p", "720p", "480p", "360p")
     private val aspectModes = setOf("fit", "fill", "stretch", "zoom", "original")
     private val themes = setOf("dark", "light", "system")
@@ -71,6 +71,11 @@ object ConfigParser {
                 password = json.optString("password"),
                 minCategoryItems = json.optInt("minCategoryItems", 2),
                 hideEmptyCategories = json.optBoolean("hideEmptyCategories", true),
+                hideCategories = json.stringList("hideCategories")
+                    ?.map(String::trim)
+                    ?.filter(String::isNotEmpty)
+                    ?.distinct()
+                    .orEmpty(),
             )
         }
         if (xtream != null) {
@@ -79,6 +84,12 @@ object ConfigParser {
             if (xtream.password.isBlank()) errors += "sources.xtream.password vacío"
             if (xtream.minCategoryItems !in 0..50) {
                 errors += "sources.xtream.minCategoryItems fuera de rango"
+            }
+            if (xtream.hideCategories.size > 100) {
+                errors += "sources.xtream.hideCategories admite como máximo 100 entradas"
+            }
+            if (xtream.hideCategories.any { it.length > 64 }) {
+                errors += "sources.xtream.hideCategories contiene una entrada demasiado larga"
             }
         }
 

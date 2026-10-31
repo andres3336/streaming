@@ -112,7 +112,6 @@ internal fun HomeScreen(
                 title = heroChannel.name,
                 badge = "En vivo",
                 meta = listOfNotNull(
-                    heroChannel.group,
                     heroChannel.provider,
                 ),
                 synopsis = null,
@@ -160,7 +159,7 @@ internal fun HomeScreen(
             MediaCardModel(
                 key = "favorite:$index",
                 title = channel.name,
-                subtitle = channel.group,
+                subtitle = channel.provider,
                 image = channel.logo,
             )
         }
@@ -170,7 +169,7 @@ internal fun HomeScreen(
             MediaCardModel(
                 key = "live:$index",
                 title = channel.name,
-                subtitle = channel.group,
+                subtitle = channel.provider,
                 image = channel.logo,
             )
         }

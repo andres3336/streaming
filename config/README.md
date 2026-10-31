@@ -39,6 +39,38 @@ Categories with fewer usable streams are hidden after they load. Punctuation-onl
 divider categories and streams are always ignored. `Ajustes → Fuentes` can change
 both values per device, and the live rail has a `Mostrar ocultas` escape hatch.
 
+Block-wrapped dividers such as `▆▆▆ＤＥＰＯＲＴＥＳ▆▆▆` are detected automatically,
+so they never reach the rail.
+
+## Remote category filters
+
+```json
+"xtream": {
+  "hideCategories": ["XXX", "ADULT", "24/7", "PPV", "LCDLF", "La Granja VIP"]
+}
+```
+
+Hides categories in **live, películas and series** from the remote gist, without
+touching the TV. It is central-only: `Ajustes` cannot override it.
+
+Matching is a substring on a normalized name: NFKD, no case, no accents, and every
+symbol/emoji/punctuation group becomes a space. The emoji and fullwidth text a
+provider adds never need to be copied:
+
+- `Costa Rica` hides `🇨🇷 Costa Rica` and `Costa Rica HD`.
+- `24/7` hides `📼 24 7 Cinema` and `▆▆▆２４／７▆▆▆`.
+- `XXX` hides `🔞 XXX Adult` and the `XXX` movie/series categories.
+
+Hidden categories disappear from the rails and **Buscar**; their live channels,
+movies and series are not indexed. `Mostrar ocultas` keeps revealing only empty
+categories, never remote-filtered ones. Entries that normalize to nothing (only
+symbols) are ignored.
+Be careful with words the provider also uses for a real category: `DEPORTES` would
+hide both the divider and `🏈 Deportes`.
+
+`config/config.json` is a local, gitignored mirror of the published gist, used to
+prepare and validate changes. It is never committed.
+
 ## Subtitles / OpenSubtitles
 
 ```json
@@ -74,8 +106,9 @@ app defaults < gist config < local device settings
 Ajustes writes only the changed keys: buffer, pre-buffer, quality, aspect, cache size,
 clear-on-start, WiFi-only, max bitrate, text/UI scale, navigation rail, player bar,
 visible player buttons, subtitle auto-download, category filtering, and boot/wake
-auto-start. Sources, credentials and force-update stay central-only. The `epg`,
-`epgUrl` and `ui.showNowNext` keys are accepted and ignored since 0.18.0.
+auto-start. Sources, credentials, `xtream.hideCategories` and force-update stay
+central-only. The `epg`, `epgUrl` and `ui.showNowNext` keys are accepted and ignored
+since 0.18.0.
 
 Validation rules are implemented in `ConfigParser.kt` and mirrored by `schema.json`.
 Never commit the real config URL, Xtream credentials, the OpenSubtitles key, or a
